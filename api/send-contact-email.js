@@ -1,8 +1,5 @@
-// Vercel Serverless Function
-// Use native fetch (available in Node 18+)
-const fetch = globalThis.fetch || require('node-fetch');
-
-module.exports = async (req, res) => {
+// Vercel Serverless Function - ES Module
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -193,5 +190,4 @@ ${message}
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
-};
-
+}

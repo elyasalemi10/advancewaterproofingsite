@@ -1,6 +1,5 @@
 // Vercel Serverless Function
 // Use native fetch (available in Node 18+)
-const fetch = globalThis.fetch || require('node-fetch');
 
 // Helper functions
 function generateBookingId() {
@@ -17,7 +16,7 @@ function formatDate(dateString) {
   });
 }
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
