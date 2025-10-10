@@ -1,5 +1,6 @@
 // Vercel Serverless Function
-const fetch = require('node-fetch');
+// Use native fetch (available in Node 18+)
+const fetch = globalThis.fetch || require('node-fetch');
 
 // Helper functions
 function generateBookingId() {
@@ -216,15 +217,28 @@ module.exports = async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Resend API Error:', data);
-      return res.status(response.status).json({ error: 'Failed to send email', details: data });
+      console.error('Resend API Error:', JSON.stringify(data, null, 2));
+      console.error('Response status:', response.status);
+      console.error('Response statusText:', response.statusText);
+      return res.status(response.status).json({ 
+        error: 'Failed to send email', 
+        details: data,
+        status: response.status,
+        statusText: response.statusText
+      });
     }
 
+    console.log('Booking email sent successfully:', data);
     return res.status(200).json({ success: true, bookingId, data });
 
   } catch (error) {
     console.error('Function error:', error);
-    return res.status(500).json({ error: 'Internal server error', message: error.message });
+    console.error('Error stack:', error.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
