@@ -116,18 +116,18 @@ export function BookingCalendar() {
 
   return (
     <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <CalendarIcon className="h-6 w-6 text-primary" />
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
+          <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
           Book a Free Inspection
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm sm:text-base">
           Schedule a tentative appointment. We'll contact you to confirm or reschedule at your convenience.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
+      <CardContent className="p-4 sm:p-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
             {/* Calendar */}
             <div>
               <Label className="mb-2 block">Select Date</Label>
@@ -151,9 +151,9 @@ export function BookingCalendar() {
             </div>
 
             {/* Time Slots & Form */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <Label className="mb-2 flex items-center gap-2">
+                <Label className="mb-2 flex items-center gap-2 text-sm sm:text-base">
                   <Clock className="h-4 w-4" />
                   Preferred Time
                 </Label>
@@ -172,7 +172,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="name" className="flex items-center gap-2">
+                <Label htmlFor="name" className="flex items-center gap-2 text-sm sm:text-base">
                   <User className="h-4 w-4" />
                   Full Name *
                 </Label>
@@ -185,7 +185,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="email" className="flex items-center gap-2">
+                <Label htmlFor="email" className="flex items-center gap-2 text-sm sm:text-base">
                   <Mail className="h-4 w-4" />
                   Email Address *
                 </Label>
@@ -199,7 +199,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="phone" className="flex items-center gap-2">
+                <Label htmlFor="phone" className="flex items-center gap-2 text-sm sm:text-base">
                   <Phone className="h-4 w-4" />
                   Phone Number *
                 </Label>
@@ -213,7 +213,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="address" className="flex items-center gap-2">
+                <Label htmlFor="address" className="flex items-center gap-2 text-sm sm:text-base">
                   <MapPin className="h-4 w-4" />
                   Property Address *
                 </Label>
@@ -227,7 +227,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="service">Service Type *</Label>
+                <Label htmlFor="service" className="text-sm sm:text-base">Service Type *</Label>
                 <Select value={formData.service} onValueChange={(value) => setFormData({ ...formData, service: value })}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a service" />
@@ -243,7 +243,7 @@ export function BookingCalendar() {
               </div>
 
               <div>
-                <Label htmlFor="notes">Additional Notes</Label>
+                <Label htmlFor="notes" className="text-sm sm:text-base">Additional Notes</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
@@ -265,7 +265,7 @@ export function BookingCalendar() {
             </ol>
           </div>
 
-          <Button type="submit" className="w-full" size="lg">
+          <Button type="submit" className="w-full text-sm sm:text-base" size="lg">
             Submit Booking Request
           </Button>
         </form>
