@@ -22,8 +22,13 @@ module.exports = async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
 
-    const RESEND_API_KEY = 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
     const BUSINESS_EMAIL = 'info@advancewaterproofing.com.au';
+
+    if (!RESEND_API_KEY) {
+      console.error('RESEND_API_KEY environment variable is not set');
+      return res.status(500).json({ error: 'Email service not configured' });
+    }
 
     const emailHTML = `
 <!DOCTYPE html>
