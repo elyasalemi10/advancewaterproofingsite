@@ -14,7 +14,7 @@ export default function Hero() {
       id="home" 
       className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-32 pb-12 sm:pb-20 bg-gradient-to-br from-secondary via-secondary/95 to-secondary/90"
       style={{
-        backgroundImage: `linear-gradient(rgba(13, 59, 102, 0.55), rgba(13, 59, 102, 0.55)), url('https://firebasestorage.googleapis.com/v0/b/blink-451505.firebasestorage.app/o/user-uploads%2FdWabIcrKixSdwUX9S0tZ3qjwI0M2%2FIMG_6736__fffd4b31.JPG?alt=media&token=cc887ebf-3ce4-4f83-ab49-cc3e6d0fc1f8')`,
+        backgroundImage: `linear-gradient(rgba(13, 59, 102, 0.55), rgba(13, 59, 102, 0.55)), url('/hero-background.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'scroll'
