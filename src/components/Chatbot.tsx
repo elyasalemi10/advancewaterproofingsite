@@ -134,22 +134,22 @@ export function Chatbot() {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform"
           size="icon"
         >
-          <MessageCircle className="h-6 w-6" />
+          <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
         </Button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-background border rounded-lg shadow-2xl flex flex-col z-50">
+        <div className="fixed bottom-0 right-0 left-0 sm:bottom-6 sm:right-6 sm:left-auto w-full sm:w-96 h-[100dvh] sm:h-[600px] bg-background border sm:rounded-lg shadow-2xl flex flex-col z-50">
           {/* Header */}
-          <div className="bg-primary text-primary-foreground p-4 rounded-t-lg flex items-center justify-between">
+          <div className="bg-primary text-primary-foreground p-3 sm:p-4 sm:rounded-t-lg flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="h-5 w-5" />
               <div>
-                <h3 className="font-semibold">Advance Waterproofing</h3>
+                <h3 className="font-semibold text-sm sm:text-base">Advance Waterproofing</h3>
                 <p className="text-xs opacity-90">Usually replies instantly</p>
               </div>
             </div>
@@ -164,7 +164,7 @@ export function Chatbot() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/30">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-muted/30">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -257,20 +257,21 @@ export function Chatbot() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t">
+          <div className="p-3 sm:p-4 border-t">
             <div className="flex gap-2">
               <Input
                 placeholder="Type your message..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                className="text-sm sm:text-base"
               />
-              <Button onClick={handleSend} size="icon">
+              <Button onClick={handleSend} size="icon" className="flex-shrink-0">
                 <Send className="h-4 w-4" />
               </Button>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Or call us: 03 9001 7788
+              Or call us: <a href="tel:+61390017788" className="hover:underline">03 9001 7788</a>
             </p>
           </div>
         </div>

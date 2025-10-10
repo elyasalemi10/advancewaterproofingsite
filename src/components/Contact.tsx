@@ -192,20 +192,20 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="py-20 bg-background">
+    <section id="contact" className="py-12 sm:py-16 lg:py-20 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-serif font-bold text-secondary mb-4">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-secondary mb-3 sm:mb-4">
             Get In <span className="text-primary">Touch</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
             Ready to solve your waterproofing issues? Contact us for a free quote and expert consultation
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Contact Information */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -263,19 +263,19 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="lg:col-span-2">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-2xl">Request a Free Quote</CardTitle>
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="text-xl sm:text-2xl">Request a Free Quote</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6">
                 {isSubmitted ? (
                   // Success Animation
-                  <div className="py-12 text-center animate-in fade-in duration-500">
-                    <div className="mb-6 flex justify-center">
-                      <div className="rounded-full bg-green-100 p-6 animate-in zoom-in duration-500">
-                        <CheckCircle2 className="w-16 h-16 text-green-600" />
+                  <div className="py-8 sm:py-12 text-center animate-in fade-in duration-500">
+                    <div className="mb-4 sm:mb-6 flex justify-center">
+                      <div className="rounded-full bg-green-100 p-4 sm:p-6 animate-in zoom-in duration-500">
+                        <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-green-600" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-secondary mb-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-secondary mb-3 px-4">
                       Thank You! 🎉
                     </h3>
                     <p className="text-lg text-muted-foreground mb-6">

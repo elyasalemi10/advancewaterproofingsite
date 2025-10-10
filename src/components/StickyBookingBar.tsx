@@ -31,40 +31,44 @@ export function StickyBookingBar() {
         isVisible ? 'translate-y-0' : 'translate-y-full'
       )}
     >
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
+      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           <button
             onClick={handleDismiss}
             className="flex-shrink-0 p-1 hover:bg-white/20 rounded transition-colors"
             aria-label="Close"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
           <div className="hidden sm:block flex-1">
-            <p className="font-semibold">Ready to protect your property?</p>
+            <p className="font-semibold text-sm md:text-base">Ready to protect your property?</p>
             <p className="text-xs opacity-90">
               Free inspections • up to 15 years: subject to terms and conditions • Expert service
             </p>
           </div>
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex gap-1.5 sm:gap-2 flex-1 sm:flex-none">
             <Button
               variant="secondary"
-              className="flex-1 sm:flex-none"
+              size="sm"
+              className="flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-4"
               onClick={() => (window.location.href = 'tel:+61390017788')}
             >
-              <Phone className="h-4 w-4 mr-2" />
-              Call Now
+              <Phone className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Call Now</span>
+              <span className="sm:hidden">Call</span>
             </Button>
             <Button
               variant="secondary"
-              className="flex-1 sm:flex-none"
+              size="sm"
+              className="flex-1 sm:flex-none text-xs sm:text-sm px-2 sm:px-4"
               onClick={() => {
                 navigate('/booking')
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
             >
-              <Calendar className="h-4 w-4 mr-2" />
-              Book Inspection
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Book Inspection</span>
+              <span className="sm:hidden">Book</span>
             </Button>
           </div>
         </div>
