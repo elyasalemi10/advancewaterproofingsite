@@ -47,7 +47,7 @@ export default function BalconyLeakDetection() {
             </div>
             <div className="relative">
               <img
-                src="/balcony-leak-detected.jpeg"
+                src="/balcony-leak-detected.webp"
                 alt="Thermal imaging of balcony leak detection"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -92,7 +92,7 @@ export default function BalconyLeakDetection() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <img
-                src="/why-choose-us.jpeg"
+                src="/why-choose-us.webp"
                 alt="Detailed leak detection report with moisture readings"
                 className="rounded-lg shadow-xl w-full h-[400px] object-cover"
               />

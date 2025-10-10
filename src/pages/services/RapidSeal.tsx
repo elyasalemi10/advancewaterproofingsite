@@ -72,8 +72,8 @@ export default function RapidSeal() {
         <div className="max-w-6xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">See the RapidSeal™ Difference</h2>
           <BeforeAfterSlider
-            beforeImage="/before-rapid-seal.png"
-            afterImage="/after-rapid-seal.jpeg"
+            beforeImage="/before-rapid-seal.webp"
+            afterImage="/after-rapid-seal.webp"
             beforeAlt="Damaged balcony before waterproofing"
             afterAlt="Restored balcony after RapidSeal treatment"
           />

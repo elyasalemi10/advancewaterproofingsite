@@ -6,7 +6,7 @@ export default function Projects() {
     {
       title: 'Educational Facilities',
       category: 'Schools',
-      image: '/School.jpg',
+      image: '/School.webp',
       description: 'Structural repairs, building upgrades, and rectification waterproofing services'
     },
     {

@@ -103,8 +103,8 @@ export default function BathroomShowerWaterproofing() {
           <h2 className="text-3xl font-bold text-center mb-12">Before & After Transformation</h2>
           <div className="max-w-3xl mx-auto">
             <BeforeAfterSlider
-              beforeImage="/bathroom-before.jpeg"
-              afterImage="/bathroom-after.jpeg"
+              beforeImage="/bathroom-before.webp"
+              afterImage="/bathroom-after.webp"
               beforeAlt="Bathroom before waterproofing"
               afterAlt="Modern waterproofed bathroom ready for tiling"
             />

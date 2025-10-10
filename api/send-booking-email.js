@@ -71,7 +71,7 @@ export default async function handler(req, res) {
           
           <tr>
             <td style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px 30px; text-align: center;">
-              <img src="https://advancewaterproofing.com.au/logo.png" alt="Advance Waterproofing" style="height: 60px; margin-bottom: 20px;">
+              <img src="https://advancewaterproofing.com.au/logo.webp" alt="Advance Waterproofing" style="height: 60px; margin-bottom: 20px;">
               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">New Booking Request</h1>
               <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">Booking ID: ${bookingId}</p>
             </td>

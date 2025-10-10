@@ -105,8 +105,8 @@ export default function RoofDeckPodiumWaterproofing() {
           <h2 className="text-3xl font-bold text-center mb-12">Project Transformation</h2>
           <div className="max-w-3xl mx-auto">
             <BeforeAfterSlider
-              beforeImage="/rooftop-before.jpeg"
-              afterImage="/rooftop-after.jpeg"
+              beforeImage="/rooftop-before.webp"
+              afterImage="/rooftop-after.webp"
               beforeAlt="Deteriorated roof deck before waterproofing"
               afterAlt="Fully waterproofed modern roof deck ready for use"
             />

@@ -85,17 +85,17 @@ export default function CaulkingSolutions() {
 
   const goneWrong = [
     {
-      image: '/caulking-gone-wrong.jpeg',
+      image: '/caulking-gone-wrong.webp',
       title: 'Adhesion Failure',
       description: 'Poor surface preparation leads to sealant debonding, allowing water ingress and structural damage.'
     },
     {
-      image: '/caulking-gone-wrong1.jpeg',
+      image: '/caulking-gone-wrong1.webp',
       title: 'Incorrect Joint Width',
       description: 'Improper joint sizing causes premature sealant failure, cracking, and loss of weatherproofing.'
     },
     {
-      image: '/caulking-gone-wrong2.jpeg',
+      image: '/caulking-gone-wrong2.webp',
       title: 'Wrong Sealant Type',
       description: 'Using incompatible sealant materials results in shrinkage, discoloration, and complete seal failure.'
     }
