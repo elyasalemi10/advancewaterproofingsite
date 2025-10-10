@@ -205,8 +205,9 @@ module.exports = async (req, res) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <onboarding@resend.dev>',
         to: [BUSINESS_EMAIL],
+        reply_to: email, // Customer's email for easy replies
         subject: `🔔 New Booking Request - ${name} - ${formattedDate}`,
         html: emailHTML
       })

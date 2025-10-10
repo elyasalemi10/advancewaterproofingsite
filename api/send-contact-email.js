@@ -158,8 +158,9 @@ ${message}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <onboarding@resend.dev>',
         to: [BUSINESS_EMAIL],
+        reply_to: email, // Customer's email for easy replies
         subject: `📧 New Contact Form: ${subject || 'General Inquiry'} - ${name}`,
         html: emailHTML
       })
