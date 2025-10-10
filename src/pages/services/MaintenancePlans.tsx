@@ -58,7 +58,7 @@ export default function MaintenancePlans() {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80"
+                src="/maintenance-inspection.webp"
                 alt="Building maintenance inspection checklist"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -103,7 +103,7 @@ export default function MaintenancePlans() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <img
-                src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80"
+                src="/maintenance-professional.webp"
                 alt="Professional building inspection and maintenance"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />

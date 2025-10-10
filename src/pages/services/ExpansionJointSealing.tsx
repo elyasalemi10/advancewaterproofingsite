@@ -56,7 +56,7 @@ export default function ExpansionJointSealing() {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=600&fit=crop"
+                src="/expansion-joint-building.webp"
                 alt="Building expansion joint sealing on commercial structure"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -101,7 +101,7 @@ export default function ExpansionJointSealing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <img
-                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&h=600&fit=crop"
+                src="/expansion-joint-work.webp"
                 alt="Expansion joint detail on modern building"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
@@ -153,7 +153,7 @@ export default function ExpansionJointSealing() {
             </div>
             <div>
               <img
-                src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&h=600&fit=crop"
+                src="/expansion-joint-concrete.webp"
                 alt="Professional sealant application process"
                 className="rounded-lg shadow-xl w-full h-[600px] object-cover"
               />

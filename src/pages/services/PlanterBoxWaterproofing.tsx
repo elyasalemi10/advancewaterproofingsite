@@ -56,7 +56,7 @@ export default function PlanterBoxWaterproofing() {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&h=600&fit=crop"
+                src="/planter-box-garden.webp"
                 alt="Modern rooftop planter boxes with waterproofing"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -117,7 +117,7 @@ export default function PlanterBoxWaterproofing() {
             </div>
             <div>
               <img
-                src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&h=600&fit=crop"
+                src="/planter-box-rooftop.webp"
                 alt="Waterproofing installation in planter box"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
@@ -150,7 +150,7 @@ export default function PlanterBoxWaterproofing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <img
-                src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=800&h=600&fit=crop"
+                src="/planter-box-landscape.webp"
                 alt="Beautiful rooftop garden with proper waterproofing"
                 className="rounded-lg shadow-xl w-full h-[400px] object-cover"
               />

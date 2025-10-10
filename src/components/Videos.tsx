@@ -6,25 +6,25 @@ export default function Videos() {
     {
       title: 'Balcony Waterproofing Process',
       description: 'See how we solve challenging balcony leaks with our proven methods',
-      thumbnail: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80',
+      thumbnail: '/video-thumbnail-balcony.webp',
       duration: '5:30'
     },
     {
       title: 'Basement Waterproofing Best Practices',
       description: 'Learn about our approach to basement and retaining wall waterproofing',
-      thumbnail: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80',
+      thumbnail: '/video-thumbnail-caulking.webp',
       duration: '7:15'
     },
     {
       title: 'Liquid Rubber Application',
       description: 'Watch our spray-applied liquid membrane system in action',
-      thumbnail: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+      thumbnail: '/maintenance-professional.webp',
       duration: '4:45'
     },
     {
       title: 'Concrete Crack Injection',
       description: 'Precision crack injection techniques for lasting repairs',
-      thumbnail: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80',
+      thumbnail: '/expansion-joint-work.webp',
       duration: '6:20'
     }
   ]

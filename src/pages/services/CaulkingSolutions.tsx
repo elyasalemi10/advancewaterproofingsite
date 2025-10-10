@@ -28,15 +28,15 @@ export default function CaulkingSolutions() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const slides = [
     {
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200',
+      image: '/maintenance-professional.webp',
       alt: 'Professional caulking application'
     },
     {
-      image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200',
+      image: '/caulking-slide1.webp',
       alt: 'Window frame sealing'
     },
     {
-      image: 'https://images.unsplash.com/photo-1581578949510-fa7315c4c350?w=1200',
+      image: '/caulking-slide2.webp',
       alt: 'Building facade joint sealing'
     }
   ]

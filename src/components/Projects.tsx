@@ -12,7 +12,7 @@ export default function Projects() {
     {
       title: 'Commercial Buildings',
       category: 'CBD & Industrial',
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+      image: '/expansion-joint-building.webp',
       description: 'Major projects including CBD rooftops and industrial infrastructure'
     },
     {
@@ -24,19 +24,19 @@ export default function Projects() {
     {
       title: 'Residential Properties',
       category: 'Strata & Owners Corporation',
-      image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+      image: '/project-commercial.webp',
       description: 'Troubleshooting water leaks for insurance companies and body corporates'
     },
     {
       title: 'Balcony Restoration',
       category: 'Residential',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+      image: '/project-residential.webp',
       description: 'Complete balcony waterproofing and structural repairs'
     },
     {
       title: 'Basement Waterproofing',
       category: 'Commercial',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80',
+      image: '/roof-deck-system.webp',
       description: 'Below-ground tanking and foundation protection systems'
     }
   ]

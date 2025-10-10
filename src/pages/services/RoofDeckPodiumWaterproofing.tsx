@@ -60,7 +60,7 @@ export default function RoofDeckPodiumWaterproofing() {
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop"
+                src="/roof-deck-system.webp"
                 alt="Modern roof deck with waterproofing system"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -122,7 +122,7 @@ export default function RoofDeckPodiumWaterproofing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <img
-                src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop"
+                src="/roof-deck-project.webp"
                 alt="Professional waterproofing installation on roof deck"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
