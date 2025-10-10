@@ -1,0 +1,68 @@
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { Chatbot } from './components/Chatbot'
+import { StickyBookingBar } from './components/StickyBookingBar'
+import Home from './pages/Home'
+import Booking from './pages/Booking'
+import Admin from './pages/Admin'
+import AcceptBooking from './pages/AcceptBooking'
+import RapidSeal from './pages/services/RapidSeal'
+import CaulkingSolutions from './pages/services/CaulkingSolutions'
+import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
+import BathroomShowerWaterproofing from './pages/services/BathroomShowerWaterproofing'
+import PlanterBoxWaterproofing from './pages/services/PlanterBoxWaterproofing'
+import RoofDeckPodiumWaterproofing from './pages/services/RoofDeckPodiumWaterproofing'
+import ExpansionJointSealing from './pages/services/ExpansionJointSealing'
+import MaintenancePlans from './pages/services/MaintenancePlans'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [pathname])
+  return null
+}
+
+function AppShell() {
+  const [isScrolled, setIsScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return (
+    <div className="min-h-screen bg-background">
+      <Header isScrolled={isScrolled} />
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/api/accept-booking" element={<AcceptBooking />} />
+          <Route path="/services/rapidseal" element={<RapidSeal />} />
+          <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />
+          <Route path="/services/balcony-leak-detection" element={<BalconyLeakDetection />} />
+          <Route path="/services/bathroom-shower-waterproofing" element={<BathroomShowerWaterproofing />} />
+          <Route path="/services/planter-box-waterproofing" element={<PlanterBoxWaterproofing />} />
+          <Route path="/services/roof-deck-podium-waterproofing" element={<RoofDeckPodiumWaterproofing />} />
+          <Route path="/services/expansion-joint-sealing" element={<ExpansionJointSealing />} />
+          <Route path="/services/maintenance-plans" element={<MaintenancePlans />} />
+        </Routes>
+      </main>
+      <Footer />
+      <Chatbot />
+      <StickyBookingBar />
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <AppShell />
+    </BrowserRouter>
+  )
+}

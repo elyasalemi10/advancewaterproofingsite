@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Colours (AU) */
+    --background: 210 20% 98%; /* #F9FAFB */
+    --foreground: 222 47% 11%; /* #111827 */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 213 80% 23%; /* #0D3B66 (logo navy) */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 211 72% 30%; /* #144E82 (logo dark-mid blue) */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 204 88% 61%; /* #3FA9F5 (logo light blue) */
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 63% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 14% 90%; /* #E5E7EB */
+    --input: 220 14% 90%;
+    --ring: 213 80% 23%; /* match primary */
+
+    /* Charts */
+    --chart-1: 205 84% 21%;
+    --chart-2: 197 100% 45%;
+    --chart-3: 229 67% 36%;
+    --chart-4: 215 16% 47%;
+    --chart-5: 220 14% 90%;
+
+    /* Sidebar */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 205 84% 21%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 14% 90%;
+    --sidebar-ring: 205 84% 21%;
+
+    /* Fonts */
+    --font-sans: Inter, sans-serif;
+    --font-serif: Playfair Display, serif;
+    --font-mono: ui-monospace, monospace;
+
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 20% 98%;
+    --card: 222 47% 13%;
+    --card-foreground: 210 20% 98%;
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 213 80% 23%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 211 72% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 15% 20%;
+    --muted-foreground: 210 20% 80%;
+    --accent: 204 88% 61%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 63% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 15% 20%;
+    --input: 222 15% 20%;
+    --ring: 213 80% 23%;
+
+    --chart-1: 213 80% 23%;
+    --chart-2: 204 88% 61%;
+    --chart-3: 211 72% 30%;
+    --chart-4: 210 20% 80%;
+    --chart-5: 222 15% 20%;
+  }
+
+  * { @apply border-border; }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    letter-spacing: var(--tracking-normal);
+  }
+
+  a, button { @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded; }
+}
+
+.animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
