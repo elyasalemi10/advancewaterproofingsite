@@ -14,7 +14,7 @@ export default function Hero() {
       id="home" 
       className="relative min-h-screen flex items-center justify-center pt-24 sm:pt-32 pb-12 sm:pb-20 bg-gradient-to-br from-secondary via-secondary/95 to-secondary/90"
       style={{
-        backgroundImage: `linear-gradient(rgba(13, 59, 102, 0.55), rgba(13, 59, 102, 0.55)), url('/hero-background.jpg')`,
+        backgroundImage: `linear-gradient(rgba(13, 59, 102, 0.55), rgba(13, 59, 102, 0.55)), url('/hero-background.webp')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'scroll'
