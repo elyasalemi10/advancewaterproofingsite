@@ -168,3 +168,4 @@ Everything is configured and ready to deploy to Vercel!
 
 **No additional setup needed** - forms, emails, and everything will work automatically!
 
+
