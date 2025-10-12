@@ -38,7 +38,7 @@ export default function Testimonials() {
               {clients.map((client, idx) => (
                 <div
                   key={`client-1-${idx}`}
-                  className="flex items-center justify-center flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
+                  className="flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110"
                   style={{ width: '180px', height: '90px' }}
                 >
                   <img
@@ -53,7 +53,7 @@ export default function Testimonials() {
               {clients.map((client, idx) => (
                 <div
                   key={`client-2-${idx}`}
-                  className="flex items-center justify-center flex-shrink-0 grayscale hover:grayscale-0 transition-all duration-300 opacity-70 hover:opacity-100"
+                  className="flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110"
                   style={{ width: '180px', height: '90px' }}
                 >
                   <img
@@ -68,11 +68,6 @@ export default function Testimonials() {
           </div>
         </div>
 
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">
-            Delivering exceptional waterproofing solutions to commercial and residential clients
-          </p>
-        </div>
       </div>
 
       <style>{`
