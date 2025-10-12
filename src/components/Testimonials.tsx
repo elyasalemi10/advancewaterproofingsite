@@ -32,13 +32,13 @@ export default function Testimonials() {
           <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
           
           {/* Scrolling Container */}
-          <div className="flex overflow-hidden">
-            <div className="flex animate-scroll gap-16 py-8">
+          <div className="overflow-hidden">
+            <div className="flex animate-scroll-seamless gap-16 py-8" style={{ width: 'fit-content' }}>
               {/* First set of logos */}
               {clients.map((client, idx) => (
                 <div
                   key={`client-1-${idx}`}
-                  className="flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110"
+                  className="flex items-center justify-center flex-shrink-0 hover:scale-110 transition-transform duration-300"
                   style={{ width: '180px', height: '90px' }}
                 >
                   <img
@@ -49,11 +49,26 @@ export default function Testimonials() {
                   />
                 </div>
               ))}
-              {/* Duplicate set for seamless loop */}
+              {/* Second set for seamless loop */}
               {clients.map((client, idx) => (
                 <div
                   key={`client-2-${idx}`}
-                  className="flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110"
+                  className="flex items-center justify-center flex-shrink-0 hover:scale-110 transition-transform duration-300"
+                  style={{ width: '180px', height: '90px' }}
+                >
+                  <img
+                    src={client.logo}
+                    alt={client.name}
+                    className="max-w-full max-h-full object-contain filter drop-shadow-md"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+              {/* Third set for extra smooth transition */}
+              {clients.map((client, idx) => (
+                <div
+                  key={`client-3-${idx}`}
+                  className="flex items-center justify-center flex-shrink-0 hover:scale-110 transition-transform duration-300"
                   style={{ width: '180px', height: '90px' }}
                 >
                   <img
@@ -71,20 +86,21 @@ export default function Testimonials() {
       </div>
 
       <style>{`
-        @keyframes scroll {
+        @keyframes scroll-seamless {
           0% {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translateX(calc(-100% / 3));
           }
         }
         
-        .animate-scroll {
-          animation: scroll 40s linear infinite;
+        .animate-scroll-seamless {
+          animation: scroll-seamless 45s linear infinite;
+          will-change: transform;
         }
         
-        .animate-scroll:hover {
+        .animate-scroll-seamless:hover {
           animation-play-state: paused;
         }
       `}</style>
