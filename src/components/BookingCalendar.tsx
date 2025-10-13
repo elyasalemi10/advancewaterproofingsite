@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar as CalendarIcon, Clock, MapPin, Phone, Mail, User, Timer } from 'lucide-react'
+import { Calendar as CalendarIcon, Clock, MapPin, Phone, Mail, User, Timer, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -41,6 +41,8 @@ export function BookingCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
   const [bookingType, setBookingType] = useState<'inspection' | 'quote'>('inspection') // 'inspection' = job
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -86,8 +88,7 @@ export function BookingCalendar() {
       return
     }
 
-    // Show loading toast
-    const loadingToast = toast.loading('Creating your booking...')
+    setIsSubmitting(true)
 
     try {
       // Send email via serverless function
@@ -111,11 +112,9 @@ export function BookingCalendar() {
         })
       })
 
-      toast.dismiss(loadingToast)
-
       if (response.ok) {
-        toast.success('Message sent successfully! We\'ll get back to you soon.', { duration: 5000 })
-
+        setIsSubmitted(true)
+        
         // Reset form
         setSelectedDate(undefined)
         setSelectedTime('')
@@ -138,9 +137,10 @@ export function BookingCalendar() {
         )
       }
     } catch (error) {
-      toast.dismiss(loadingToast)
       console.error('Booking submission error:', error)
       toast.error('There was an issue submitting your booking. Please try again or call us directly at 03 9001 7788.')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -175,7 +175,49 @@ export function BookingCalendar() {
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
-        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        {isSubmitted ? (
+          // Success state
+          <div className="py-8 sm:py-12 text-center animate-in fade-in duration-500">
+            <div className="mb-4 sm:mb-6 flex justify-center">
+              <div className="rounded-full bg-green-100 p-4 sm:p-6 animate-in zoom-in duration-500">
+                <CheckCircle2 className="w-12 h-12 sm:w-16 sm:h-16 text-green-600" />
+              </div>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-secondary mb-3 px-4">
+              Thank You! 🎉
+            </h3>
+            <p className="text-lg text-muted-foreground mb-6">
+              Your request has been received successfully!
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+              <p className="text-sm text-blue-900 mb-2">
+                <strong>What happens next?</strong>
+              </p>
+              <ul className="text-sm text-blue-800 space-y-2 text-left max-w-md mx-auto">
+                <li>✓ We'll review your request within 2 hours</li>
+                <li>✓ A waterproofing specialist will contact you within 24 hours</li>
+                <li>✓ We'll confirm your preferred time or suggest alternatives</li>
+                <li>✓ You'll receive all details via email</li>
+              </ul>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Need immediate assistance? Call us at{' '}
+              <a href="tel:+61390017788" className="text-primary font-semibold hover:underline">
+                03 9001 7788
+              </a>
+            </p>
+            <Button
+              onClick={() => {
+                setIsSubmitted(false)
+              }}
+              variant="outline"
+              className="mt-4"
+            >
+              Submit Another Request
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
             {/* Calendar */}
             <div>
@@ -357,10 +399,18 @@ export function BookingCalendar() {
             </p>
           </div>
 
-          <Button type="submit" className="w-full text-sm sm:text-base" size="lg">
-            Submit Booking Request
+          <Button type="submit" className="w-full text-sm sm:text-base" size="lg" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <span className="animate-spin mr-2">⏳</span>
+                Submitting...
+              </>
+            ) : (
+              'Submit Booking Request'
+            )}
           </Button>
         </form>
+        )}
       </CardContent>
     </Card>
   )

@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { sendEmail } from '../lib/zohoMail.js';
 
 // Initialize Supabase
 function getSupabaseClient() {
@@ -31,8 +30,7 @@ export default async function handler(req, res) {
     }
 
     const CAL_API_KEY = process.env.CAL_API_KEY || 'cal_live_30cc62be183a46889753a4e6b4683971';
-    const ZOHO_API_KEY = process.env.ZOHO_API_KEY; // You'll need to add this
-    const ZOHO_FROM_EMAIL = process.env.ZOHO_FROM_EMAIL || 'info@advancewaterproofing.com.au';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
     
     // Get booking from Supabase
     const supabase = getSupabaseClient();
@@ -226,15 +224,28 @@ export default async function handler(req, res) {
 </html>
     `.trim();
 
-    // Send confirmation email to customer (Zoho with Resend fallback)
+    // Send confirmation email to customer via Resend
     try {
-      await sendEmail({
-        to: booking.email,
-        subject: `✅ Booking Confirmed - ${formattedDate}`,
-        html: customerEmailHTML,
-        from: `Advance Waterproofing <${ZOHO_FROM_EMAIL}>`
+      const emailResponse = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
+          to: [booking.email],
+          subject: `✅ Booking Confirmed - ${formattedDate}`,
+          html: customerEmailHTML
+        })
       });
-      console.log('Confirmation email sent to customer');
+      
+      if (emailResponse.ok) {
+        console.log('Confirmation email sent to customer via Resend');
+      } else {
+        const errorData = await emailResponse.json();
+        console.error('Resend email error:', errorData);
+      }
     } catch (emailError) {
       console.error('Email sending error:', emailError);
       // Don't fail the whole request if email fails
