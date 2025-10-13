@@ -23,14 +23,14 @@ export default function Videos() {
     {
       title: 'Shower waterproofing',
       description: 'Watch our spray-applied liquid membrane system in action',
-      thumbnail: '/maintenance-professional.webp',
+      thumbnail: '/thumbnailshower.png',
       videoFile: null,
       videoUrl: 'https://www.youtube.com/shorts/lLbgdzjiK0M'
     },
     {
       title: 'Bathroom Waterproofing systems',
       description: 'See how we solve challenging bathroom leaks with our proven methods',
-      thumbnail: '/video-thumbnail-balcony.webp',
+      thumbnail: '/thumbnailbathroom.png',
       videoFile: null,
       videoUrl: 'https://www.youtube.com/shorts/DVqfjpyFfkQ'
     }
