@@ -30,6 +30,14 @@ function generateBookingEmailHTML(data) {
     day: 'numeric' 
   });
   
+  const messageBody = `
+Date: ${formattedDate}
+Time: ${data.time}
+Address: ${data.address}
+Service: ${data.service}
+${data.notes ? 'Notes: ' + data.notes : ''}
+  `.trim();
+  
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -75,34 +83,29 @@ function generateBookingEmailHTML(data) {
           <tr>
             <td style="padding: 20px; text-align: center; font-size: 16px; color: #101112;">
               <p>A new job has been created and assigned to you. Below are the job details for your reference:</p>
-              <p style="text-align: left; padding: 10px 0;">
+              <p>
                 <strong>Name:</strong> ${data.name}<br>
-                <strong>Email:</strong> <a href="mailto:${data.email}" style="color: #2596be; text-decoration: none;">${data.email}</a><br>
-                <strong>Phone Number:</strong> <a href="tel:${data.phone}" style="color: #2596be; text-decoration: none;">${data.phone}</a><br>
-                <strong>Address:</strong> ${data.address}<br>
-                <strong>Service:</strong> ${data.service}<br>
-                <strong>Date:</strong> ${formattedDate}<br>
-                <strong>Time:</strong> ${data.time}<br>
-                ${data.notes ? `<strong>Additional Notes:</strong><br>${data.notes.replace(/\n/g, '<br>')}` : ''}
+                <strong>Email:</strong> ${data.email}<br>
+                <strong>Phone Number:</strong> ${data.phone}<br>
+                <strong>Subject:</strong> ${data.service}<br>
+                <strong>Message:</strong><br>
+                ${messageBody}
               </p>
-              <p>Please review the job information carefully and confirm your acceptance or denial by clicking the buttons below.</p>
+              <p>Please review the job information carefully and confirm your acceptance or denial by clicking the button below.</p>
             </td>
           </tr>
 
           <tr>
             <td align="center" style="padding: 20px;">
-              <a href="${data.acceptUrl}" target="_blank" style="background-color: #10b981; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px; margin: 0 5px;">
-                ✅ Accept Booking
-              </a>
-              <a href="${data.cancelUrl}" target="_blank" style="background-color: #ef4444; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px; margin: 0 5px;">
-                ❌ Deny Booking
+              <a href="${data.acceptUrl}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
+                Accept/Deny Booking
               </a>
             </td>
           </tr>
 
           <tr>
             <td align="center" style="font-size: 13px; color: #777777; padding: 20px 0;">
-              <p>If you have any questions, please contact us at <a href="mailto:info@advancewaterproofing.com.au" style="color: #2596be;">info@advancewaterproofing.com.au</a>.</p>
+              <p>If you have any questions, please contact us at <a href="mailto:support@advancewaterproofing.com.au" style="color: #2596be;">support@advancewaterproofing.com.au</a>.</p>
             </td>
           </tr>
         </table>
@@ -115,27 +118,10 @@ function generateBookingEmailHTML(data) {
 }
 
 exports.handler = async (event) => {
-  // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-  };
-
-  // Handle preflight request
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: ''
-    };
-  }
-
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -200,8 +186,7 @@ exports.handler = async (event) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <onboarding@resend.dev>',
-        reply_to: BUSINESS_EMAIL,
+        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
         to: [BUSINESS_EMAIL],
         subject: `🔔 New Booking Request - ${name} - ${formattedDate}`,
         html: emailHTML
@@ -212,18 +197,14 @@ exports.handler = async (event) => {
 
     if (!response.ok) {
       console.error('Resend API Error:', data);
-      console.error('Response status:', response.status);
-      console.error('API Key present:', !!RESEND_API_KEY);
       return {
         statusCode: response.status,
-        headers,
         body: JSON.stringify({ error: 'Failed to send email', details: data })
       };
     }
 
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify({ success: true, bookingId, data })
     };
 
@@ -231,7 +212,6 @@ exports.handler = async (event) => {
     console.error('Function error:', error);
     return {
       statusCode: 500,
-      headers,
       body: JSON.stringify({ error: 'Internal server error', message: error.message })
     };
   }

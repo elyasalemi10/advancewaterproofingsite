@@ -18,7 +18,7 @@ export default function Testimonials() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-serif font-bold text-secondary mb-4">
-            Past <span className="text-primary">Projects</span>
+            Past <span className="text-primary">Clients</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Trusted by leading organisations across Melbourne and Victoria

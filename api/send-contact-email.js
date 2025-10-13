@@ -1,19 +1,32 @@
-const fetch = require('node-fetch');
+// Vercel Serverless Function - ES Module
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
-exports.handler = async (event) => {
+  // Handle OPTIONS request for CORS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { name, email, phone, subject, message } = JSON.parse(event.body);
+    const { name, email, phone, subject, message } = req.body;
 
-    const RESEND_API_KEY = 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY;
     const BUSINESS_EMAIL = 'info@advancewaterproofing.com.au';
+
+    if (!RESEND_API_KEY) {
+      console.error('RESEND_API_KEY environment variable is not set');
+      return res.status(500).json({ error: 'Email service not configured' });
+    }
 
     const emailHTML = `
 <!DOCTYPE html>
@@ -32,7 +45,7 @@ exports.handler = async (event) => {
           <!-- Header -->
           <tr>
             <td style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); padding: 40px 30px; text-align: center;">
-              <img src="https://advancewaterproofing.com.au/logo.png" alt="Advance Waterproofing" style="height: 60px; margin-bottom: 20px;">
+              <img src="https://advancewaterproofing.com.au/logo.webp" alt="Advance Waterproofing" style="height: 60px; margin-bottom: 20px;">
               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 600;">New Contact Form Inquiry</h1>
               <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">📧 Contact Request</p>
             </td>
@@ -143,8 +156,9 @@ ${message}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
         to: [BUSINESS_EMAIL],
+        reply_to: email, // Customer's email for easy replies
         subject: `📧 New Contact Form: ${subject || 'General Inquiry'} - ${name}`,
         html: emailHTML
       })
@@ -153,24 +167,27 @@ ${message}
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Resend API Error:', data);
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: 'Failed to send email', details: data })
-      };
+      console.error('Resend API Error:', JSON.stringify(data, null, 2));
+      console.error('Response status:', response.status);
+      console.error('Response statusText:', response.statusText);
+      return res.status(response.status).json({ 
+        error: 'Failed to send email', 
+        details: data,
+        status: response.status,
+        statusText: response.statusText
+      });
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true, data })
-    };
+    console.log('Email sent successfully:', data);
+    return res.status(200).json({ success: true, data });
 
   } catch (error) {
     console.error('Function error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error', message: error.message })
-    };
+    console.error('Error stack:', error.stack);
+    return res.status(500).json({ 
+      error: 'Internal server error', 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
-};
-
+}
