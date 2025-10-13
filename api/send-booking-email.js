@@ -41,6 +41,7 @@ export default async function handler(req, res) {
     // Store in Supabase - Cal.com booking will be created AFTER owner confirms
     const supabase = getSupabaseClient();
     let dbSuccess = false;
+    let dbErrorMessage = null;
     
     try {
       const { data, error } = await supabase.from('bookings').insert([{
@@ -70,11 +71,9 @@ export default async function handler(req, res) {
       dbSuccess = true;
     } catch (dbError) {
       console.error('Supabase error details:', dbError);
-      // Return error to frontend so user knows it failed
-      return res.status(500).json({ 
-        error: 'Failed to save booking', 
-        details: dbError.message || dbError 
-      });
+      // Do NOT fail the whole request; continue to send email via Resend
+      dbSuccess = false;
+      dbErrorMessage = dbError?.message || String(dbError);
     }
     
     // Build message body
@@ -253,10 +252,11 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       console.error('Resend error:', data);
-      return res.status(response.status).json({ error: 'Failed to send email', details: data });
+      // If email failed, this is a hard failure
+      return res.status(response.status || 500).json({ error: 'Failed to send email', details: data, dbSuccess, dbErrorMessage });
     }
 
-    return res.status(200).json({ success: true, bookingId, data });
+    return res.status(200).json({ success: true, bookingId, dbSuccess, dbErrorMessage, data });
 
   } catch (error) {
     console.error('Function error:', error);
