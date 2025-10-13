@@ -6,10 +6,10 @@
 
 Go to: https://supabase.com/dashboard/project/ryhrxlblccjjjowpubyv/sql/new
 
-```sql
--- First, check if the bookings table exists
--- If it doesn't exist, create it:
+**COPY THE ENTIRE SQL BLOCK BELOW** (make sure you get "CREATE" not "REATE"):
 
+```sql
+-- Create the bookings table with all required columns
 CREATE TABLE IF NOT EXISTS bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   booking_id TEXT UNIQUE NOT NULL,

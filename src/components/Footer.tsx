@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Facebook, Linkedin, Instagram } from 'lucide-react'
+import { Phone, Mail, MapPin } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export default function Footer() {
@@ -23,20 +23,9 @@ export default function Footer() {
             <h3 className="text-2xl font-serif font-bold mb-4">
               Advance <span className="text-white">Waterproofing</span>
             </h3>
-            <p className="text-white/70 mb-6">
+            <p className="text-white/70">
               Melbourne's expert waterproofing contractors & remediation experts. Solving challenging water leaks permanently.
             </p>
-            <div className="flex gap-4">
-              <a href="#" aria-label="Facebook" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="Instagram" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
           </div>
 
           <div>

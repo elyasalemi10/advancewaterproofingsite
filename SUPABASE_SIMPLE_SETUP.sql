@@ -1,0 +1,77 @@
+-- Supabase Database Setup for Bookings
+-- Copy and paste this ENTIRE script into your Supabase SQL Editor
+-- Go to: https://supabase.com/dashboard/project/ryhrxlblccjjjowpubyv/sql/new
+
+-- Create the bookings table with all required columns
+CREATE TABLE IF NOT EXISTS bookings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_id TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  address TEXT NOT NULL,
+  service TEXT NOT NULL,
+  date TEXT NOT NULL,
+  time TEXT NOT NULL,
+  notes TEXT,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  cal_booking_uid TEXT,
+  cal_event_type_id INTEGER,
+  is_inspection BOOLEAN DEFAULT true,
+  preferred_time TEXT,
+  end_time TEXT
+);
+
+-- Add indexes for faster queries
+CREATE INDEX IF NOT EXISTS idx_bookings_booking_id ON bookings(booking_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_cal_uid ON bookings(cal_booking_uid);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
+
+-- If the table already exists, add missing columns
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_booking_uid TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_event_type_id INTEGER;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_inspection BOOLEAN DEFAULT true;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS preferred_time TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS end_time TEXT;
+
+-- Create trigger function for updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create trigger
+DROP TRIGGER IF EXISTS update_bookings_updated_at ON bookings;
+CREATE TRIGGER update_bookings_updated_at
+    BEFORE UPDATE ON bookings
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Enable Row Level Security
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
+
+-- Allow service role full access
+DROP POLICY IF EXISTS "Service role can do everything" ON bookings;
+CREATE POLICY "Service role can do everything" ON bookings
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- Allow anyone to insert bookings
+DROP POLICY IF EXISTS "Anyone can create bookings" ON bookings;
+CREATE POLICY "Anyone can create bookings" ON bookings
+  FOR INSERT
+  WITH CHECK (true);
+
+-- Allow anyone to read bookings by booking_id
+DROP POLICY IF EXISTS "Anyone can read bookings by booking_id" ON bookings;
+CREATE POLICY "Anyone can read bookings by booking_id" ON bookings
+  FOR SELECT
+  USING (true);
+
