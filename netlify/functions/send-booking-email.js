@@ -115,10 +115,27 @@ function generateBookingEmailHTML(data) {
 }
 
 exports.handler = async (event) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  // Handle preflight request
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -199,12 +216,14 @@ exports.handler = async (event) => {
       console.error('API Key present:', !!RESEND_API_KEY);
       return {
         statusCode: response.status,
+        headers,
         body: JSON.stringify({ error: 'Failed to send email', details: data })
       };
     }
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ success: true, bookingId, data })
     };
 
@@ -212,6 +231,7 @@ exports.handler = async (event) => {
     console.error('Function error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: 'Internal server error', message: error.message })
     };
   }
