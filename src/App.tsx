@@ -10,6 +10,7 @@ import Admin from './pages/Admin'
 import AcceptBooking from './pages/AcceptBooking'
 import ManageBookings from './pages/ManageBookings'
 import CancelBooking from './pages/CancelBooking'
+import Shortcuts from './pages/Shortcuts'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
@@ -45,6 +46,7 @@ function AppShell() {
           <Route path="/accept-booking" element={<AcceptBooking />} />
           <Route path="/manage-booking" element={<ManageBookings />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
+          <Route path="/shortcuts" element={<Shortcuts />} />
           <Route path="/services/rapidseal" element={<RapidSeal />} />
           <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />
           <Route path="/services/balcony-leak-detection" element={<BalconyLeakDetection />} />

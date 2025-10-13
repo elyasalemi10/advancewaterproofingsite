@@ -1,17 +1,20 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Play, X } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 
 export default function Videos() {
   const [playingVideo, setPlayingVideo] = useState<number | null>(null)
+  const navigate = useNavigate()
 
   const videos = [
     {
-      title: 'Selecting the right applicator',
-      description: 'Precision techniques for lasting repairs and quality workmanship',
+      title: 'The hidden cost of shortcuts',
+      description: 'Why your choice of waterproofing applicator is a multi-million dollar decision',
       thumbnail: '/thumbnailtrailer.png',
-      videoFile: '/trailer.webm',
-      videoUrl: null
+      videoFile: null,
+      videoUrl: null,
+      internalLink: '/shortcuts'
     },
     {
       title: 'Choosing the right waterproofer',
@@ -38,7 +41,9 @@ export default function Videos() {
 
   const handleVideoClick = (index: number) => {
     const video = videos[index]
-    if (video.videoUrl) {
+    if (video.internalLink) {
+      navigate(video.internalLink)
+    } else if (video.videoUrl) {
       window.open(video.videoUrl, '_blank')
     } else if (video.videoFile) {
       setPlayingVideo(playingVideo === index ? null : index)
