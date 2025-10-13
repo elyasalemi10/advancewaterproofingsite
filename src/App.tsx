@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Booking from './pages/Booking'
 import Admin from './pages/Admin'
 import AcceptBooking from './pages/AcceptBooking'
+import ManageBookings from './pages/ManageBookings'
 import CancelBooking from './pages/CancelBooking'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
@@ -42,6 +43,7 @@ function AppShell() {
           <Route path="/booking" element={<Booking />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/accept-booking" element={<AcceptBooking />} />
+          <Route path="/manage-booking" element={<ManageBookings />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/services/rapidseal" element={<RapidSeal />} />
           <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />

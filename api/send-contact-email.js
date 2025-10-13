@@ -104,7 +104,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'info@advancewaterproofing.com.au',
+        from: 'onboarding@resend.dev',
         to: ['info@advancewaterproofing.com.au'],
         reply_to: email,
         subject: `📧 Contact Form: ${subject || 'General Inquiry'} - ${name}`,

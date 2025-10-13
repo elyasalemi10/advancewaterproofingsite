@@ -19,6 +19,11 @@ export interface Booking {
   status: 'pending' | 'accepted' | 'cancelled'
   created_at: string
   updated_at?: string
+  cal_booking_uid?: string
+  cal_event_type_id?: number
+  is_inspection?: boolean
+  preferred_time?: string
+  end_time?: string
 }
 
 // Create a new booking

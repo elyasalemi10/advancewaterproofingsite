@@ -27,17 +27,66 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, email, phone, address, service, date, time, notes } = req.body;
+    const { name, email, phone, address, service, date, time, notes, isInspection, startTime, endTime } = req.body;
     
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const CAL_API_KEY = process.env.CAL_API_KEY || 'cal_live_30cc62be183a46889753a4e6b4683971';
     const bookingId = generateBookingId();
+    
+    // Determine event type and create Cal.com booking
+    const eventTypeId = isInspection ? 3637831 : 3629145; // Inspection (60min) or Quote (10min)
+    let calBookingUid = null;
+    
+    try {
+      // Create Cal.com booking
+      const calResponse = await fetch('https://api.cal.com/v1/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${CAL_API_KEY}`
+        },
+        body: JSON.stringify({
+          eventTypeId: eventTypeId,
+          start: startTime,
+          end: endTime,
+          responses: {
+            name: name,
+            email: email,
+            phone: phone || '',
+            notes: notes || ''
+          },
+          timeZone: 'Australia/Melbourne',
+          language: 'en',
+          metadata: {
+            address: address,
+            service: service,
+            bookingId: bookingId
+          }
+        })
+      });
+      
+      if (calResponse.ok) {
+        const calData = await calResponse.json();
+        calBookingUid = calData.uid;
+      } else {
+        console.error('Cal.com booking failed:', await calResponse.text());
+      }
+    } catch (calError) {
+      console.error('Cal.com error:', calError);
+      // Continue even if Cal.com fails
+    }
     
     // Store in Supabase
     try {
       await supabase.from('bookings').insert([{
         booking_id: bookingId,
         name, email, phone, address, service, date, time, notes,
-        status: 'pending'
+        status: 'pending',
+        cal_booking_uid: calBookingUid,
+        cal_event_type_id: eventTypeId,
+        is_inspection: isInspection,
+        preferred_time: startTime,
+        end_time: endTime
       }]);
     } catch (dbError) {
       console.error('Supabase error:', dbError);
@@ -57,9 +106,9 @@ Service: ${service}
 ${notes ? 'Notes: ' + notes : ''}
     `.trim();
     
-    // Get accept URL
+    // Get manage booking URL
     const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
-    const acceptUrl = `${baseUrl}/accept-booking?id=${bookingId}`;
+    const manageUrl = `${baseUrl}/manage-booking?id=${bookingId}`;
     
     const emailHTML = `
 <!DOCTYPE html>
@@ -120,8 +169,8 @@ ${notes ? 'Notes: ' + notes : ''}
 
           <tr>
             <td align="center" style="padding: 20px;">
-              <a href="${acceptUrl}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
-                Accept/Deny Booking
+              <a href="${manageUrl}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
+                Manage Booking
               </a>
             </td>
           </tr>
@@ -146,7 +195,7 @@ ${notes ? 'Notes: ' + notes : ''}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'info@advancewaterproofing.com.au',
+        from: 'onboarding@resend.dev',
         to: ['info@advancewaterproofing.com.au'],
         subject: `🔔 New Booking - ${name} - ${formattedDate}`,
         html: emailHTML
