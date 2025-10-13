@@ -98,13 +98,20 @@ export default async function handler(req, res) {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
     
-    const messageBody = `
-Date: ${formattedDate}
-Time: ${time}
-Address: ${address}
-Service: ${service}
-${notes ? 'Notes: ' + notes : ''}
-    `.trim();
+    const formattedTime = startTime ? new Date(startTime).toLocaleTimeString('en-AU', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Australia/Melbourne'
+    }) : time;
+    
+    const formattedEndTime = endTime ? new Date(endTime).toLocaleTimeString('en-AU', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Australia/Melbourne'
+    }) : '';
+    
+    const bookingType = isInspection ? '60-Minute On-Site Inspection' : '10-Minute Phone Quote';
+    const duration = isInspection ? '60 minutes' : '10 minutes';
     
     // Get manage booking URL
     const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
@@ -142,7 +149,7 @@ ${notes ? 'Notes: ' + notes : ''}
 
           <tr>
             <td align="center" style="padding: 10px;">
-              <h1 style="color: #3585c3; font-size: 32px; font-weight: 700; margin: 0;">New Booking - ${service}</h1>
+              <h1 style="color: #3585c3; font-size: 32px; font-weight: 700; margin: 0;">New ${bookingType}</h1>
             </td>
           </tr>
 
@@ -153,17 +160,72 @@ ${notes ? 'Notes: ' + notes : ''}
           </tr>
 
           <tr>
-            <td style="padding: 20px; text-align: center; font-size: 16px; color: #101112;">
-              <p>A new job has been created and assigned to you. Below are the job details for your reference:</p>
-              <p>
-                <strong>Name:</strong> ${name}<br>
-                <strong>Email:</strong> ${email}<br>
-                <strong>Phone Number:</strong> ${phone}<br>
-                <strong>Subject:</strong> ${service}<br>
-                <strong>Message:</strong><br>
-                ${messageBody}
-              </p>
-              <p>Please review the job information carefully and confirm your acceptance or denial by clicking the button below.</p>
+            <td style="padding: 20px; font-size: 16px; color: #101112;">
+              <p style="margin-bottom: 20px; text-align: center;">You have received a new booking request. Details below:</p>
+              
+              <table width="100%" border="0" cellpadding="8" cellspacing="0" style="background-color: #f8f9fa; border-radius: 8px; margin: 20px 0;">
+                <tr>
+                  <td style="padding: 15px;">
+                    <table width="100%" border="0" cellpadding="6" cellspacing="0">
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3; width: 140px;">📋 Booking Type:</td>
+                        <td>${bookingType}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">⏱️ Duration:</td>
+                        <td>${duration}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 1px solid #dddddd;"></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">👤 Customer:</td>
+                        <td>${name}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">📧 Email:</td>
+                        <td>${email}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">📞 Phone:</td>
+                        <td>${phone}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">📍 Address:</td>
+                        <td>${address}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 1px solid #dddddd;"></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">🔧 Service:</td>
+                        <td>${service}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">📅 Date:</td>
+                        <td>${formattedDate}</td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">🕒 Time:</td>
+                        <td>${formattedTime}${formattedEndTime ? ' - ' + formattedEndTime : ''}</td>
+                      </tr>
+                      ${notes ? `<tr>
+                        <td style="font-weight: bold; color: #3585c3; vertical-align: top;">📝 Notes:</td>
+                        <td style="background-color: #ffffff; padding: 10px; border-radius: 4px;">${notes}</td>
+                      </tr>` : ''}
+                      <tr>
+                        <td colspan="2" style="padding: 10px 0;"><hr style="border: none; border-top: 1px solid #dddddd;"></td>
+                      </tr>
+                      <tr>
+                        <td style="font-weight: bold; color: #3585c3;">🆔 Booking ID:</td>
+                        <td style="font-family: monospace; color: #666;">${bookingId}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              
+              <p style="margin-top: 20px; text-align: center; color: #666;">Click below to manage this booking:</p>
             </td>
           </tr>
 
@@ -195,7 +257,7 @@ ${notes ? 'Notes: ' + notes : ''}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'onboarding@resend.dev',
+        from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
         to: ['info@advancewaterproofing.com.au'],
         subject: `🔔 New Booking - ${name} - ${formattedDate}`,
         html: emailHTML

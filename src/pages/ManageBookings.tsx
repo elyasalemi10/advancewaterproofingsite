@@ -232,7 +232,9 @@ export default function ManageBookings() {
                 <Mail className="w-5 h-5 text-primary mt-0.5" />
                 <div>
                   <p className="text-sm text-slate-600">Email</p>
-                  <p className="font-semibold break-all">{booking.email}</p>
+                  <p className="font-semibold break-all select-text" style={{ pointerEvents: 'none' }}>
+                    {booking.email}
+                  </p>
                 </div>
               </div>
 
@@ -240,7 +242,9 @@ export default function ManageBookings() {
                 <Phone className="w-5 h-5 text-primary mt-0.5" />
                 <div>
                   <p className="text-sm text-slate-600">Phone</p>
-                  <p className="font-semibold">{booking.phone}</p>
+                  <p className="font-semibold select-text" style={{ pointerEvents: 'none' }}>
+                    {booking.phone}
+                  </p>
                 </div>
               </div>
 

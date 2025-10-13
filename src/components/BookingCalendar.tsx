@@ -114,10 +114,7 @@ export function BookingCalendar() {
       toast.dismiss(loadingToast)
 
       if (response.ok) {
-        toast.success(
-          `🎉 Booking request sent! We'll contact you at ${formData.email} to confirm your appointment on ${selectedDate.toLocaleDateString('en-AU')} at ${selectedTime}.`,
-          { duration: 6000 }
-        )
+        toast.success('Message sent successfully! We\'ll get back to you soon.', { duration: 5000 })
 
         // Reset form
         setSelectedDate(undefined)
