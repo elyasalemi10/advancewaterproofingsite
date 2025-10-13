@@ -67,8 +67,7 @@ export function StickyBookingBar() {
               }}
             >
               <Calendar className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Book Inspection</span>
-              <span className="sm:hidden">Book</span>
+              <span>Book</span>
             </Button>
           </div>
         </div>
