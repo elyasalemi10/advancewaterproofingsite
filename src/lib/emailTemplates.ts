@@ -1,28 +1,30 @@
-const fetch = require('node-fetch');
-const { createClient } = require('@supabase/supabase-js');
-
-// Initialize Supabase client
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24';
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Helper functions
-function generateBookingId() {
-  return `BOOK-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+export interface BookingEmailData {
+  bookingId: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  service: string
+  date: string
+  time: string
+  notes?: string
+  acceptUrl: string
+  cancelUrl: string
 }
 
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-AU', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+export interface QuoteEmailData {
+  quoteId: string
+  name: string
+  email: string
+  phone: string
+  service: string
+  message: string
+  acceptUrl: string
+  cancelUrl: string
 }
 
-function generateBookingEmailHTML(data) {
-  const dateObj = new Date(data.date);
+export function generateBookingEmail(data: BookingEmailData): string {
+  const dateObj = new Date(data.date)
   
   return `
 <!DOCTYPE html>
@@ -49,6 +51,7 @@ function generateBookingEmailHTML(data) {
       <td align="center" style="padding: 20px 0;">
         <table width="600" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
           
+          <!-- Header -->
           <tr>
             <td align="center" style="background: linear-gradient(135deg, #0d3b66 0%, #2596be 100%); padding: 40px 30px;">
               <img src="https://advancewaterproofing.com.au/logo.webp" width="120" alt="Advance Waterproofing" style="display: block; height: auto; border: 0; margin-bottom: 20px;">
@@ -57,6 +60,7 @@ function generateBookingEmailHTML(data) {
             </td>
           </tr>
 
+          <!-- Date & Time Card -->
           <tr>
             <td style="padding: 30px;">
               <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 2px solid #2596be; text-align: center;">
@@ -78,6 +82,7 @@ function generateBookingEmailHTML(data) {
                 </div>
               </div>
 
+              <!-- Client Information -->
               <div style="background-color: #f8fafc; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
                 <h2 style="color: #0d3b66; margin: 0 0 20px 0; font-size: 20px; border-bottom: 2px solid #2596be; padding-bottom: 10px;">
                   👤 Client Information
@@ -110,6 +115,7 @@ function generateBookingEmailHTML(data) {
                 </table>
               </div>
 
+              <!-- Service Requested -->
               <div style="background-color: #ecfdf5; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #10b981;">
                 <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 20px;">
                   🔧 Service Requested
@@ -130,6 +136,7 @@ function generateBookingEmailHTML(data) {
               </div>
               ` : ''}
 
+              <!-- Action Buttons -->
               <div style="text-align: center; margin: 32px 0;">
                 <a href="${data.acceptUrl}" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 18px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); margin: 0 8px 12px 8px;">
                   ✅ Accept Booking
@@ -142,6 +149,7 @@ function generateBookingEmailHTML(data) {
                 </p>
               </div>
 
+              <!-- Next Steps -->
               <div style="background-color: #eff6ff; border-radius: 8px; padding: 16px; border-left: 4px solid #2596be;">
                 <p style="color: #1e40af; margin: 0; font-size: 13px; line-height: 1.6;">
                   <strong>📌 Next Steps:</strong><br>
@@ -154,6 +162,7 @@ function generateBookingEmailHTML(data) {
             </td>
           </tr>
 
+          <!-- Footer -->
           <tr>
             <td style="background-color: #0d3b66; padding: 30px; text-align: center;">
               <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 14px;">
@@ -173,106 +182,134 @@ function generateBookingEmailHTML(data) {
   </table>
 </body>
 </html>
-  `.trim();
+  `.trim()
 }
 
-exports.handler = async (event) => {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
-  try {
-    const { name, email, phone, address, service, date, time, notes } = JSON.parse(event.body);
-
-    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
-    const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@advancewaterproofing.com.au';
-    const bookingId = generateBookingId();
-    const formattedDate = formatDate(date);
-    
-    // Store booking in Supabase
-    try {
-      const { error: dbError } = await supabase
-        .from('bookings')
-        .insert([{
-          booking_id: bookingId,
-          name,
-          email,
-          phone,
-          address,
-          service,
-          date,
-          time,
-          notes,
-          status: 'pending'
-        }]);
-
-      if (dbError) {
-        console.error('Supabase error:', dbError);
-        // Continue even if DB insert fails
-      }
-    } catch (dbErr) {
-      console.error('Database error:', dbErr);
-      // Continue even if DB insert fails
+export function generateQuoteEmail(data: QuoteEmailData): string {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Quote Request</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: Arial, Helvetica, sans-serif; }
+    a[x-apple-data-detectors] { color: inherit !important; text-decoration: inherit !important; }
+    p { line-height: 1.6; margin: 0 0 10px; }
+    @media (max-width:540px) {
+      .row-content { width: 100% !important; }
+      .stack .column { width: 100%; display: block; }
     }
-    
-    // Get the accept URL - use the request origin
-    const baseUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
-    const acceptUrl = `${baseUrl}/accept-booking?id=${bookingId}`;
-    const cancelUrl = `${baseUrl}/cancel-booking?id=${bookingId}`;
+  </style>
+</head>
 
-    const emailHTML = generateBookingEmailHTML({
-      bookingId,
-      name,
-      email,
-      phone,
-      address,
-      service,
-      date,
-      time,
-      notes,
-      acceptUrl,
-      cancelUrl
-    });
+<body style="background-color: #f5f5f5; margin: 0; padding: 0;">
+  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table width="600" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;">
+          
+          <!-- Header -->
+          <tr>
+            <td align="center" style="background: linear-gradient(135deg, #0d3b66 0%, #2596be 100%); padding: 40px 30px;">
+              <img src="https://advancewaterproofing.com.au/logo.webp" width="120" alt="Advance Waterproofing" style="display: block; height: auto; border: 0; margin-bottom: 20px;">
+              <h1 style="color: #ffffff; font-size: 32px; font-weight: 700; margin: 0 0 10px 0; text-align: center;">New Quote Request</h1>
+              <p style="color: #e0f2fe; margin: 0; font-size: 16px; text-align: center;">Quote ID: <strong>${data.quoteId}</strong></p>
+            </td>
+          </tr>
 
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${RESEND_API_KEY}`
-      },
-      body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
-        to: [BUSINESS_EMAIL],
-        subject: `🔔 New Booking Request - ${name} - ${formattedDate}`,
-        html: emailHTML
-      })
-    });
+          <tr>
+            <td style="padding: 30px;">
+              <!-- Client Information -->
+              <div style="background-color: #f8fafc; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                <h2 style="color: #0d3b66; margin: 0 0 20px 0; font-size: 20px; border-bottom: 2px solid #2596be; padding-bottom: 10px;">
+                  👤 Client Information
+                </h2>
+                <table role="presentation" style="width: 100%;">
+                  <tr>
+                    <td style="padding: 8px 0;">
+                      <strong style="color: #475569; display: inline-block; width: 120px;">Name:</strong>
+                      <span style="color: #1e293b;">${data.name}</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0;">
+                      <strong style="color: #475569; display: inline-block; width: 120px;">Email:</strong>
+                      <a href="mailto:${data.email}" style="color: #2596be; text-decoration: none;">${data.email}</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px 0;">
+                      <strong style="color: #475569; display: inline-block; width: 120px;">Phone:</strong>
+                      <a href="tel:${data.phone}" style="color: #2596be; text-decoration: none;">${data.phone}</a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
 
-    const data = await response.json();
+              <!-- Service Requested -->
+              <div style="background-color: #ecfdf5; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #10b981;">
+                <h2 style="color: #059669; margin: 0 0 12px 0; font-size: 20px;">
+                  🔧 Service Requested
+                </h2>
+                <p style="color: #1e293b; margin: 0; font-size: 16px; font-weight: 500;">
+                  ${data.service}
+                </p>
+              </div>
 
-    if (!response.ok) {
-      console.error('Resend API Error:', data);
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: 'Failed to send email', details: data })
-      };
-    }
+              <!-- Message -->
+              <div style="background-color: #fef3c7; border-radius: 12px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #f59e0b;">
+                <h2 style="color: #d97706; margin: 0 0 12px 0; font-size: 20px;">
+                  💬 Message
+                </h2>
+                <p style="color: #1e293b; margin: 0; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">
+                  ${data.message}
+                </p>
+              </div>
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ success: true, bookingId, data })
-    };
+              <!-- Action Buttons -->
+              <div style="text-align: center; margin: 32px 0;">
+                <a href="${data.acceptUrl}" style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 16px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 18px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3); margin: 0 8px 12px 8px;">
+                  ✅ Respond to Quote
+                </a>
+                <p style="color: #64748b; font-size: 12px; margin-top: 12px;">
+                  Click to respond to this quote request
+                </p>
+              </div>
 
-  } catch (error) {
-    console.error('Function error:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error', message: error.message })
-    };
-  }
-};
+              <!-- Contact Info -->
+              <div style="background-color: #eff6ff; border-radius: 8px; padding: 16px; border-left: 4px solid #2596be;">
+                <p style="color: #1e40af; margin: 0; font-size: 13px; line-height: 1.6;">
+                  <strong>📌 Contact Client:</strong><br>
+                  Email: <a href="mailto:${data.email}" style="color: #2596be;">${data.email}</a><br>
+                  Phone: <a href="tel:${data.phone}" style="color: #2596be;">${data.phone}</a>
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #0d3b66; padding: 30px; text-align: center;">
+              <p style="color: #94a3b8; margin: 0 0 10px 0; font-size: 14px;">
+                Advance Waterproofing & Caulking Solution
+              </p>
+              <p style="color: #64748b; margin: 0; font-size: 12px;">
+                📞 03 9001 7788 | 📧 info@advancewaterproofing.com.au
+              </p>
+              <p style="color: #64748b; margin: 10px 0 0 0; font-size: 12px;">
+                Melbourne Metro & Victoria, Australia
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim()
+}
 

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:netlify": "netlify dev",
     "build": "vite build",
     "lint": "npm run lint:types && npm run lint:js && npm run lint:css && npm run check:css-vars && npm run check:css-classes",
     "preview": "vite preview",
@@ -47,6 +48,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@react-three/drei": "^10.7.5",
     "@react-three/fiber": "^9.3.0",
+    "@supabase/supabase-js": "^2.75.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

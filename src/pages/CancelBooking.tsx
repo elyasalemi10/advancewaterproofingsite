@@ -5,7 +5,7 @@ import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-export default function AcceptBooking() {
+export default function CancelBooking() {
   const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
@@ -19,11 +19,11 @@ export default function AcceptBooking() {
       return
     }
 
-    // Automatically accept the booking
-    handleAcceptBooking()
+    // Automatically cancel the booking
+    handleCancelBooking()
   }, [bookingId])
 
-  const handleAcceptBooking = async () => {
+  const handleCancelBooking = async () => {
     if (!bookingId) return
 
     try {
@@ -40,48 +40,41 @@ export default function AcceptBooking() {
 
       setBooking(bookingData)
 
-      // Check if already accepted
-      if (bookingData.status === 'accepted') {
-        setStatus('success')
-        setMessage('This booking has already been confirmed!')
-        return
-      }
-
-      // Check if cancelled
+      // Check if already cancelled
       if (bookingData.status === 'cancelled') {
-        setStatus('error')
-        setMessage('This booking has been cancelled and cannot be accepted.')
+        setStatus('success')
+        setMessage('This booking has already been cancelled.')
         return
       }
 
-      // Update booking status to accepted
-      await updateBookingStatus(bookingId, 'accepted')
+      // Update booking status to cancelled
+      await updateBookingStatus(bookingId, 'cancelled')
 
-      // TODO: Send confirmation email to client
+      // TODO: Send cancellation email to client
       // This would require a separate serverless function
 
       setStatus('success')
-      setMessage('Booking has been confirmed! The client will be notified via email.')
+      setMessage('Booking has been cancelled successfully. The client will be notified.')
     } catch (error) {
-      console.error('Error accepting booking:', error)
+      console.error('Error cancelling booking:', error)
       setStatus('error')
-      setMessage('An error occurred while processing the booking. Please try again or contact support.')
+      setMessage('An error occurred while cancelling the booking. Please try again or contact support.')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
       <Card className="max-w-2xl w-full">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             {status === 'loading' && (
-              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
-                <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+              <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center">
+                <Loader2 className="w-10 h-10 text-orange-600 animate-spin" />
               </div>
             )}
             {status === 'success' && (
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-10 h-10 text-green-600" />
+              <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-10 h-10 text-orange-600" />
               </div>
             )}
             {status === 'error' && (
@@ -91,9 +84,9 @@ export default function AcceptBooking() {
             )}
           </div>
           <CardTitle className="text-2xl md:text-3xl">
-            {status === 'loading' && 'Processing Booking...'}
-            {status === 'success' && 'Booking Confirmed!'}
-            {status === 'error' && 'Booking Error'}
+            {status === 'loading' && 'Cancelling Booking...'}
+            {status === 'success' && 'Booking Cancelled'}
+            {status === 'error' && 'Cancellation Error'}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center space-y-6">
@@ -102,35 +95,28 @@ export default function AcceptBooking() {
           </p>
 
           {status === 'success' && booking && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-left">
-              <h3 className="font-semibold text-green-900 mb-3">✅ Booking Details:</h3>
-              <div className="space-y-2 text-green-800 mb-4">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 text-left">
+              <h3 className="font-semibold text-orange-900 mb-3">📋 Cancelled Booking Details:</h3>
+              <div className="space-y-2 text-orange-800 mb-4">
                 <p><strong>Client:</strong> {booking.name}</p>
                 <p><strong>Email:</strong> <a href={`mailto:${booking.email}`} className="underline">{booking.email}</a></p>
                 <p><strong>Phone:</strong> <a href={`tel:${booking.phone}`} className="underline">{booking.phone}</a></p>
-                <p><strong>Address:</strong> {booking.address}</p>
-                <p><strong>Service:</strong> {booking.service}</p>
                 <p><strong>Date:</strong> {new Date(booking.date).toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 <p><strong>Time:</strong> {booking.time}</p>
-                {booking.notes && <p><strong>Notes:</strong> {booking.notes}</p>}
               </div>
-              <h3 className="font-semibold text-green-900 mb-3">✅ What happens next:</h3>
-              <ul className="space-y-2 text-green-800">
+              <h3 className="font-semibold text-orange-900 mb-3">ℹ️ What happens next:</h3>
+              <ul className="space-y-2 text-orange-800">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
-                  <span>The client will be notified of the confirmation</span>
+                  <span className="text-orange-600 mt-1">•</span>
+                  <span>The client will be notified of the cancellation</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
-                  <span>Add the appointment to your calendar</span>
+                  <span className="text-orange-600 mt-1">•</span>
+                  <span>You may want to contact the client directly to explain or reschedule</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
-                  <span>Contact the client at {booking.email} or {booking.phone}</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 mt-1">•</span>
-                  <span>Prepare any necessary equipment for the inspection</span>
+                  <span className="text-orange-600 mt-1">•</span>
+                  <span>Contact: {booking.email} or {booking.phone}</span>
                 </li>
               </ul>
             </div>
@@ -153,7 +139,7 @@ export default function AcceptBooking() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-600 mt-1">•</span>
-                  <span>Contact the client directly to confirm</span>
+                  <span>Contact the client directly</span>
                 </li>
               </ul>
             </div>
@@ -169,7 +155,7 @@ export default function AcceptBooking() {
             </Button>
             {status === 'error' && (
               <Button
-                onClick={handleAcceptBooking}
+                onClick={handleCancelBooking}
                 size="lg"
               >
                 Try Again
@@ -185,6 +171,4 @@ export default function AcceptBooking() {
     </div>
   )
 }
-
-
 

@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Booking from './pages/Booking'
 import Admin from './pages/Admin'
 import AcceptBooking from './pages/AcceptBooking'
+import CancelBooking from './pages/CancelBooking'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
@@ -40,7 +41,8 @@ function AppShell() {
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/admin" element={<Admin />} />
-          <Route path="/api/accept-booking" element={<AcceptBooking />} />
+          <Route path="/accept-booking" element={<AcceptBooking />} />
+          <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/services/rapidseal" element={<RapidSeal />} />
           <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />
           <Route path="/services/balcony-leak-detection" element={<BalconyLeakDetection />} />

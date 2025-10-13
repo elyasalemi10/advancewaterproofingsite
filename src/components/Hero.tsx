@@ -23,8 +23,8 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="animate-fade-in">
           <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 sm:mb-6 leading-tight px-2">
-            Melbourne's Leading<br />
-            <span className="text-accent">Waterproofing Company</span>
+            Seal it right<br />
+            <span className="text-accent">Protect for life</span>
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-3 sm:mb-4 max-w-3xl mx-auto px-4">
             Solving water leaks. Permanently.

@@ -11,36 +11,146 @@ interface Message {
   timestamp: Date
 }
 
-const faqs = [
+interface FAQ {
+  keywords: string[]
+  patterns?: RegExp[]
+  response: string | ((match?: string) => string)
+  priority?: number
+}
+
+const faqs: FAQ[] = [
+  // High priority - exact service matches
   {
-    keywords: ['cost', 'price', 'how much'],
-    response:
-      "Our pricing varies based on project size and scope. RapidSeal™ typically costs about half of traditional methods. Contact us for a free quote tailored to your specific needs!",
-  },
-  {
-    keywords: ['rapidseal', 'rapid seal', 'system'],
+    keywords: ['rapidseal', 'rapid seal', 'balcony waterproofing'],
+    patterns: [/rapid\s*seal/i, /balcon(y|ies)\s*(waterproof|seal)/i],
+    priority: 10,
     response:
       "RapidSeal™ is our proprietary balcony waterproofing system that's 3x faster and 50% cheaper than traditional methods. It includes a 10-step process with warranty up to 15 years: subject to terms and conditions. Would you like to learn more?",
   },
   {
-    keywords: ['caulking', 'sealing', 'joint'],
+    keywords: ['caulking', 'sealing', 'joint', 'silicon'],
+    patterns: [/caulk(ing)?/i, /seal(ing|ant)?/i, /expansion\s*joint/i],
+    priority: 10,
     response:
       'We offer professional caulking solutions for balconies, windows, façades, and expansion joints. Our work prevents water ingress, improves energy efficiency, and enhances aesthetics.',
   },
   {
-    keywords: ['time', 'how long', 'duration'],
+    keywords: ['bathroom', 'shower', 'wet area'],
+    patterns: [/(bathroom|shower)\s*(waterproof|leak)/i],
+    priority: 10,
+    response:
+      'We specialize in bathroom and shower waterproofing, ensuring your wet areas are completely protected. Our services include full membrane systems, compliant with Australian standards.',
+  },
+  {
+    keywords: ['planter box', 'garden bed', 'planter'],
+    patterns: [/planter\s*box/i],
+    priority: 10,
+    response:
+      'Our planter box waterproofing prevents water damage to buildings while maintaining beautiful gardens. We use specialized membranes and drainage systems for long-lasting protection.',
+  },
+  {
+    keywords: ['roof deck', 'podium', 'rooftop'],
+    patterns: [/(roof|rooftop)\s*(deck|podium)/i],
+    priority: 10,
+    response:
+      'We provide comprehensive roof deck and podium waterproofing for commercial and residential properties, including pedestrian traffic areas and landscaped rooftops.',
+  },
+  {
+    keywords: ['leak detection', 'find leak', 'water leak'],
+    patterns: [/(leak|water)\s*detect/i, /find.*leak/i],
+    priority: 9,
+    response:
+      'Our leak detection service uses advanced techniques to identify the source of water ingress. We provide detailed reports with photos and recommended solutions. Book a free inspection!',
+  },
+  
+  // Medium priority - pricing and quotes
+  {
+    keywords: ['cost', 'price', 'how much', 'quote', 'estimate'],
+    patterns: [/how\s*much/i, /what.*cost/i, /price|pricing/i],
+    priority: 7,
+    response:
+      "Our pricing varies based on project size and scope. RapidSeal™ typically costs about half of traditional methods. Contact us for a free quote tailored to your specific needs!",
+  },
+  
+  // Timing questions
+  {
+    keywords: ['time', 'how long', 'duration', 'quick', 'fast'],
+    patterns: [/how\s*(long|quick)/i, /time.*take/i, /duration/i],
+    priority: 7,
     response:
       'RapidSeal™ projects typically complete in ⅓ the time of traditional methods. Most balcony projects are done within 1-2 days, minimising disruption to residents.',
   },
+  
+  // Warranty and guarantees
   {
-    keywords: ['warranty', 'guarantee'],
+    keywords: ['warranty', 'guarantee', 'insurance', 'cover'],
+    patterns: [/warrant(y|ies)/i, /guarantee/i],
+    priority: 7,
     response:
       'We provide warranty up to 15 years: subject to terms and conditions on all RapidSeal™ installations, and our work complies with AS 4654.2:2012, AS 3740:2021, and NCC standards.',
   },
+  
+  // Booking and appointments
   {
-    keywords: ['booking', 'book', 'appointment', 'inspection'],
+    keywords: ['booking', 'book', 'appointment', 'inspection', 'schedule', 'visit'],
+    patterns: [/book(ing)?/i, /schedule|appointment/i, /inspection/i],
+    priority: 8,
     response:
       "You can book a free inspection using our calendar booking system or by calling 03 9001 7788. We'll schedule a site visit at your convenience!",
+  },
+  
+  // Location and service area
+  {
+    keywords: ['location', 'where', 'area', 'melbourne', 'victoria', 'service area'],
+    patterns: [/where.*service/i, /service.*area/i, /do.*work/i],
+    priority: 6,
+    response:
+      'We service all of Melbourne Metro and regional Victoria. Whether you\'re in the CBD or suburbs, our team can help. Call us to confirm we service your area: 03 9001 7788',
+  },
+  
+  // Commercial vs residential
+  {
+    keywords: ['commercial', 'business', 'strata', 'body corporate'],
+    patterns: [/commercial|business/i, /strata|body\s*corporate/i],
+    priority: 6,
+    response:
+      'We specialize in both commercial and residential waterproofing. Our commercial clients include schools, hospitals, government buildings, and strata complexes. We handle projects of all sizes.',
+  },
+  
+  // Emergency and urgent
+  {
+    keywords: ['emergency', 'urgent', 'asap', 'right now', 'immediately'],
+    patterns: [/emergency|urgent|asap/i, /right\s*now|immediately/i],
+    priority: 10,
+    response:
+      'For urgent waterproofing issues, please call us immediately at 03 9001 7788. We prioritize emergency leak repairs and can often provide same-day service for critical situations.',
+  },
+  
+  // Maintenance plans
+  {
+    keywords: ['maintenance', 'plan', 'preventative', 'regular service'],
+    patterns: [/maintenance\s*plan/i, /prevent(ative|ion)/i],
+    priority: 6,
+    response:
+      'Our preventative maintenance plans help avoid costly repairs. We offer regular inspections and maintenance schedules for commercial properties, strata buildings, and large residential complexes.',
+  },
+  
+  // Greetings
+  {
+    keywords: ['hello', 'hi', 'hey', 'good morning', 'good afternoon', 'good evening'],
+    patterns: [/^(hi|hello|hey|g'?day)/i],
+    priority: 5,
+    response:
+      "G'day! Welcome to Advance Waterproofing. I'm here to help you with waterproofing solutions. What would you like to know about?",
+  },
+  
+  // Thanks
+  {
+    keywords: ['thanks', 'thank you', 'cheers'],
+    patterns: [/thanks|thank\s*you|cheers/i],
+    priority: 5,
+    response:
+      "You're welcome! If you have any more questions about our waterproofing services, feel free to ask. Or book a free inspection to get started!",
   },
 ]
 
@@ -70,20 +180,61 @@ export function Chatbot() {
   }, [messages])
 
   const findResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase()
-
-    for (const faq of faqs) {
-      if (faq.keywords.some((keyword) => lowerMessage.includes(keyword))) {
-        return faq.response
-      }
-    }
-
-    if (lowerMessage.includes('human') || lowerMessage.includes('talk to')) {
+    const lowerMessage = userMessage.toLowerCase().trim()
+    
+    // Handle talk to human requests first
+    if (lowerMessage.includes('human') || lowerMessage.includes('talk to') || 
+        lowerMessage.includes('speak to someone') || lowerMessage.includes('call me')) {
       setShowLeadForm(true)
       return "I'd be happy to connect you with our team! Please fill in your details below and we'll get back to you shortly."
     }
 
-    return "Thanks for your question! For specific inquiries, I recommend booking a free inspection or calling us at 03 9001 7788. How else can I help you today?"
+    // Score-based matching for better accuracy
+    let bestMatch: FAQ | null = null
+    let bestScore = 0
+
+    for (const faq of faqs) {
+      let score = 0
+      
+      // Check regex patterns first (more accurate)
+      if (faq.patterns) {
+        for (const pattern of faq.patterns) {
+          if (pattern.test(userMessage)) {
+            score += 15 * (faq.priority || 5)
+          }
+        }
+      }
+      
+      // Check keywords
+      for (const keyword of faq.keywords) {
+        if (lowerMessage.includes(keyword.toLowerCase())) {
+          // Give more points for exact word matches
+          const wordBoundary = new RegExp(`\\b${keyword.toLowerCase()}\\b`)
+          score += wordBoundary.test(lowerMessage) ? 10 : 5
+          score *= (faq.priority || 5)
+        }
+      }
+      
+      if (score > bestScore) {
+        bestScore = score
+        bestMatch = faq
+      }
+    }
+
+    // Return best match if score is high enough
+    if (bestMatch && bestScore > 20) {
+      return typeof bestMatch.response === 'function' 
+        ? bestMatch.response() 
+        : bestMatch.response
+    }
+
+    // Default response with contextual help
+    const hasQuestion = lowerMessage.includes('?')
+    if (hasQuestion) {
+      return "That's a great question! For specific inquiries, I recommend booking a free inspection or calling us at 03 9001 7788. You can also ask me about our services, pricing, warranties, or booking process."
+    }
+
+    return "Thanks for reaching out! I can help you with information about our waterproofing services, pricing, warranties, and bookings. What would you like to know?"
   }
 
   const handleSend = () => {

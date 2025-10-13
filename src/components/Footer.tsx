@@ -21,7 +21,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div>
             <h3 className="text-2xl font-serif font-bold mb-4">
-              Advance <span className="text-primary">Waterproofing</span>
+              Advance <span className="text-white">Waterproofing</span>
             </h3>
             <p className="text-white/70 mb-6">
               Melbourne's expert waterproofing contractors & remediation experts. Solving challenging water leaks permanently.

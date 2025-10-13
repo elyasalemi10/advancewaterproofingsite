@@ -54,10 +54,10 @@ export default function Header({ isScrolled }: HeaderProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
-              <img src="/logo.webp" alt="Advance Waterproofing logo" className="h-20 md:h-24 w-auto" />
+              <img src="/logo.webp" alt="Advance Waterproofing logo" className="h-12 md:h-14 w-auto" />
               <span className="sr-only">Advance Waterproofing</span>
             </Link>
           </div>
