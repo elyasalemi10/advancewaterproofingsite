@@ -1,33 +1,49 @@
-import { Play } from 'lucide-react'
+import { useState } from 'react'
+import { Play, X } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 
 export default function Videos() {
+  const [playingVideo, setPlayingVideo] = useState<number | null>(null)
+
   const videos = [
     {
       title: 'Selecting the right applicator',
       description: 'Precision techniques for lasting repairs and quality workmanship',
       thumbnail: '/thumbnailtrailer.png',
+      videoFile: '/trailer.webm',
       videoUrl: null
     },
     {
       title: 'Choosing the right waterproofer',
       description: 'Learn about our approach to selecting quality waterproofing solutions',
       thumbnail: '/thumbnailleak.png',
+      videoFile: '/leaking.webm',
       videoUrl: null
     },
     {
       title: 'Shower waterproofing',
       description: 'Watch our spray-applied liquid membrane system in action',
       thumbnail: '/maintenance-professional.webp',
+      videoFile: null,
       videoUrl: 'https://www.youtube.com/shorts/lLbgdzjiK0M'
     },
     {
       title: 'Bathroom Waterproofing systems',
       description: 'See how we solve challenging bathroom leaks with our proven methods',
       thumbnail: '/video-thumbnail-balcony.webp',
+      videoFile: null,
       videoUrl: 'https://www.youtube.com/shorts/DVqfjpyFfkQ'
     }
   ]
+
+  const handleVideoClick = (index: number) => {
+    const video = videos[index]
+    if (video.videoUrl) {
+      window.open(video.videoUrl, '_blank')
+    } else if (video.videoFile) {
+      setPlayingVideo(playingVideo === index ? null : index)
+    }
+  }
 
   return (
     <section id="videos" className="py-20 bg-background">
@@ -46,30 +62,53 @@ export default function Videos() {
             <Card 
               key={index} 
               className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300"
-              onClick={() => video.videoUrl && window.open(video.videoUrl, '_blank')}
+              onClick={() => handleVideoClick(index)}
             >
               <div className="relative h-64 overflow-hidden">
-                {video.thumbnail.endsWith('.webm') ? (
-                  <video
-                    src={video.thumbnail}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    muted
-                    loop
-                    autoPlay
-                    playsInline
-                  />
-                ) : (
-                  <img
-                    src={video.thumbnail}
-                    alt={video.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                )}
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
-                  <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                {playingVideo === index && video.videoFile ? (
+                  <div className="relative w-full h-full bg-black">
+                    <video
+                      src={video.videoFile}
+                      className="w-full h-full object-contain"
+                      controls
+                      autoPlay
+                      playsInline
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setPlayingVideo(null)
+                      }}
+                      className="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors z-10"
+                    >
+                      <X className="w-5 h-5 text-white" />
+                    </button>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    {video.thumbnail.endsWith('.webm') ? (
+                      <video
+                        src={video.thumbnail}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={video.thumbnail}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+                      <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
               <CardContent className="p-6">
                 <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
