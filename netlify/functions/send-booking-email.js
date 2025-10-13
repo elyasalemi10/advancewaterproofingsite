@@ -183,7 +183,8 @@ exports.handler = async (event) => {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <onboarding@resend.dev>',
+        reply_to: BUSINESS_EMAIL,
         to: [BUSINESS_EMAIL],
         subject: `🔔 New Booking Request - ${name} - ${formattedDate}`,
         html: emailHTML
@@ -194,6 +195,8 @@ exports.handler = async (event) => {
 
     if (!response.ok) {
       console.error('Resend API Error:', data);
+      console.error('Response status:', response.status);
+      console.error('API Key present:', !!RESEND_API_KEY);
       return {
         statusCode: response.status,
         body: JSON.stringify({ error: 'Failed to send email', details: data })

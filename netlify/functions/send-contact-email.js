@@ -12,8 +12,8 @@ exports.handler = async (event) => {
   try {
     const { name, email, phone, subject, message } = JSON.parse(event.body);
 
-    const RESEND_API_KEY = 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
-    const BUSINESS_EMAIL = 'info@advancewaterproofing.com.au';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@advancewaterproofing.com.au';
 
     const emailHTML = `
 <!DOCTYPE html>
@@ -143,7 +143,8 @@ ${message}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <onboarding@resend.dev>',
+        reply_to: BUSINESS_EMAIL,
         to: [BUSINESS_EMAIL],
         subject: `📧 New Contact Form: ${subject || 'General Inquiry'} - ${name}`,
         html: emailHTML
@@ -154,6 +155,8 @@ ${message}
 
     if (!response.ok) {
       console.error('Resend API Error:', data);
+      console.error('Response status:', response.status);
+      console.error('API Key present:', !!RESEND_API_KEY);
       return {
         statusCode: response.status,
         body: JSON.stringify({ error: 'Failed to send email', details: data })
