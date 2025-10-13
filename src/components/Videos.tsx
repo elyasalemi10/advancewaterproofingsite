@@ -6,13 +6,13 @@ export default function Videos() {
     {
       title: 'Selecting the right applicator',
       description: 'Precision techniques for lasting repairs and quality workmanship',
-      thumbnail: '/thumbnailtrailer.webp',
+      thumbnail: '/thumbnailtrailer.png',
       videoUrl: null
     },
     {
       title: 'Choosing the right waterproofer',
       description: 'Learn about our approach to selecting quality waterproofing solutions',
-      thumbnail: '/thumbnailleak.webp',
+      thumbnail: '/thumbnailleak.png',
       videoUrl: null
     },
     {
