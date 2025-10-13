@@ -6,14 +6,14 @@ export default function Videos() {
     {
       title: 'Selecting the right applicator',
       description: 'Precision techniques for lasting repairs and quality workmanship',
-      thumbnail: '/expansion-joint-work.webp',
+      thumbnail: '/trailer.webm',
       duration: '6:20',
       videoUrl: null
     },
     {
       title: 'Choosing the right waterproofer',
       description: 'Learn about our approach to selecting quality waterproofing solutions',
-      thumbnail: '/leaking.webm',
+      thumbnail: '/leaking.webp',
       duration: '7:15',
       videoUrl: null
     },
@@ -53,11 +53,22 @@ export default function Videos() {
               onClick={() => video.videoUrl && window.open(video.videoUrl, '_blank')}
             >
               <div className="relative h-64 overflow-hidden">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                {video.thumbnail.endsWith('.webm') ? (
+                  <video
+                    src={video.thumbnail}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    muted
+                    loop
+                    autoPlay
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
                   <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Play className="w-10 h-10 text-white ml-1" fill="white" />
