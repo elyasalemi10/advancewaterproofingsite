@@ -1,44 +1,69 @@
 const fetch = require('node-fetch');
 const { createClient } = require('@supabase/supabase-js');
 
-// Initialize Supabase client
+// Initialize Supabase
 const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Helper functions
 function generateBookingId() {
   return `BOOK-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
 }
 
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-AU', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-}
+exports.handler = async (event, context) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
 
-function generateBookingEmailHTML(data) {
-  const dateObj = new Date(data.date);
-  const formattedDate = dateObj.toLocaleDateString('en-AU', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
-  
-  const messageBody = `
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
+  // Only POST
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
+
+  try {
+    const { name, email, phone, address, service, date, time, notes } = JSON.parse(event.body);
+    
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const bookingId = generateBookingId();
+    
+    // Store in Supabase
+    try {
+      await supabase.from('bookings').insert([{
+        booking_id: bookingId,
+        name, email, phone, address, service, date, time, notes,
+        status: 'pending'
+      }]);
+    } catch (dbError) {
+      console.error('Supabase error:', dbError);
+    }
+    
+    // Build message body
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toLocaleDateString('en-AU', { 
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    
+    const messageBody = `
 Date: ${formattedDate}
-Time: ${data.time}
-Address: ${data.address}
-Service: ${data.service}
-${data.notes ? 'Notes: ' + data.notes : ''}
-  `.trim();
-  
-  return `
+Time: ${time}
+Address: ${address}
+Service: ${service}
+${notes ? 'Notes: ' + notes : ''}
+    `.trim();
+    
+    // Get accept URL
+    const baseUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
+    const acceptUrl = `${baseUrl}/accept-booking?id=${bookingId}`;
+    
+    const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -70,7 +95,7 @@ ${data.notes ? 'Notes: ' + data.notes : ''}
 
           <tr>
             <td align="center" style="padding: 10px;">
-              <h1 style="color: #3585c3; font-size: 32px; font-weight: 700; margin: 0;">New Booking - ${data.service}</h1>
+              <h1 style="color: #3585c3; font-size: 32px; font-weight: 700; margin: 0;">New Booking - ${service}</h1>
             </td>
           </tr>
 
@@ -84,10 +109,10 @@ ${data.notes ? 'Notes: ' + data.notes : ''}
             <td style="padding: 20px; text-align: center; font-size: 16px; color: #101112;">
               <p>A new job has been created and assigned to you. Below are the job details for your reference:</p>
               <p>
-                <strong>Name:</strong> ${data.name}<br>
-                <strong>Email:</strong> ${data.email}<br>
-                <strong>Phone Number:</strong> ${data.phone}<br>
-                <strong>Subject:</strong> ${data.service}<br>
+                <strong>Name:</strong> ${name}<br>
+                <strong>Email:</strong> ${email}<br>
+                <strong>Phone Number:</strong> ${phone}<br>
+                <strong>Subject:</strong> ${service}<br>
                 <strong>Message:</strong><br>
                 ${messageBody}
               </p>
@@ -97,7 +122,7 @@ ${data.notes ? 'Notes: ' + data.notes : ''}
 
           <tr>
             <td align="center" style="padding: 20px;">
-              <a href="${data.acceptUrl}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
+              <a href="${acceptUrl}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
                 Accept/Deny Booking
               </a>
             </td>
@@ -114,70 +139,7 @@ ${data.notes ? 'Notes: ' + data.notes : ''}
   </table>
 </body>
 </html>
-  `.trim();
-}
-
-exports.handler = async (event) => {
-  // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
-  try {
-    const { name, email, phone, address, service, date, time, notes } = JSON.parse(event.body);
-
-    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
-    const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@advancewaterproofing.com.au';
-    const bookingId = generateBookingId();
-    const formattedDate = formatDate(date);
-    
-    // Store booking in Supabase
-    try {
-      const { error: dbError } = await supabase
-        .from('bookings')
-        .insert([{
-          booking_id: bookingId,
-          name,
-          email,
-          phone,
-          address,
-          service,
-          date,
-          time,
-          notes,
-          status: 'pending'
-        }]);
-
-      if (dbError) {
-        console.error('Supabase error:', dbError);
-        // Continue even if DB insert fails
-      }
-    } catch (dbErr) {
-      console.error('Database error:', dbErr);
-      // Continue even if DB insert fails
-    }
-    
-    // Get the accept URL - use the request origin
-    const baseUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
-    const acceptUrl = `${baseUrl}/accept-booking?id=${bookingId}`;
-    const cancelUrl = `${baseUrl}/cancel-booking?id=${bookingId}`;
-
-    const emailHTML = generateBookingEmailHTML({
-      bookingId,
-      name,
-      email,
-      phone,
-      address,
-      service,
-      date,
-      time,
-      notes,
-      acceptUrl,
-      cancelUrl
-    });
+    `.trim();
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -187,8 +149,8 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         from: 'Advance Waterproofing <bookings@advancewaterproofing.com.au>',
-        to: [BUSINESS_EMAIL],
-        subject: `🔔 New Booking Request - ${name} - ${formattedDate}`,
+        to: ['info@advancewaterproofing.com.au'],
+        subject: `🔔 New Booking - ${name} - ${formattedDate}`,
         html: emailHTML
       })
     });
@@ -196,15 +158,17 @@ exports.handler = async (event) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Resend API Error:', data);
+      console.error('Resend error:', data);
       return {
         statusCode: response.status,
+        headers,
         body: JSON.stringify({ error: 'Failed to send email', details: data })
       };
     }
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ success: true, bookingId, data })
     };
 
@@ -212,6 +176,7 @@ exports.handler = async (event) => {
     console.error('Function error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: 'Internal server error', message: error.message })
     };
   }
