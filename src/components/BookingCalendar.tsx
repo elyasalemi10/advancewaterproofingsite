@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import toast from 'react-hot-toast'
 import { calculateEndTime, isWithinWorkingHours } from '@/lib/calcom'
 
-// Working hours: 7 AM - 6 PM (last inspection at 5 PM for 60 min)
+// Working hours: 7 AM - 6 PM (last job at 5 PM for 1 hour)
 const timeSlots = [
   '7:00 AM',
   '8:00 AM',
@@ -40,7 +40,7 @@ const services = [
 export function BookingCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
-  const [bookingType, setBookingType] = useState<'inspection' | 'quote'>('inspection')
+  const [bookingType, setBookingType] = useState<'inspection' | 'quote'>('inspection') // 'inspection' = job
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -168,10 +168,10 @@ export function BookingCalendar() {
       <CardHeader className="p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-          {bookingType === 'inspection' ? 'Book a Free Inspection' : 'Request a Quote'}
+          {bookingType === 'inspection' ? 'Book a Free Job' : 'Request a Quote'}
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Schedule a {bookingType === 'inspection' ? '60-minute inspection' : '10-minute quote call'}. We'll contact you to confirm or reschedule at your convenience.
+          Schedule a {bookingType === 'inspection' ? 'free on-site job' : 'quote call'}. We'll contact you to confirm or reschedule at your convenience.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
@@ -210,15 +210,15 @@ export function BookingCalendar() {
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
                     <RadioGroupItem value="inspection" id="inspection" />
                     <Label htmlFor="inspection" className="flex-1 cursor-pointer">
-                      <div className="font-semibold">Free Inspection</div>
-                      <div className="text-xs text-muted-foreground">60 minutes on-site visit</div>
+                      <div className="font-semibold">Free Job</div>
+                      <div className="text-xs text-muted-foreground">On-site visit</div>
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
                     <RadioGroupItem value="quote" id="quote" />
                     <Label htmlFor="quote" className="flex-1 cursor-pointer">
                       <div className="font-semibold">Quote Call</div>
-                      <div className="text-xs text-muted-foreground">10 minute phone consultation</div>
+                      <div className="text-xs text-muted-foreground">Phone consultation</div>
                     </Label>
                   </div>
                 </RadioGroup>
@@ -236,7 +236,7 @@ export function BookingCalendar() {
                   <SelectContent>
                     {timeSlots
                       .filter(time => {
-                        // For inspections, don't allow times after 5 PM (ends at 6 PM)
+                        // For jobs, don't allow times after 5 PM (ends at 6 PM)
                         if (bookingType === 'inspection') {
                           return !time.includes('5:') || time.includes('5:00')
                         }
@@ -252,7 +252,7 @@ export function BookingCalendar() {
                 </Select>
                 {selectedTime && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    End time: {getEndTime()} ({bookingType === 'inspection' ? '60' : '10'} minutes)
+                    End time: {getEndTime()}
                   </p>
                 )}
               </div>
@@ -348,8 +348,8 @@ export function BookingCalendar() {
               <li>You'll receive an email confirmation within minutes</li>
               <li>Our team will review and confirm or suggest alternative times</li>
               <li>{bookingType === 'inspection' 
-                ? 'Our specialist will arrive at the scheduled time for your 60-minute inspection'
-                : 'We\'ll call you at the scheduled time for a 10-minute quote discussion'}
+                ? 'Our specialist will arrive at the scheduled time for your free on-site job'
+                : 'We\'ll call you at the scheduled time for a quote discussion'}
               </li>
             </ol>
             <p className="text-xs text-muted-foreground mt-3">

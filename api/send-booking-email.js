@@ -1,9 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase
-const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Initialize Supabase (will be created fresh in each request)
+function getSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24';
+  return createClient(supabaseUrl, supabaseKey);
+}
 
 function generateBookingId() {
   return `BOOK-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
@@ -33,63 +35,46 @@ export default async function handler(req, res) {
     const CAL_API_KEY = process.env.CAL_API_KEY || 'cal_live_30cc62be183a46889753a4e6b4683971';
     const bookingId = generateBookingId();
     
-    // Determine event type and create Cal.com booking
-    const eventTypeId = isInspection ? 3637831 : 3629145; // Inspection (60min) or Quote (10min)
-    let calBookingUid = null;
+    // Determine event type (Job = 1 hour, Quote = 10 min)
+    const eventTypeId = isInspection ? 3637831 : 3629145;
+    
+    // Store in Supabase - Cal.com booking will be created AFTER owner confirms
+    const supabase = getSupabaseClient();
+    let dbSuccess = false;
     
     try {
-      // Create Cal.com booking
-      const calResponse = await fetch('https://api.cal.com/v1/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${CAL_API_KEY}`
-        },
-        body: JSON.stringify({
-          eventTypeId: eventTypeId,
-          start: startTime,
-          end: endTime,
-          responses: {
-            name: name,
-            email: email,
-            phone: phone || '',
-            notes: notes || ''
-          },
-          timeZone: 'Australia/Melbourne',
-          language: 'en',
-          metadata: {
-            address: address,
-            service: service,
-            bookingId: bookingId
-          }
-        })
-      });
-      
-      if (calResponse.ok) {
-        const calData = await calResponse.json();
-        calBookingUid = calData.uid;
-      } else {
-        console.error('Cal.com booking failed:', await calResponse.text());
-      }
-    } catch (calError) {
-      console.error('Cal.com error:', calError);
-      // Continue even if Cal.com fails
-    }
-    
-    // Store in Supabase
-    try {
-      await supabase.from('bookings').insert([{
+      const { data, error } = await supabase.from('bookings').insert([{
         booking_id: bookingId,
-        name, email, phone, address, service, date, time, notes,
+        name, 
+        email, 
+        phone, 
+        address, 
+        service, 
+        date, 
+        time, 
+        notes,
         status: 'pending',
-        cal_booking_uid: calBookingUid,
+        cal_booking_uid: null, // Will be set when owner confirms
         cal_event_type_id: eventTypeId,
         is_inspection: isInspection,
         preferred_time: startTime,
         end_time: endTime
-      }]);
+      }]).select();
+      
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
+      
+      console.log('Booking saved successfully:', data);
+      dbSuccess = true;
     } catch (dbError) {
-      console.error('Supabase error:', dbError);
+      console.error('Supabase error details:', dbError);
+      // Return error to frontend so user knows it failed
+      return res.status(500).json({ 
+        error: 'Failed to save booking', 
+        details: dbError.message || dbError 
+      });
     }
     
     // Build message body
@@ -110,8 +95,8 @@ export default async function handler(req, res) {
       timeZone: 'Australia/Melbourne'
     }) : '';
     
-    const bookingType = isInspection ? '60-Minute On-Site Inspection' : '10-Minute Phone Quote';
-    const duration = isInspection ? '60 minutes' : '10 minutes';
+    const bookingType = isInspection ? 'On-Site Job' : 'Phone Quote';
+    const duration = isInspection ? '1 hour' : '10 minutes';
     
     // Get manage booking URL
     const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';

@@ -7,7 +7,6 @@ import Projects from '@/components/Projects'
 import Videos from '@/components/Videos'
 import Testimonials from '@/components/Testimonials'
 import Contact from '@/components/Contact'
-import FAQ from '@/components/FAQ'
 import CTA from '@/components/CTA'
 import { setSEO } from '@/lib/seo'
 
@@ -54,7 +53,6 @@ export default function Home() {
       <Projects />
       <Videos />
       <Testimonials />
-      <FAQ />
       <CTA />
       <Contact />
     </div>

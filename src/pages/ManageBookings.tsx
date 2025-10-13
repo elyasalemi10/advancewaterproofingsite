@@ -57,17 +57,28 @@ export default function ManageBookings() {
       setProcessing(true)
       setError('')
       
-      // Update status in Supabase
-      const updated = await updateBookingStatus(bookingId!, 'accepted')
+      // Call confirm-booking API which will:
+      // 1. Update status in Supabase
+      // 2. Create Cal.com event for owner (no customer attendees)
+      // 3. Send confirmation email to customer via Zoho
+      const response = await fetch('/api/confirm-booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ bookingId: bookingId })
+      })
       
-      if (updated) {
-        setSuccess('Booking accepted successfully! ✅')
-        setTimeout(() => loadBooking(), 1000)
+      if (response.ok) {
+        const result = await response.json()
+        setSuccess('Booking confirmed! Calendar event created and customer notified. ✅')
+        setTimeout(() => loadBooking(), 1500)
       } else {
-        setError('Failed to accept booking')
+        const errorData = await response.json()
+        setError(`Failed to confirm booking: ${errorData.error || 'Unknown error'}`)
       }
     } catch (err) {
-      setError('Failed to accept booking')
+      setError('Failed to confirm booking')
       console.error(err)
     } finally {
       setProcessing(false)
@@ -212,7 +223,7 @@ export default function ManageBookings() {
               Booking ID: <span className="font-mono">{booking.booking_id}</span>
               {booking.is_inspection !== undefined && (
                 <span className="ml-4">
-                  • Type: <strong>{booking.is_inspection ? '60min Inspection' : '10min Quote'}</strong>
+                  • Type: <strong>{booking.is_inspection ? 'Job' : 'Quote'}</strong>
                 </span>
               )}
             </CardDescription>
