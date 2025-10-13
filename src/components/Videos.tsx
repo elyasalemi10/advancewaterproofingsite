@@ -6,29 +6,25 @@ export default function Videos() {
     {
       title: 'Selecting the right applicator',
       description: 'Precision techniques for lasting repairs and quality workmanship',
-      thumbnail: '/trailer.webm',
-      duration: '6:20',
+      thumbnail: '/thumbnailtrailer.webp',
       videoUrl: null
     },
     {
       title: 'Choosing the right waterproofer',
       description: 'Learn about our approach to selecting quality waterproofing solutions',
-      thumbnail: '/leaking.webp',
-      duration: '7:15',
+      thumbnail: '/thumbnailleak.webp',
       videoUrl: null
     },
     {
       title: 'Shower waterproofing',
       description: 'Watch our spray-applied liquid membrane system in action',
       thumbnail: '/maintenance-professional.webp',
-      duration: '4:45',
       videoUrl: 'https://www.youtube.com/shorts/lLbgdzjiK0M'
     },
     {
       title: 'Bathroom Waterproofing systems',
       description: 'See how we solve challenging bathroom leaks with our proven methods',
       thumbnail: '/video-thumbnail-balcony.webp',
-      duration: '5:30',
       videoUrl: 'https://www.youtube.com/shorts/DVqfjpyFfkQ'
     }
   ]
@@ -73,9 +69,6 @@ export default function Videos() {
                   <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Play className="w-10 h-10 text-white ml-1" fill="white" />
                   </div>
-                </div>
-                <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded text-sm">
-                  {video.duration}
                 </div>
               </div>
               <CardContent className="p-6">
