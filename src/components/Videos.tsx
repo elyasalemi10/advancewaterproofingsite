@@ -18,13 +18,7 @@ export default function Videos() {
     { type: 'video', src: '/slideshow/leaking.webm' }
   ]
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)
-    }, 4000) // Auto-advance every 4 seconds
-
-    return () => clearInterval(interval)
-  }, [slideshowMedia.length])
+  // Removed auto-advance - manual navigation only
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)

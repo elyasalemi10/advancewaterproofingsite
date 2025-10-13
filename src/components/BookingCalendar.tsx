@@ -29,7 +29,7 @@ const timeSlots = [
 const services = [
   'Advance RapidSeal™ Balcony Waterproofing',
   'Caulking Solutions',
-  'Balcony Leak Detection & Reporting',
+  'Leak Detection & Reporting',
   'Bathroom & Shower Waterproofing',
   'Planter Box Waterproofing',
   'Roof Deck & Podium Waterproofing',
@@ -168,10 +168,10 @@ export function BookingCalendar() {
       <CardHeader className="p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-          {bookingType === 'inspection' ? 'Book a Free Job' : 'Request a Quote'}
+          {bookingType === 'inspection' ? 'Book a Job' : 'Request a Quote'}
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Schedule a {bookingType === 'inspection' ? 'free on-site job' : 'quote call'}. We'll contact you to confirm or reschedule at your convenience.
+          Schedule a {bookingType === 'inspection' ? 'job' : 'quote'}. We'll contact you to confirm or reschedule at your convenience.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
@@ -210,15 +210,15 @@ export function BookingCalendar() {
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
                     <RadioGroupItem value="inspection" id="inspection" />
                     <Label htmlFor="inspection" className="flex-1 cursor-pointer">
-                      <div className="font-semibold">Free Job</div>
+                      <div className="font-semibold">Job</div>
                       <div className="text-xs text-muted-foreground">On-site visit</div>
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
                     <RadioGroupItem value="quote" id="quote" />
                     <Label htmlFor="quote" className="flex-1 cursor-pointer">
-                      <div className="font-semibold">Quote Call</div>
-                      <div className="text-xs text-muted-foreground">Phone consultation</div>
+                      <div className="font-semibold">Quote</div>
+                      <div className="text-xs text-muted-foreground">Request a quote</div>
                     </Label>
                   </div>
                 </RadioGroup>

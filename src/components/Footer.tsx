@@ -7,7 +7,7 @@ export default function Footer() {
   const services = [
     { label: 'Advance RapidSeal™ Balcony Waterproofing', path: '/services/rapidseal' },
     { label: 'Caulking Solutions', path: '/services/caulking-solutions' },
-    { label: 'Balcony Leak Detection & Reporting', path: '/services/balcony-leak-detection' },
+    { label: 'Leak Detection & Reporting', path: '/services/balcony-leak-detection' },
     { label: 'Bathroom & Shower Waterproofing', path: '/services/bathroom-shower-waterproofing' },
     { label: 'Planter Box Waterproofing', path: '/services/planter-box-waterproofing' },
     { label: 'Roof Deck & Podium Waterproofing', path: '/services/roof-deck-podium-waterproofing' },

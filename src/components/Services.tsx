@@ -6,7 +6,7 @@ export default function Services() {
   const services = [
     { icon: Droplets, title: 'Advance RapidSeal™ Balcony Waterproofing', desc: 'Proprietary, cost‑effective method – faster, cheaper and compliant.', path: '/services/rapidseal' },
     { icon: Wrench, title: 'Caulking Solutions', desc: 'Professional sealing for balconies, windows, façades and joints.', path: '/services/caulking-solutions' },
-    { icon: Search, title: 'Balcony Leak Detection & Reporting', desc: 'Diagnostics, moisture mapping and practical repair scopes.', path: '/services/balcony-leak-detection' },
+    { icon: Search, title: 'Leak Detection & Reporting', desc: 'Diagnostics, moisture mapping and practical repair scopes.', path: '/services/balcony-leak-detection' },
     { icon: ShieldCheck, title: 'Bathroom & Shower Waterproofing', desc: 'Compliant wet‑area systems that protect your home or business.', path: '/services/bathroom-shower-waterproofing' },
     { icon: Leaf, title: 'Planter Box Waterproofing', desc: 'Root‑resistant membranes and drainage for lasting performance.', path: '/services/planter-box-waterproofing' },
     { icon: Building2, title: 'Roof Deck & Podium Waterproofing', desc: 'Robust systems for exposed, trafficable surfaces.', path: '/services/roof-deck-podium-waterproofing' },
