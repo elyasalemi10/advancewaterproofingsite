@@ -285,7 +285,7 @@ export function Chatbot() {
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform"
+          className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-lg z-50 hover:scale-110 transition-transform"
           size="icon"
         >
           <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -294,7 +294,7 @@ export function Chatbot() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-0 right-0 left-0 sm:bottom-6 sm:right-6 sm:left-auto w-full sm:w-96 h-[100dvh] sm:h-[600px] bg-background border sm:rounded-lg shadow-2xl flex flex-col z-50">
+        <div className="fixed bottom-16 right-0 left-0 sm:bottom-24 sm:right-6 sm:left-auto w-full sm:w-96 h-[100dvh] sm:h-[600px] bg-background border sm:rounded-lg shadow-2xl flex flex-col z-50">
           {/* Header */}
           <div className="bg-primary text-primary-foreground p-3 sm:p-4 sm:rounded-t-lg flex items-center justify-between">
             <div className="flex items-center gap-2">

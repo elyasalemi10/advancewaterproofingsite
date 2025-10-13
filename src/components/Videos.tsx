@@ -170,7 +170,16 @@ export default function Videos() {
                   </div>
                 ) : (
                   <>
-                    {video.thumbnail.endsWith('.webm') ? (
+                    {video.internalLink === '/shortcuts' ? (
+                      // Text-based code display thumbnail for Shortcuts card
+                      <div className="w-full h-full bg-[#0b1220] text-[#d1e7ff] p-5 flex items-center justify-center">
+                        <pre className="whitespace-pre-wrap font-mono text-center text-base sm:text-lg leading-relaxed">
+{`90% of waterproofing failures are attributed to
+poor workmanship and incorrect application,
+not material defects.`}
+                        </pre>
+                      </div>
+                    ) : video.thumbnail.endsWith('.webm') ? (
                       <video
                         src={video.thumbnail}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
@@ -186,11 +195,13 @@ export default function Videos() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     )}
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
-                      <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                    {video.internalLink === '/shortcuts' ? null : (
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-center justify-center">
+                        <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Play className="w-10 h-10 text-white ml-1" fill="white" />
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </>
                 )}
               </div>
