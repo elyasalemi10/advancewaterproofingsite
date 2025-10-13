@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { sendEmail } from '../lib/zohoMail.js';
 
 // Initialize Supabase
 function getSupabaseClient() {
@@ -225,26 +226,15 @@ export default async function handler(req, res) {
 </html>
     `.trim();
 
-    // Send via Zoho Mail (using their SMTP or API)
-    // For now, we'll use Resend as fallback, but you should configure Zoho
+    // Send confirmation email to customer (Zoho with Resend fallback)
     try {
-      const emailResponse = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
-        },
-        body: JSON.stringify({
-          from: `Advance Waterproofing <${ZOHO_FROM_EMAIL}>`,
-          to: [booking.email],
-          subject: `✅ Booking Confirmed - ${formattedDate}`,
-          html: customerEmailHTML
-        })
+      await sendEmail({
+        to: booking.email,
+        subject: `✅ Booking Confirmed - ${formattedDate}`,
+        html: customerEmailHTML,
+        from: `Advance Waterproofing <${ZOHO_FROM_EMAIL}>`
       });
-
-      if (!emailResponse.ok) {
-        console.error('Failed to send confirmation email:', await emailResponse.text());
-      }
+      console.log('Confirmation email sent to customer');
     } catch (emailError) {
       console.error('Email sending error:', emailError);
       // Don't fail the whole request if email fails
