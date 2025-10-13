@@ -7,10 +7,7 @@
 Create a file named `.env.local` in the root directory with this content:
 
 ```env
-VITE_SUPABASE_URL=https://ryhrxlblccjjjowpubyv.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzMzAzNDcsImV4cCI6MjA3NTkwNjM0N30.CLnaJ7Lj6tq9voFaRDpTtGjE0RXPGB87TSCKkZbppSc
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24
-SUPABASE_DB_PASSWORD=234562345Bookings!
+
 ```
 
 **Location**: `/Users/elyasalemi/Desktop/Websites/Advanced Waterproofing/.env.local`
@@ -23,34 +20,7 @@ SUPABASE_DB_PASSWORD=234562345Bookings!
 
 ```sql
 -- Create bookings table
-CREATE TABLE IF NOT EXISTS bookings (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  booking_id TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  address TEXT NOT NULL,
-  service TEXT NOT NULL,
-  date TEXT NOT NULL,
-  time TEXT NOT NULL,
-  notes TEXT,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE
-);
 
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_bookings_booking_id ON bookings(booking_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
-CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
-
--- Enable RLS
-ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Allow public insert" ON bookings FOR INSERT TO anon WITH CHECK (true);
-CREATE POLICY "Allow public read" ON bookings FOR SELECT TO anon USING (true);
-CREATE POLICY "Allow public update" ON bookings FOR UPDATE TO anon USING (true) WITH CHECK (true);
 ```
 
 4. Click **Run** to execute the SQL
