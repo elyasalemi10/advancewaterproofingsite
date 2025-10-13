@@ -1,10 +1,27 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
+      headers,
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -12,8 +29,8 @@ exports.handler = async (event) => {
   try {
     const { name, email, phone, subject, message } = JSON.parse(event.body);
 
-    const RESEND_API_KEY = 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
-    const BUSINESS_EMAIL = 'info@advancewaterproofing.com.au';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@advancewaterproofing.com.au';
 
     const emailHTML = `
 <!DOCTYPE html>
@@ -156,12 +173,14 @@ ${message}
       console.error('Resend API Error:', data);
       return {
         statusCode: response.status,
+        headers,
         body: JSON.stringify({ error: 'Failed to send email', details: data })
       };
     }
 
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({ success: true, data })
     };
 
@@ -169,6 +188,7 @@ ${message}
     console.error('Function error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: 'Internal server error', message: error.message })
     };
   }
