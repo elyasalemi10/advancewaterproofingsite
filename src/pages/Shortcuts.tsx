@@ -176,7 +176,7 @@ export default function Shortcuts() {
   }
 
   return (
-    <div className="bg-[#F2F2F2] text-gray-800 min-h-screen">
+    <div className="bg-[#F2F2F2] text-gray-800 min-h-screen pt-20">
       <style>{`
         .chart-container {
           position: relative;

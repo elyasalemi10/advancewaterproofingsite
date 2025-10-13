@@ -1,11 +1,38 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Play, X } from 'lucide-react'
+import { Play, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 
 export default function Videos() {
   const [playingVideo, setPlayingVideo] = useState<number | null>(null)
+  const [currentSlide, setCurrentSlide] = useState(0)
   const navigate = useNavigate()
+
+  const slideshowMedia = [
+    { type: 'image', src: '/slideshow/defect.jpeg' },
+    { type: 'image', src: '/slideshow/defect2.jpeg' },
+    { type: 'image', src: '/slideshow/defect3.jpeg' },
+    { type: 'image', src: '/slideshow/defect4.jpeg' },
+    { type: 'image', src: '/slideshow/defect5.jpeg' },
+    { type: 'image', src: '/slideshow/defect6.jpeg' },
+    { type: 'video', src: '/slideshow/leaking.webm' }
+  ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)
+    }, 4000) // Auto-advance every 4 seconds
+
+    return () => clearInterval(interval)
+  }, [slideshowMedia.length])
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + slideshowMedia.length) % slideshowMedia.length)
+  }
 
   const videos = [
     {
@@ -17,11 +44,13 @@ export default function Videos() {
       internalLink: '/shortcuts'
     },
     {
-      title: 'Choosing the right waterproofer',
-      description: 'Learn about our approach to selecting quality waterproofing solutions',
+      title: 'What happens when you choose a cheap applicator',
+      description: 'See the real consequences of cutting corners on waterproofing expertise',
       thumbnail: '/thumbnailleak.png',
-      videoFile: '/leaking.webm',
-      videoUrl: null
+      videoFile: null,
+      videoUrl: null,
+      internalLink: null,
+      isSlideshow: true
     },
     {
       title: 'Shower waterproofing',
@@ -41,6 +70,10 @@ export default function Videos() {
 
   const handleVideoClick = (index: number) => {
     const video = videos[index]
+    if (video.isSlideshow) {
+      // Slideshow is always visible, do nothing on click
+      return
+    }
     if (video.internalLink) {
       navigate(video.internalLink)
     } else if (video.videoUrl) {
@@ -66,11 +99,63 @@ export default function Videos() {
           {videos.map((video, index) => (
             <Card 
               key={index} 
-              className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300"
+              className={`overflow-hidden group transition-all duration-300 ${video.isSlideshow ? '' : 'cursor-pointer hover:shadow-xl'}`}
               onClick={() => handleVideoClick(index)}
             >
               <div className="relative h-64 overflow-hidden">
-                {playingVideo === index && video.videoFile ? (
+                {video.isSlideshow ? (
+                  <div className="relative w-full h-full bg-black">
+                    {slideshowMedia[currentSlide].type === 'video' ? (
+                      <video
+                        key={currentSlide}
+                        src={slideshowMedia[currentSlide].src}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={slideshowMedia[currentSlide].src}
+                        alt={`Waterproofing defect ${currentSlide + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        prevSlide()
+                      }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors z-10"
+                    >
+                      <ChevronLeft className="w-6 h-6 text-white" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        nextSlide()
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/70 rounded-full flex items-center justify-center hover:bg-black/90 transition-colors z-10"
+                    >
+                      <ChevronRight className="w-6 h-6 text-white" />
+                    </button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                      {slideshowMedia.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setCurrentSlide(idx)
+                          }}
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            idx === currentSlide ? 'bg-primary w-8' : 'bg-white/50'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ) : playingVideo === index && video.videoFile ? (
                   <div className="relative w-full h-full bg-black">
                     <video
                       src={video.videoFile}
