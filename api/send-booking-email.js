@@ -146,7 +146,7 @@ ${notes ? 'Notes: ' + notes : ''}
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'onboarding@resend.dev',
+        from: 'info@advancewaterproofing.com.au',
         to: ['info@advancewaterproofing.com.au'],
         subject: `🔔 New Booking - ${name} - ${formattedDate}`,
         html: emailHTML
