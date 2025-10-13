@@ -13,31 +13,61 @@ Zoho uses OAuth 2.0, which requires a **refresh token** to send emails on your b
 
 ### Step 1: Get Authorization Code
 
-1. Replace `{CLIENT_ID}` with your actual Client ID and visit this URL in your browser:
+**Option A: Use localhost (Easier)**
+
+1. Visit this URL in your browser:
+
+```
+https://accounts.zoho.com/oauth/v2/auth?scope=ZohoMail.messages.CREATE&client_id=1000.GBBKC2MN97MDWONHDY5TTIDCDXULHO&response_type=code&access_type=offline&redirect_uri=http://localhost
+```
+
+2. Login to your Zoho account and authorize
+3. You'll be redirected to something like:
+   ```
+   http://localhost/?code=1000.abc123def456...
+   ```
+4. The page will show "This site can't be reached" - **that's OK!**
+5. Copy the entire URL from your browser address bar
+6. Extract the `code` value (everything after `code=` and before `&` if there is one)
+
+**Option B: Use your domain**
+
+If localhost doesn't work, first you need to add your domain as an authorized redirect URI in Zoho:
+
+1. Go to: https://api-console.zoho.com/
+2. Find your app
+3. Add redirect URI: `https://www.advancewaterproofing.com.au`
+4. Then use this URL:
 
 ```
 https://accounts.zoho.com/oauth/v2/auth?scope=ZohoMail.messages.CREATE&client_id=1000.GBBKC2MN97MDWONHDY5TTIDCDXULHO&response_type=code&access_type=offline&redirect_uri=https://www.advancewaterproofing.com.au
 ```
 
-2. You'll be asked to authorize the app
-3. After authorization, you'll be redirected to a URL like:
-   ```
-   https://www.advancewaterproofing.com.au?code=1000.XXXXXX.XXXXXX
-   ```
-4. Copy the `code` parameter from the URL
-
 ### Step 2: Exchange Code for Refresh Token
 
-Use this code in your terminal to get the refresh token:
+**If you used localhost in Step 1:**
 
 ```bash
-curl -X POST https://accounts.zoho.com/oauth/v2/token \
+curl -X POST "https://accounts.zoho.com/oauth/v2/token" \
+  -d "code=YOUR_CODE_FROM_STEP_1" \
+  -d "client_id=1000.GBBKC2MN97MDWONHDY5TTIDCDXULHO" \
+  -d "client_secret=fbe8b3672675e5f1be76d845726dc35fdda83406f7" \
+  -d "redirect_uri=http://localhost" \
+  -d "grant_type=authorization_code"
+```
+
+**If you used your domain in Step 1:**
+
+```bash
+curl -X POST "https://accounts.zoho.com/oauth/v2/token" \
   -d "code=YOUR_CODE_FROM_STEP_1" \
   -d "client_id=1000.GBBKC2MN97MDWONHDY5TTIDCDXULHO" \
   -d "client_secret=fbe8b3672675e5f1be76d845726dc35fdda83406f7" \
   -d "redirect_uri=https://www.advancewaterproofing.com.au" \
   -d "grant_type=authorization_code"
 ```
+
+**IMPORTANT:** The `redirect_uri` in Step 2 MUST match exactly what you used in Step 1!
 
 You'll get a response like:
 ```json
