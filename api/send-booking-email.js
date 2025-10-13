@@ -1,5 +1,4 @@
-const fetch = require('node-fetch');
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase
 const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
@@ -10,26 +9,24 @@ function generateBookingId() {
   return `BOOK-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
 }
 
-exports.handler = async (event, context) => {
+export default async function handler(req, res) {
   // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS'
-  };
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
   // Only POST
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { name, email, phone, address, service, date, time, notes } = JSON.parse(event.body);
+    const { name, email, phone, address, service, date, time, notes } = req.body;
     
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
     const bookingId = generateBookingId();
@@ -60,7 +57,7 @@ ${notes ? 'Notes: ' + notes : ''}
     `.trim();
     
     // Get accept URL
-    const baseUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
+    const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
     const acceptUrl = `${baseUrl}/accept-booking?id=${bookingId}`;
     
     const emailHTML = `
@@ -159,26 +156,14 @@ ${notes ? 'Notes: ' + notes : ''}
 
     if (!response.ok) {
       console.error('Resend error:', data);
-      return {
-        statusCode: response.status,
-        headers,
-        body: JSON.stringify({ error: 'Failed to send email', details: data })
-      };
+      return res.status(response.status).json({ error: 'Failed to send email', details: data });
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ success: true, bookingId, data })
-    };
+    return res.status(200).json({ success: true, bookingId, data });
 
   } catch (error) {
     console.error('Function error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Internal server error', message: error.message })
-    };
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
-};
+}
 

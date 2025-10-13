@@ -112,8 +112,8 @@ export default function Contact() {
     setIsSubmitting(true)
 
     try {
-      // Call Netlify function directly
-      const response = await fetch('/.netlify/functions/send-contact-email', {
+      // Call Vercel API function
+      const response = await fetch('/api/send-contact-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export default function Contact() {
         body: JSON.stringify(formData)
       })
 
-      // Check if we got a 404 (local dev without Netlify)
+      // Check if we got a 404 (local dev without Vercel)
       if (response.status === 404) {
         // Show helpful message for local development
         console.log('📧 Form Data (would be sent in production):', formData)
@@ -130,7 +130,7 @@ export default function Contact() {
         
         toast({
           title: "✅ Development Mode",
-          description: "Form validated! In production, this will send an email. Use 'npm run dev:netlify' to test locally.",
+          description: "Form validated! In production, this will send an email via Vercel.",
           duration: 8000,
         })
         
