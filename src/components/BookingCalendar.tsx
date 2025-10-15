@@ -7,9 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import toast from 'react-hot-toast'
-import { calculateEndTime, isWithinWorkingHours } from '@/lib/calcom'
+import { isWithinWorkingHours } from '@/lib/calcom'
 
 // Working hours: 7 AM - 6 PM (last job at 5 PM for 1 hour)
 const timeSlots = [
@@ -77,7 +76,6 @@ export function BookingCalendar() {
     startDateTime.setHours(hours, minutes || 0, 0, 0)
     const startTimeISO = startDateTime.toISOString()
     
-    // Calculate end time based on booking type
     const isInspection = true
     const endTimeISO = '' // no end-time usage in emails/UI
     
@@ -117,7 +115,6 @@ export function BookingCalendar() {
         // Reset form
         setSelectedDate(undefined)
         setSelectedTime('')
-        setBookingType('inspection')
         setFormData({
           name: '',
           email: '',
@@ -155,24 +152,7 @@ export function BookingCalendar() {
     }
   }
 
-  const getEndTime = () => {
-    if (!selectedTime) return ''
-    const [time, period] = selectedTime.split(' ')
-    let [hours, minutes] = time.split(':').map(Number)
-    
-    if (period === 'PM' && hours !== 12) hours += 12
-    if (period === 'AM' && hours === 12) hours = 0
-    
-    const duration = bookingType === 'inspection' ? 60 : 10
-    const totalMinutes = hours * 60 + (minutes || 0) + duration
-    const endHours = Math.floor(totalMinutes / 60) % 24
-    const endMinutes = totalMinutes % 60
-    
-    const endPeriod = endHours >= 12 ? 'PM' : 'AM'
-    const displayHours = endHours > 12 ? endHours - 12 : endHours === 0 ? 12 : endHours
-    
-    return `${displayHours}:${endMinutes.toString().padStart(2, '0')} ${endPeriod}`
-  }
+  // no end time display
 
   return (
     <Card className="max-w-4xl mx-auto">
@@ -266,13 +246,7 @@ export function BookingCalendar() {
                   </SelectTrigger>
                   <SelectContent>
                     {timeSlots
-                      .filter(time => {
-                        // For jobs, don't allow times after 5 PM (ends at 6 PM)
-                        if (bookingType === 'inspection') {
-                          return !time.includes('5:') || time.includes('5:00')
-                        }
-                        return true
-                      })
+                      .filter((time) => !time.includes('5:') || time.includes('5:00'))
                       .map((time) => (
                         <SelectItem key={time} value={time}>
                           {time}
@@ -281,11 +255,7 @@ export function BookingCalendar() {
                     }
                   </SelectContent>
                 </Select>
-                {selectedTime && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    End time: {getEndTime()}
-                  </p>
-                )}
+                
               </div>
 
               <div>
@@ -378,10 +348,7 @@ export function BookingCalendar() {
               <li>Your booking is automatically scheduled in our calendar</li>
               <li>You'll receive an email confirmation within minutes</li>
               <li>Our team will review and confirm or suggest alternative times</li>
-              <li>{bookingType === 'inspection' 
-                ? 'Our specialist will arrive at the scheduled time for your free on-site job'
-                : 'We\'ll call you at the scheduled time for a quote discussion'}
-              </li>
+              <li>Our specialist will arrive at the scheduled time for your on-site job</li>
             </ol>
             {/* Working hours text removed per request */}
           </div>

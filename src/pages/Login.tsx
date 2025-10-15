@@ -31,7 +31,18 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem('aw_auth', data.token)
       }
-      navigate('/manage-booking')
+      const fallback = '/manage-booking'
+      let target = fallback
+      try {
+        const stored = sessionStorage.getItem('aw_redirect_to')
+        if (stored) {
+          target = stored
+          sessionStorage.removeItem('aw_redirect_to')
+        } else if ((window.history.state && (window.history.state as any).usr?.from)) {
+          target = (window.history.state as any).usr.from
+        }
+      } catch {}
+      navigate(target, { replace: true })
     } catch (e) {
       setError('Login failed')
     } finally {
