@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar as CalendarIcon, Clock, MapPin, Phone, Mail, User, Timer, CheckCircle2 } from 'lucide-react'
+import { Calendar as CalendarIcon, Clock, MapPin, Phone, Mail, User, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,7 +40,6 @@ const services = [
 export function BookingCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
-  const [bookingType, setBookingType] = useState<'inspection' | 'quote'>('inspection') // 'inspection' = job
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
@@ -79,7 +78,7 @@ export function BookingCalendar() {
     const startTimeISO = startDateTime.toISOString()
     
     // Calculate end time based on booking type
-    const isInspection = bookingType === 'inspection'
+    const isInspection = true
     const endTimeISO = '' // no end-time usage in emails/UI
     
     // Validate working hours
@@ -180,10 +179,10 @@ export function BookingCalendar() {
       <CardHeader className="p-4 sm:p-6">
         <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-          {bookingType === 'inspection' ? 'Book a Job' : 'Request a Quote'}
+          Book a Job
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Schedule a {bookingType === 'inspection' ? 'job' : 'quote'}. We'll contact you to confirm or reschedule at your convenience.
+          Schedule a job. We'll contact you to confirm or reschedule at your convenience.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
@@ -255,28 +254,6 @@ export function BookingCalendar() {
 
             {/* Time Slots & Form */}
             <div className="space-y-3 sm:space-y-4">
-              <div>
-                <Label className="mb-2 flex items-center gap-2 text-sm sm:text-base">
-                  <Timer className="h-4 w-4" />
-                  Booking Type *
-                </Label>
-                <RadioGroup value={bookingType} onValueChange={(value: any) => setBookingType(value)}>
-                  <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
-                    <RadioGroupItem value="inspection" id="inspection" />
-                    <Label htmlFor="inspection" className="flex-1 cursor-pointer">
-                      <div className="font-semibold">Job</div>
-                      <div className="text-xs text-muted-foreground">On-site visit</div>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-slate-50">
-                    <RadioGroupItem value="quote" id="quote" />
-                    <Label htmlFor="quote" className="flex-1 cursor-pointer">
-                      <div className="font-semibold">Quote</div>
-                      <div className="text-xs text-muted-foreground">Request a quote</div>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
 
               <div>
                 <Label className="mb-2 flex items-center gap-2 text-sm sm:text-base">

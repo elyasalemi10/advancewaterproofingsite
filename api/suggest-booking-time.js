@@ -30,7 +30,10 @@ export default async function handler(req, res) {
     // Send email via Resend
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
     const formattedRequested = new Date(booking.preferred_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
-    const formattedSuggested = new Date(date).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
+    const suggestedDate = new Date(date)
+    const [hStr, mStr] = String(time).split(':')
+    if (hStr) suggestedDate.setHours(parseInt(hStr, 10), parseInt(mStr || '0', 10), 0, 0)
+    const formattedSuggested = suggestedDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
 
     const emailHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -48,10 +51,13 @@ export default async function handler(req, res) {
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:0;"><div style="max-width:156px;"><img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" width="156" alt="Logo" style="display:block;width:100%;height:auto;border:0;"/></div></td></tr></table>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:10px;"><h1 style="margin:0;color:#3585c3;font-family:Arial,Helvetica,sans-serif;font-size:32px;font-weight:700;line-height:1.2;text-align:center;">Alternative Time Suggested</h1></td></tr></table>
           <div style="height:40px;line-height:40px;font-size:1px;">&nbsp;</div>
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:10px;"><div style="color:#101112;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:400;line-height:1.4;text-align:center;">
-            <p style="margin-bottom:16px;">Sorry we are not available at ${formattedRequested} but we are on ${formattedSuggested}.</p>
-            <p>Date: ${new Date(date).toLocaleDateString('en-AU', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>
-          </div></td></tr></table>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:10px;">
+            <div style="color:#101112;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:400;line-height:1.4;text-align:center;">
+              <p style="margin-bottom:16px;">Sorry we are not available at ${formattedRequested} but we are on ${formattedSuggested}.</p>
+              <p style="margin-bottom:16px;">Date: ${suggestedDate.toLocaleDateString('en-AU', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>
+              <p>Service: ${booking.service}<br/>Address: ${booking.address}</p>
+            </div>
+          </td></tr></table>
         </td></tr>
       </table>
     </td></tr>

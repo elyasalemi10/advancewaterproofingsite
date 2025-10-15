@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Calendar, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw, FileUp } from 'lucide-react'
+import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/supabase'
 import { cancelCalBooking } from '@/lib/calcom'
 import { Button } from '@/components/ui/button'
@@ -517,17 +519,34 @@ export default function ManageBookings() {
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Suggest a Different Time</CardTitle>
-              <CardDescription>Pick a date and time to propose to the customer</CardDescription>
+              <CardDescription>
+                Sorry we are not available at the requested time. Suggest an alternative below. The customer will receive a detailed email with the context and your suggested time.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <Label>Select Date</Label>
-                  <input type="date" className="mt-2 border rounded px-3 py-2 w-full" onChange={(e) => setSuggestDate(e.target.value ? new Date(e.target.value) : undefined)} />
+                  <Label className="mb-2 block">Select Date</Label>
+                  <Calendar
+                    mode="single"
+                    selected={suggestDate}
+                    onSelect={setSuggestDate}
+                    disabled={(date) => date < new Date() || date.getDay() === 0}
+                    className="rounded-md border"
+                  />
                 </div>
                 <div>
-                  <Label>Time</Label>
-                  <input type="time" className="mt-2 border rounded px-3 py-2 w-full" onChange={(e) => setSuggestTime(e.target.value)} />
+                  <Label className="mb-2 block">Preferred Start Time</Label>
+                  <Select value={suggestTime} onValueChange={setSuggestTime}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a time slot" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'].map((t) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="flex gap-3">
