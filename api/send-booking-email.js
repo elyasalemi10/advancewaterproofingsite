@@ -76,7 +76,12 @@ export default async function handler(req, res) {
       dbErrorMessage = dbError?.message || String(dbError);
     }
     
-    // Build message body
+    // If DB insert failed, fail the API call and do not send email
+    if (!dbSuccess) {
+      return res.status(500).json({ error: 'Failed to save booking', dbErrorMessage });
+    }
+
+    // Build message body (only after successful DB insert)
     const dateObj = new Date(date);
     const formattedDate = dateObj.toLocaleDateString('en-AU', { 
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 

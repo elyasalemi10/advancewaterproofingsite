@@ -11,6 +11,7 @@ import AcceptBooking from './pages/AcceptBooking'
 import ManageBookings from './pages/ManageBookings'
 import CancelBooking from './pages/CancelBooking'
 import Shortcuts from './pages/Shortcuts'
+import NotFound from './pages/NotFound'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
@@ -55,6 +56,7 @@ function AppShell() {
           <Route path="/services/roof-deck-podium-waterproofing" element={<RoofDeckPodiumWaterproofing />} />
           <Route path="/services/expansion-joint-sealing" element={<ExpansionJointSealing />} />
           <Route path="/services/maintenance-plans" element={<MaintenancePlans />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

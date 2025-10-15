@@ -128,8 +128,20 @@ export function BookingCalendar() {
           notes: '',
         })
       } else {
-        const errorData = await response.json()
-        console.error('API Error:', errorData)
+        let errorMessage = `HTTP ${response.status}`
+        const contentType = response.headers.get('content-type') || ''
+        try {
+          if (contentType.includes('application/json')) {
+            const errorData = await response.json()
+            errorMessage = JSON.stringify(errorData)
+          } else {
+            const text = await response.text()
+            errorMessage = text || errorMessage
+          }
+        } catch (parseErr) {
+          // leave errorMessage as-is
+        }
+        console.error('API Error sending booking:', errorMessage)
         
         toast.error(
           'There was an issue sending your booking. Please call us directly at 03 9001 7788.',
@@ -394,9 +406,7 @@ export function BookingCalendar() {
                 : 'We\'ll call you at the scheduled time for a quote discussion'}
               </li>
             </ol>
-            <p className="text-xs text-muted-foreground mt-3">
-              📅 Working hours: Monday - Friday, 7:00 AM - 6:00 PM
-            </p>
+            {/* Working hours text removed per request */}
           </div>
 
           <Button type="submit" className="w-full text-sm sm:text-base" size="lg" disabled={isSubmitting}>
