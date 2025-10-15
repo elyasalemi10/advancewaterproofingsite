@@ -12,6 +12,7 @@ import CancelBooking from './pages/CancelBooking'
 import Shortcuts from './pages/Shortcuts'
 import ManageQuote from './pages/ManageQuote'
 import NotFound from './pages/NotFound'
+import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
@@ -45,8 +46,8 @@ function AppShell() {
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/accept-booking" element={<AcceptBooking />} />
-          <Route path="/manage-booking" element={<ManageBookings />} />
-          <Route path="/manage-quotes" element={<ManageQuote />} />
+          <Route path="/manage-booking" element={<ProtectedRoute><ManageBookings /></ProtectedRoute>} />
+          <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/quoteid" element={<ManageQuote />} />
