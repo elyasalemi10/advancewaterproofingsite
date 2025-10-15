@@ -22,6 +22,10 @@ export default async function handler(req, res) {
 
     const safeMessage = (message && String(message).trim().length > 0) ? message : 'Empty';
 
+    if (!declined && (!pdfBase64 || !pdfFilename)) {
+      return res.status(400).json({ error: 'PDF attachment is required' })
+    }
+
     const emailHTML = declined ? `
 <!DOCTYPE html>
 <html lang="en">
@@ -241,11 +245,7 @@ export default async function handler(req, res) {
       to: ['info@advancewaterproofing.com.au', to],
       subject: declined ? 'Your Quote Status' : 'Your Quote from Advance Waterproofing',
       html: emailHTML,
-      attachments: !declined && pdfBase64 && pdfFilename ? [{
-        filename: pdfFilename,
-        content: pdfBase64,
-        disposition: 'attachment'
-      }] : undefined
+      attachments: !declined && pdfBase64 && pdfFilename ? [{ filename: pdfFilename, content: pdfBase64 }] : undefined
     };
 
     const emailResponse = await fetch('https://api.resend.com/emails', {
@@ -257,12 +257,15 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload)
     });
 
-    const result = await emailResponse.json();
+    let resultText = ''
+    try { resultText = await emailResponse.text() } catch {}
     if (!emailResponse.ok) {
-      return res.status(emailResponse.status).json({ error: 'Failed to send quote email', details: result });
+      let details
+      try { details = JSON.parse(resultText) } catch { details = resultText }
+      return res.status(emailResponse.status).json({ error: 'Failed to send quote email', details });
     }
 
-    return res.status(200).json({ success: true, result });
+    return res.status(200).json({ success: true });
   } catch (error) {
     console.error('send-quote-email error:', error);
     return res.status(500).json({ error: 'Internal server error', message: error.message });

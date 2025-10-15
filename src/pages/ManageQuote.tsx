@@ -113,10 +113,10 @@ export default function ManageQuote() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Manage Quote</h1>
-          <p className="text-slate-600">Send a quote PDF or decline with a note</p>
+          <h1 className="text-3xl font-bold text-slate-900">Send Quote</h1>
+          <p className="text-slate-600">Review the request and send a PDF quote or decline with a reason</p>
         </div>
 
         {success && (
@@ -135,10 +135,10 @@ export default function ManageQuote() {
         <Card>
           <CardHeader>
             <CardTitle>Quote Details</CardTitle>
-            <CardDescription>Review details from the request</CardDescription>
+            <CardDescription>Customer information and request context</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <Label>Customer Email</Label>
                 <Input value={quote?.email || ''} readOnly />
@@ -161,7 +161,7 @@ export default function ManageQuote() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="quoteFile">Upload Quote (PDF)</Label>
                 <input id="quoteFile" type="file" accept="application/pdf" onChange={(e) => setQuoteFile(e.target.files?.[0] || null)} className="mt-2 block w-full text-sm" />
@@ -172,7 +172,7 @@ export default function ManageQuote() {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 pt-2">
               <Button onClick={sendQuote} disabled={processing || !quoteFile} className="flex items-center">
                 {processing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileUp className="w-4 h-4 mr-2" />}
                 Send Quote
