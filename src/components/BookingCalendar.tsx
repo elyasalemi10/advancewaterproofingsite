@@ -80,10 +80,10 @@ export function BookingCalendar() {
     
     // Calculate end time based on booking type
     const isInspection = bookingType === 'inspection'
-    const endTimeISO = calculateEndTime(startTimeISO, isInspection)
+    const endTimeISO = '' // no end-time usage in emails/UI
     
     // Validate working hours
-    if (!isWithinWorkingHours(startTimeISO) || !isWithinWorkingHours(endTimeISO)) {
+    if (!isWithinWorkingHours(startTimeISO)) {
       toast.error('Please select a time within working hours (Mon-Fri, 7 AM - 6 PM)')
       return
     }

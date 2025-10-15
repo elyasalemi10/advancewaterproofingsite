@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Calendar, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw } from 'lucide-react'
+import { Calendar, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw, FileUp } from 'lucide-react'
 import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/supabase'
 import { cancelCalBooking } from '@/lib/calcom'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,8 @@ export default function ManageBookings() {
   const [success, setSuccess] = useState('')
   const [declineReason, setDeclineReason] = useState('')
   const [showDeclineForm, setShowDeclineForm] = useState(false)
+  const [quoteFile, setQuoteFile] = useState<File | null>(null)
+  const [quoteMessage, setQuoteMessage] = useState('')
 
   const bookingId = searchParams.get('id')
 
@@ -80,6 +82,51 @@ export default function ManageBookings() {
     } catch (err) {
       setError('Failed to confirm booking')
       console.error(err)
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const sendQuote = async () => {
+    if (!booking) return
+    if (!quoteFile) {
+      setError('Please select a PDF to send')
+      return
+    }
+    try {
+      setProcessing(true)
+      setError('')
+
+      const fileArrayBuffer = await quoteFile.arrayBuffer()
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(fileArrayBuffer)))
+
+      const response = await fetch('/api/send-quote-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: booking.email,
+          date: formatDate(booking.date),
+          time: formatTime(booking.preferred_time || booking.time),
+          address: booking.address,
+          service: booking.service,
+          job: booking.is_inspection ? 'Job' : 'Quote',
+          message: quoteMessage,
+          pdfBase64: base64,
+          pdfFilename: quoteFile.name
+        })
+      })
+
+      if (response.ok) {
+        setSuccess('Quote sent to customer ✅')
+        setQuoteFile(null)
+        setQuoteMessage('')
+      } else {
+        const errorData = await response.json()
+        setError(`Failed to send quote: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Failed to send quote')
     } finally {
       setProcessing(false)
     }
@@ -292,9 +339,7 @@ export default function ManageBookings() {
                     <Clock className="w-5 h-5 text-primary mt-0.5" />
                     <div>
                       <p className="text-sm text-slate-600">Preferred Time</p>
-                      <p className="font-semibold">
-                        {formatTime(booking.preferred_time)} - {formatTime(booking.end_time || '')}
-                      </p>
+                      <p className="font-semibold">{formatTime(booking.preferred_time)}</p>
                     </div>
                   </div>
                 )}
@@ -328,7 +373,7 @@ export default function ManageBookings() {
         </Card>
 
         {/* Action Buttons */}
-        {booking.status === 'pending' && (
+        {booking.status === 'pending' && booking.is_inspection && (
           <Card>
             <CardHeader>
               <CardTitle>Actions</CardTitle>
@@ -417,6 +462,48 @@ export default function ManageBookings() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Quote Actions */}
+        {booking.status === 'pending' && booking.is_inspection === false && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Quote Actions</CardTitle>
+              <CardDescription>Upload a PDF quote and send to customer</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4 items-end">
+                <div>
+                  <Label htmlFor="quoteFile">Quote PDF</Label>
+                  <input
+                    id="quoteFile"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => setQuoteFile(e.target.files?.[0] || null)}
+                    className="mt-2 block w-full text-sm"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="quoteMessage">Message (optional)</Label>
+                  <Textarea
+                    id="quoteMessage"
+                    placeholder="Add a short message for the customer"
+                    value={quoteMessage}
+                    onChange={(e) => setQuoteMessage(e.target.value)}
+                    className="mt-2"
+                    rows={4}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button onClick={sendQuote} disabled={processing || !quoteFile} className="flex items-center">
+                  {processing ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <FileUp className="w-4 h-4 mr-2" />}
+                  Send Quote
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}

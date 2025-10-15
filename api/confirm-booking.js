@@ -64,8 +64,8 @@ export default async function handler(req, res) {
           end: booking.end_time,
           // NOTE: We're NOT including customer email/phone - this is owner's calendar only
           responses: {
-            name: `Job: ${booking.name}`,
-            notes: `Customer: ${booking.name}\nPhone: ${booking.phone}\nEmail: ${booking.email}\nAddress: ${booking.address}\nService: ${booking.service}\nNotes: ${booking.notes || 'None'}\nBooking ID: ${booking.booking_id}`
+            name: `${booking.is_inspection ? 'Job' : 'Quote'}: ${booking.name}`,
+            notes: `Customer: ${booking.name}\nPhone: ${booking.phone}\nEmail: ${booking.email}\nAddress: ${booking.address}\nService: ${booking.service}\nNotes: ${booking.notes || 'None'}`
           },
           timeZone: 'Australia/Melbourne',
           language: 'en',
@@ -108,12 +108,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to update booking status' });
     }
 
-    // Send confirmation email to customer via Zoho Mail
+    // Send confirmation email to customer using provided template (no IDs, no end time)
     const dateObj = new Date(booking.date);
     const formattedDate = dateObj.toLocaleDateString('en-AU', { 
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
-    
     const formattedTime = new Date(booking.preferred_time).toLocaleTimeString('en-AU', {
       hour: '2-digit',
       minute: '2-digit',
@@ -122,104 +121,101 @@ export default async function handler(req, res) {
 
     const customerEmailHTML = `
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking Confirmed</title>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		* { box-sizing: border-box; }
+		body { margin: 0; padding: 0; }
+		a[x-apple-data-detectors] { color: inherit !important; text-decoration: inherit !important; }
+		#MessageViewBody a { color: inherit; text-decoration: none; }
+		p { line-height: inherit }
+		.desktop_hide, .desktop_hide table { mso-hide: all; display: none; max-height: 0px; overflow: hidden; }
+		.image_block img+div { display: none; }
+		sup, sub { font-size: 75%; line-height: 0; }
+		@media (max-width:540px) {
+			.desktop_hide table.icons-inner { display: inline-block !important; }
+			.icons-inner { text-align: center; }
+			.icons-inner td { margin: 0 auto; }
+			.mobile_hide { display: none; }
+			.row-content { width: 100% !important; }
+			.stack .column { width: 100%; display: block; }
+			.mobile_hide { min-height: 0; max-height: 0; max-width: 0; overflow: hidden; font-size: 0px; }
+			.desktop_hide, .desktop_hide table { display: table !important; max-height: none !important; }
+		}
+	</style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: Arial, sans-serif;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 0;">
-    <tr>
-      <td align="center">
-        <table width="600" border="0" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-          <tr>
-            <td align="center" style="padding: 40px 40px 20px 40px;">
-              <img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" width="180" alt="Advance Waterproofing" style="display: block; height: auto; border: 0;">
-            </td>
-          </tr>
-          
-          <tr>
-            <td style="padding: 0 40px 20px 40px; text-align: center;">
-              <h1 style="color: #3585c3; font-size: 28px; font-weight: 700; margin: 0;">✅ Booking Confirmed!</h1>
-            </td>
-          </tr>
 
-          <tr>
-            <td style="padding: 0 40px 30px 40px;">
-              <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 0 0 20px 0;">
-                Hi ${booking.name},
-              </p>
-              <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 0 0 20px 0;">
-                Great news! Your booking with Advance Waterproofing has been confirmed.
-              </p>
-              
-              <table width="100%" border="0" cellpadding="15" cellspacing="0" style="background-color: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-                <tr>
-                  <td>
-                    <table width="100%" border="0" cellpadding="6" cellspacing="0">
-                      <tr>
-                        <td style="font-weight: bold; color: #3585c3; padding: 8px 0;">📅 Date:</td>
-                        <td style="padding: 8px 0;">${formattedDate}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: bold; color: #3585c3; padding: 8px 0;">🕒 Time:</td>
-                        <td style="padding: 8px 0;">${formattedTime}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: bold; color: #3585c3; padding: 8px 0;">📍 Address:</td>
-                        <td style="padding: 8px 0;">${booking.address}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: bold; color: #3585c3; padding: 8px 0;">🔧 Service:</td>
-                        <td style="padding: 8px 0;">${booking.service}</td>
-                      </tr>
-                      <tr>
-                        <td style="font-weight: bold; color: #3585c3; padding: 8px 0;">🆔 Booking ID:</td>
-                        <td style="padding: 8px 0; font-family: monospace; color: #666;">${booking.booking_id}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 20px 0;">
-                Our specialist will arrive at your property at the scheduled time. Please ensure the area is accessible.
-              </p>
-
-              <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 20px 0;">
-                If you need to reschedule or have any questions, please don't hesitate to contact us:
-              </p>
-
-              <div style="background-color: #f0f8ff; padding: 20px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 0 0 10px 0; color: #333;">
-                  📞 <strong>Phone:</strong> <a href="tel:+61390017788" style="color: #3585c3; text-decoration: none;">03 9001 7788</a>
-                </p>
-                <p style="margin: 0; color: #333;">
-                  📧 <strong>Email:</strong> <a href="mailto:info@advancewaterproofing.com.au" style="color: #3585c3; text-decoration: none;">info@advancewaterproofing.com.au</a>
-                </p>
-              </div>
-
-              <p style="font-size: 16px; line-height: 1.6; color: #333; margin: 20px 0 0 0;">
-                Thank you for choosing Advance Waterproofing!
-              </p>
-            </td>
-          </tr>
-
-          <tr>
-            <td style="padding: 30px 40px; background-color: #f8f9fa; text-align: center; border-top: 1px solid #e0e0e0;">
-              <p style="font-size: 13px; color: #777; margin: 0;">
-                © ${new Date().getFullYear()} Advance Waterproofing & Caulking Solution. All rights reserved.
-              </p>
-              <p style="font-size: 12px; color: #999; margin: 10px 0 0 0;">
-                VBA Registered Building Practitioner | Certified Waterproofers | Fully Insured
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+<body class="body" style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
+		<tbody>
+			<tr>
+				<td>
+					<table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 520px; margin: 0 auto;" width="520">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
+													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+														<tr>
+															<td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
+																<div class="alignment" align="center">
+																	<div style="max-width: 156px;">
+																		<img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" style="display: block; height: auto; border: 0; width: 100%;" width="156" alt title height="auto">
+																	</div>
+																</div>
+														</td>
+													</tr>
+												</table>
+												<table class="heading_block block-2" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<h1 style="margin: 0; color: #3585c3; font-family: Arial, Helvetica, sans-serif; font-size: 38px; font-weight: 700; line-height: 1.2; text-align: center;">Booking Confirmed!</h1>
+														</td>
+													</tr>
+												</table>
+												<table class="divider_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<div class="alignment" align="center">
+																<table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+																	<tr>
+																		<td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 1px solid #dddddd;"><span>&#8202;</span></td>
+																	</tr>
+																</table>
+															</div>
+														</td>
+													</tr>
+												</table>
+												<div class="spacer_block block-4" style="height:60px;line-height:60px;font-size:1px;">&#8202;</div>
+												<table class="paragraph_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<div style="color:#101112;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;line-height:1.2;text-align:center;">
+																<p style="margin: 0; margin-bottom: 16px;">The job "${booking.is_inspection ? 'Job' : 'Quote'}" has been confirmed, see the details below</p>
+																<p style="margin: 0; margin-bottom: 16px;"><br>Date: ${formattedDate}<br>Time: ${formattedTime}<br>Address: ${booking.address}<br>Service: ${booking.service}</p>
+																<p style="margin: 0;">If you were not the one who did this action please contact us at support@advancewaterproofing.com.au<br><br></p>
+															</div>
+														</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>
+	</table>
 </body>
 </html>
     `.trim();
