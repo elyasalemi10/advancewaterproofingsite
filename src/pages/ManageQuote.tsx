@@ -47,8 +47,20 @@ export default function ManageQuote() {
       setProcessing(true)
       setError('')
 
-      const fileArrayBuffer = await quoteFile.arrayBuffer()
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(fileArrayBuffer)))
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onerror = () => reject(new Error('Failed to read file'))
+        reader.onload = () => {
+          try {
+            const res = String(reader.result || '')
+            const commaIdx = res.indexOf(',')
+            resolve(commaIdx >= 0 ? res.slice(commaIdx + 1) : res)
+          } catch (e) {
+            reject(e)
+          }
+        }
+        reader.readAsDataURL(quoteFile)
+      })
 
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
@@ -67,8 +79,9 @@ export default function ManageQuote() {
         setQuoteFile(null)
         setNote('')
       } else {
-        const err = await response.json()
-        setError(err.error || 'Failed to send quote')
+        let errText = ''
+        try { errText = await response.text() } catch {}
+        setError(errText || 'Failed to send quote')
       }
     } catch (e) {
       setError('Failed to send quote')
