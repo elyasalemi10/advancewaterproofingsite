@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getQuoteById, type Quote } from '@/lib/supabase'
+import type { Quote } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -21,11 +21,19 @@ export default function ManageQuote() {
   useEffect(() => {
     const load = async () => {
       if (!quoteId) return
-      const data = await getQuoteById(quoteId)
-      if (!data) {
-        setError('Quote not found')
+      try {
+        const resp = await fetch(`/api/get-quote?id=${encodeURIComponent(quoteId)}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` }
+        })
+        if (resp.ok) {
+          const data = await resp.json()
+          setQuote(data.quote)
+        } else {
+          setError('Quote not found')
+        }
+      } catch (e) {
+        setError('Failed to load quote')
       }
-      setQuote(data)
     }
     load()
   }, [quoteId])
@@ -140,16 +148,16 @@ export default function ManageQuote() {
                 <Input value={quote?.subject || 'Quote'} readOnly />
               </div>
               <div>
-                <Label>Date</Label>
-                <Input value={''} readOnly />
+                <Label>Name</Label>
+                <Input value={quote?.name || ''} readOnly />
               </div>
               <div>
-                <Label>Time</Label>
-                <Input value={''} readOnly />
+                <Label>Phone</Label>
+                <Input value={quote?.phone || ''} readOnly />
               </div>
               <div className="md:col-span-2">
-                <Label>Address</Label>
-                <Input value={''} readOnly />
+                <Label>Message</Label>
+                <Textarea value={quote?.message || ''} readOnly rows={4} className="mt-2" />
               </div>
             </div>
 

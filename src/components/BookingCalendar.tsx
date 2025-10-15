@@ -218,7 +218,7 @@ export function BookingCalendar() {
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 disabled={(date) => date < new Date() || date.getDay() === 0}
-                className="rounded-md border"
+                className="rounded-md border w-full"
               />
               {selectedDate && (
                 <p className="text-sm text-muted-foreground mt-2">
