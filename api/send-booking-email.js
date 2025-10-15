@@ -95,113 +95,201 @@ export default async function handler(req, res) {
     // Team notification email (no UUID/bookingId, no duration/end time)
     const emailHTML = `
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+
 <head>
-  <title></title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; }
-    a[x-apple-data-detectors] { color: inherit !important; text-decoration: inherit !important; }
-    #MessageViewBody a { color: inherit; text-decoration: none; }
-    p { line-height: inherit; }
-    .desktop_hide, .desktop_hide table { mso-hide: all; display: none; max-height: 0px; overflow: hidden; }
-    .image_block img+div { display: none; }
-    sup, sub { font-size: 75%; line-height: 0; }
-    @media (max-width:540px) {
-      .desktop_hide table.icons-inner { display: inline-block !important; }
-      .icons-inner { text-align: center; }
-      .icons-inner td { margin: 0 auto; }
-      .mobile_hide { display: none; }
-      .row-content { width: 100% !important; }
-      .stack .column { width: 100%; display: block; }
-      .mobile_hide { min-height: 0; max-height: 0; max-width: 0; overflow: hidden; font-size: 0px; }
-      .desktop_hide, .desktop_hide table { display: table !important; max-height: none !important; }
-    }
-  </style>
-  </head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		* {
+			box-sizing: border-box;
+		}
 
-  <body style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
-      <tbody>
-        <tr>
-          <td>
-            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-              <tbody>
-                <tr>
-                  <td>
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 520px; margin: 0 auto;">
-                      <tbody>
-                        <tr>
-                          <td width="100%" style="font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
-                            <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-                              <tr>
-                                <td style="width:100%;padding:0;">
-                                  <div align="center">
-                                    <div style="max-width: 156px;">
-                                      <img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" style="display: block; height: auto; border: 0; width: 100%;" width="156" alt="Logo" title="">
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            </table>
+		body {
+			margin: 0;
+			padding: 0;
+		}
 
-                            <table width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
-                              <tr>
-                                <td>
-                                  <h1 style="margin: 0; color: #3585c3; font-family: Arial, Helvetica, sans-serif; font-size: 38px; font-weight: 700; line-height: 1.2; text-align: center;">Booking Confirmed!</h1>
-                                </td>
-                              </tr>
-                            </table>
+		a[x-apple-data-detectors] {
+			color: inherit !important;
+			text-decoration: inherit !important;
+		}
 
-                            <table width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
-                              <tr>
-                                <td>
-                                  <div align="center">
-                                    <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
-                                      <tr>
-                                        <td style="font-size: 1px; line-height: 1px; border-top: 1px solid #dddddd;"><span>&#8202;</span></td>
-                                      </tr>
-                                    </table>
-                                  </div>
-                                </td>
-                              </tr>
-                            </table>
+		#MessageViewBody a {
+			color: inherit;
+			text-decoration: none;
+		}
 
-                            <div style="height:60px;line-height:60px;font-size:1px;">&#8202;</div>
+		p {
+			line-height: inherit;
+		}
 
-                            <table width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
-                              <tr>
-                                <td>
-                                  <div style="color:#101112;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;line-height:1.2;text-align:center;">
-                                    <p style="margin: 0; margin-bottom: 16px;">The job "${isInspection ? 'Job' : 'Quote'}" has been confirmed. See the details below:</p>
-                                    <p style="margin: 0; margin-bottom: 16px;">
-                                      Date: ${formattedDate}<br>
-                                      Time: ${formattedTime}<br>
-                                      Address: ${address}<br>
-                                      Service: ${service}
-                                    </p>
-                                    <p style="margin: 0;">If you were not the one who did this action, please contact us at <a href="mailto:support@advancewaterproofing.com.au">support@advancewaterproofing.com.au</a>.</p>
-                                  </div>
-                                </td>
-                              </tr>
-                            </table>
+		.desktop_hide,
+		.desktop_hide table {
+			mso-hide: all;
+			display: none;
+			max-height: 0px;
+			overflow: hidden;
+		}
 
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </body>
-  </html>
+		.image_block img+div {
+			display: none;
+		}
+
+		sup,
+		sub {
+			font-size: 75%;
+			line-height: 0;
+		}
+
+		@media (max-width:540px) {
+			.desktop_hide table.icons-inner {
+				display: inline-block !important;
+			}
+
+			.icons-inner {
+				text-align: center;
+			}
+
+			.icons-inner td {
+				margin: 0 auto;
+			}
+
+			.mobile_hide {
+				display: none;
+			}
+
+			.row-content {
+				width: 100% !important;
+			}
+
+			.stack .column {
+				width: 100%;
+				display: block;
+			}
+
+			.mobile_hide {
+				min-height: 0;
+				max-height: 0;
+				max-width: 0;
+				overflow: hidden;
+				font-size: 0px;
+			}
+
+			.desktop_hide,
+			.desktop_hide table {
+				display: table !important;
+				max-height: none !important;
+			}
+		}
+	</style>
+</head>
+
+<body class="body" style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
+		<tbody>
+			<tr>
+				<td>
+					<table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 520px; margin: 0 auto;" width="520">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top;">
+													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+														<tr>
+															<td class="pad" style="width:100%;padding-right:0px;padding-left:0px;">
+																<div class="alignment" align="center">
+																	<div style="max-width: 156px;">
+																		<img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" style="display: block; height: auto; border: 0; width: 100%;" width="156" alt title height="auto">
+																	</div>
+																</div>
+														</td>
+													</tr>
+												</table>
+
+												<table class="heading_block block-2" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<h1 style="margin: 0; color: #3585c3; font-family: Arial, Helvetica, sans-serif; font-size: 38px; font-weight: 700; line-height: 1.2; text-align: center;">
+																New Booking
+															</h1>
+														</td>
+													</tr>
+												</table>
+
+												<table class="divider_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<div class="alignment" align="center">
+																<table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+																	<tr>
+																		<td class="divider_inner" style="font-size: 1px; line-height: 1px; border-top: 1px solid #dddddd;"><span>&#8202;</span></td>
+																	</tr>
+																</table>
+															</div>
+														</td>
+													</tr>
+												</table>
+
+												<div class="spacer_block block-4" style="height:60px;line-height:60px;font-size:1px;">&#8202;</div>
+
+												<table class="paragraph_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<div style="color:#101112;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;line-height:1.2;text-align:center;">
+																<p style="margin: 0; margin-bottom: 16px;">
+																	A new job has been requested. Below are the job details for your reference:
+																</p>
+																<p style="margin: 0;">
+																	Customer Name: ${name}<br>
+																	Customer Email: ${email}<br>
+																	Customer Phone Number: ${phone}<br>
+																	Address: ${address}<br>
+																	Service: ${service}<br>
+																	Date: ${formattedDate}<br>
+																	Time: ${formattedTime}<br>
+																	Notes: ${notes || 'Empty'}<br><br>
+																	Please review the job information carefully and confirm your acceptance or denial by clicking the button below.
+																</p>
+															</div>
+														</td>
+													</tr>
+												</table>
+
+												<table class="button_block block-6" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+													<tr>
+														<td class="pad">
+															<div class="alignment" align="center">
+																<a href="${(req.headers.origin || '').replace(/\/$/, '')}/manage-booking?id=${bookingId}" target="_blank" style="color:#ffffff;text-decoration:none;">
+																	<span class="button" style="background-color: #2596be; border-radius: 4px; color: #ffffff; display: inline-block; font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 400; padding: 5px 20px; text-align: center;">
+																		Accept/Deny Booking
+																	</span>
+																</a>
+															</div>
+														</td>
+													</tr>
+												</table>
+
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- Beefree footer removed -->
+			</td>
+		</tr>
+	</tbody>
+	</table>
+</body>
+
+</html>
     `.trim();
 
     const response = await fetch('https://api.resend.com/emails', {

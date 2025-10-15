@@ -20,81 +20,116 @@ export default async function handler(req, res) {
     
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
     
+    const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
+    const manageUrl = `${baseUrl}/admin`;
     const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <title>New Quote Request</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New Contact Form</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 0; background-color: #ffffff; font-family: Arial, Helvetica, sans-serif; }
+    body { margin:0; padding:0; -webkit-text-size-adjust:none; text-size-adjust:none; background:#ffffff; }
     a[x-apple-data-detectors] { color: inherit !important; text-decoration: inherit !important; }
-    p { line-height: 1.5; margin: 0 0 10px; }
-    @media (max-width:540px) {
-      .row-content { width: 100% !important; }
-      .stack .column { width: 100%; display: block; }
+    #MessageViewBody a { color: inherit; text-decoration: none; }
+    p { line-height: inherit; margin: 0; }
+    @media (max-width:540px){
+      .row-content{ width:100% !important; }
+      .stack .column{ display:block; width:100% !important; }
     }
   </style>
-</head>
-
-<body style="background-color: #ffffff; margin: 0; padding: 0;">
-  <table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff;">
+  </head>
+  <body style="background:#ffffff; margin:0; padding:0;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;">
     <tr>
       <td align="center">
-        <table width="520" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin: 0 auto; color: #000000;">
+        <table role="presentation" class="row-content" width="520" cellpadding="0" cellspacing="0" style="width:520px; max-width:520px; color:#000; margin:0 auto;">
           <tr>
-            <td align="center" style="padding: 20px 0;">
-              <img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" width="156" alt="Logo" style="display: block; height: auto; border: 0;">
-            </td>
-          </tr>
+            <td class="column" style="padding:5px 0; text-align:left; vertical-align:top;">
 
-          <tr>
-            <td align="center" style="padding: 10px;">
-              <h1 style="color: #3585c3; font-size: 32px; font-weight: 700; margin: 0;">New Contact Form - ${subject || 'General Inquiry'}</h1>
-            </td>
-          </tr>
+              <!-- Logo -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:0;">
+                    <div style="max-width:156px;">
+                      <img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png"
+                           width="156" alt="Logo" style="display:block; width:100%; height:auto; border:0;">
+                    </div>
+                  </td>
+                </tr>
+              </table>
 
-          <tr>
-            <td align="center" style="padding: 10px;">
-              <hr style="border: none; border-top: 1px solid #dddddd; width: 100%;">
-            </td>
-          </tr>
+              <!-- Heading -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:10px;">
+                    <h1 style="margin:0; color:#3585c3; font-family:Arial, Helvetica, sans-serif; font-size:38px; font-weight:700; line-height:1.2; text-align:center;">
+                      New Quote Request
+                    </h1>
+                  </td>
+                </tr>
+              </table>
 
-          <tr>
-            <td style="padding: 20px; text-align: center; font-size: 16px; color: #101112;">
-              <p>A new contact form submission has been received. Below are the details:</p>
-              <p>
-                <strong>Name:</strong> ${name}<br>
-                <strong>Email:</strong> ${email}<br>
-                <strong>Phone Number:</strong> ${phone || 'Not provided'}<br>
-                <strong>Subject:</strong> ${subject || 'General Inquiry'}<br>
-                <strong>Message:</strong><br>
-                ${message}
-              </p>
-            </td>
-          </tr>
+              <!-- Divider -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:10px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="border-top:1px solid #dddddd; font-size:1px; line-height:1px;">&nbsp;</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
 
-          <tr>
-            <td align="center" style="padding: 20px;">
-              <a href="mailto:${email}" target="_blank" style="background-color: #2596be; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; display: inline-block; font-size: 16px;">
-                Reply to Customer
-              </a>
-            </td>
-          </tr>
+              <!-- Spacer -->
+              <div style="height:60px; line-height:60px; font-size:1px;">&nbsp;</div>
 
-          <tr>
-            <td align="center" style="font-size: 13px; color: #777777; padding: 20px 0;">
-              <p>If you have any questions, please contact us at <a href="mailto:support@advancewaterproofing.com.au" style="color: #2596be;">support@advancewaterproofing.com.au</a>.</p>
+              <!-- Body copy -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="padding:10px;">
+                    <div style="color:#101112; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:400; line-height:1.2; text-align:center;">
+                      <p style="margin-bottom:16px;">A quote has been requested. Below are the quote details for your reference:</p>
+                      <p style="margin-bottom:16px;">
+                        Customer Name: ${name}<br>
+                        Customer Email: ${email}<br>
+                        Customer Phone Number: ${phone || 'Not provided'}<br>
+                        Subject: ${subject || 'General Inquiry'}<br>
+                        Message: ${message}
+                      </p>
+                      <p>Please review the quote information carefully and manage by clicking the button below.</p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Button -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding:10px;">
+                    <a href="${manageUrl}" target="_blank" style="text-decoration:none; color:#ffffff;">
+                      <span style="display:inline-block; background-color:#2596be; color:#ffffff; font-family:Arial, Helvetica, sans-serif; font-size:16px; font-weight:400; padding:5px 20px; border-radius:4px; text-align:center;">
+                        Manage Quote
+                      </span>
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- (No Beefree footer) -->
+
             </td>
           </tr>
         </table>
       </td>
     </tr>
   </table>
-</body>
-</html>
+  </body>
+  </html>
     `.trim();
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -107,7 +142,7 @@ export default async function handler(req, res) {
         from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
         to: ['info@advancewaterproofing.com.au'],
         reply_to: email,
-        subject: `📧 Contact Form: ${subject || 'General Inquiry'} - ${name}`,
+        subject: `New Quote Request - ${name}`,
         html: emailHTML
       })
     });

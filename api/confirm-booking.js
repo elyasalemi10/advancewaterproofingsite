@@ -193,11 +193,11 @@ export default async function handler(req, res) {
 													</tr>
 												</table>
 												<div class="spacer_block block-4" style="height:60px;line-height:60px;font-size:1px;">&#8202;</div>
-												<table class="paragraph_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
+                            <table class="paragraph_block block-5" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation">
 													<tr>
 														<td class="pad">
 															<div style="color:#101112;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;line-height:1.2;text-align:center;">
-																<p style="margin: 0; margin-bottom: 16px;">The job "${booking.is_inspection ? 'Job' : 'Quote'}" has been confirmed, see the details below</p>
+                                    <p style="margin: 0; margin-bottom: 16px;">The job "${booking.service}" has been confirmed, see the details below</p>
 																<p style="margin: 0; margin-bottom: 16px;"><br>Date: ${formattedDate}<br>Time: ${formattedTime}<br>Address: ${booking.address}<br>Service: ${booking.service}</p>
 																<p style="margin: 0;">If you were not the one who did this action please contact us at support@advancewaterproofing.com.au<br><br></p>
 															</div>

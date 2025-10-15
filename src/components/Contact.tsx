@@ -199,7 +199,7 @@ export default function Contact() {
             Get In <span className="text-primary">Touch</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-            Ready to solve your waterproofing issues? Contact us for a free quote and expert consultation
+            Ready to solve your waterproofing issues? Contact us to request a quote and expert consultation
           </p>
         </div>
 
@@ -264,7 +264,7 @@ export default function Contact() {
           <div className="lg:col-span-2">
             <Card>
               <CardHeader className="p-4 sm:p-6">
-                <CardTitle className="text-xl sm:text-2xl">Request a Free Quote</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Request a Quote</CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6">
                 {isSubmitted ? (

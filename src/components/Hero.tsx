@@ -38,7 +38,7 @@ export default function Hero() {
               size="lg"
               className="bg-primary hover:bg-primary/90 text-white px-6 sm:px-8 text-base sm:text-lg group w-full sm:w-auto"
             >
-              Get a Free Quote
+              Request a Quote
               <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button 

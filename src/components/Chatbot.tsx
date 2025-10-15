@@ -69,7 +69,7 @@ const faqs: FAQ[] = [
     patterns: [/how\s*much/i, /what.*cost/i, /price|pricing/i],
     priority: 7,
     response:
-      "Our pricing varies based on project size and scope. RapidSeal™ typically costs about half of traditional methods. Contact us for a free quote tailored to your specific needs!",
+      "Our pricing varies based on project size and scope. RapidSeal™ typically costs about half of traditional methods. Contact us to request a quote tailored to your specific needs!",
   },
   
   // Timing questions
@@ -96,7 +96,7 @@ const faqs: FAQ[] = [
     patterns: [/book(ing)?/i, /schedule|appointment/i, /inspection/i],
     priority: 8,
     response:
-      "You can book a free inspection using our calendar booking system or by calling 03 9001 7788. We'll schedule a site visit at your convenience!",
+      "You can book an inspection using our calendar booking system or by calling 03 9001 7788. We'll schedule a site visit at your convenience!",
   },
   
   // Location and service area
@@ -150,7 +150,7 @@ const faqs: FAQ[] = [
     patterns: [/thanks|thank\s*you|cheers/i],
     priority: 5,
     response:
-      "You're welcome! If you have any more questions about our waterproofing services, feel free to ask. Or book a free inspection to get started!",
+      "You're welcome! If you have any more questions about our waterproofing services, feel free to ask. Or book an inspection to get started!",
   },
 ]
 

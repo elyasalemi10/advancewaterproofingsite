@@ -14,7 +14,7 @@ export default function CTA() {
               <Button variant="secondary" className="bg-white text-primary hover:bg-white/90 w-full sm:w-auto text-sm sm:text-base whitespace-nowrap">Call 03 9001 7788</Button>
             </a>
             <a href="/#contact" className="w-full sm:w-auto">
-              <Button className="bg-secondary hover:bg-secondary/90 text-white w-full sm:w-auto text-sm sm:text-base">Get My Free Quote</Button>
+              <Button className="bg-secondary hover:bg-secondary/90 text-white w-full sm:w-auto text-sm sm:text-base">Request a Quote</Button>
             </a>
           </div>
         </div>
