@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { requireAuth } from './_auth.js'
 
 // Initialize Supabase
 function getSupabaseClient() {
@@ -23,6 +24,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    const auth = requireAuth(req, res)
+    if (!auth) return
     const { bookingId, cancel } = req.body;
     
     if (!bookingId) {

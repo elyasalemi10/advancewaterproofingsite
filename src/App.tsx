@@ -12,6 +12,7 @@ import CancelBooking from './pages/CancelBooking'
 import Shortcuts from './pages/Shortcuts'
 import ManageQuote from './pages/ManageQuote'
 import NotFound from './pages/NotFound'
+import Login from './pages/Login'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
@@ -46,6 +47,7 @@ function AppShell() {
           <Route path="/accept-booking" element={<AcceptBooking />} />
           <Route path="/manage-booking" element={<ManageBookings />} />
           <Route path="/manage-quotes" element={<ManageQuote />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/quoteid" element={<ManageQuote />} />
           <Route path="/shortcuts" element={<Shortcuts />} />

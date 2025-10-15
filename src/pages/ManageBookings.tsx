@@ -72,6 +72,7 @@ export default function ManageBookings() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}`,
         },
         body: JSON.stringify({ bookingId: bookingId })
       })
@@ -107,7 +108,7 @@ export default function ManageBookings() {
 
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({
           to: booking.email,
           date: formatDate(booking.date),
@@ -148,7 +149,7 @@ export default function ManageBookings() {
 
       const response = await fetch('/api/suggest-booking-time', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({
           bookingId: booking.booking_id,
           date: suggestDate.toISOString(),

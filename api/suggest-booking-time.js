@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { requireAuth } from './_auth.js'
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co'
@@ -15,6 +16,8 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   try {
+    const auth = requireAuth(req, res)
+    if (!auth) return
     const { bookingId, date, time } = req.body
     if (!bookingId || !date || !time) return res.status(400).json({ error: 'Missing fields' })
 

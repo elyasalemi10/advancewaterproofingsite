@@ -1,3 +1,5 @@
+import { requireAuth } from './_auth.js'
+
 export default async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -13,6 +15,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    const auth = requireAuth(req, res)
+    if (!auth) return
     const { to, date, time, address, service, job, message, pdfBase64, pdfFilename, declined } = req.body;
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
 

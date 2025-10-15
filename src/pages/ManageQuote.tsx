@@ -44,7 +44,7 @@ export default function ManageQuote() {
 
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({
           to: quote?.email,
           date: '', time: '', address: '', service: quote?.subject || 'Quote', job: 'Quote',
@@ -80,7 +80,7 @@ export default function ManageQuote() {
 
       const response = await fetch('/api/send-quote-email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({
           to: quote?.email,
           date: '', time: '', address: '', service: quote?.subject || 'Quote', job: 'Quote',
