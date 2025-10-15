@@ -299,7 +299,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
         to: ['info@advancewaterproofing.com.au'],
         subject: `🔔 New ${isInspection ? 'Job' : 'Quote'} - ${name} - ${formattedDate}`,
         html: emailHTML

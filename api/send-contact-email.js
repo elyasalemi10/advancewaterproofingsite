@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
     
     const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
-    const manageUrl = `${baseUrl}/admin`;
+    const manageUrl = `${baseUrl}/quoteid`;
     const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">
@@ -139,7 +139,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Advance Waterproofing <info@advancewaterproofing.com.au>',
+        from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
         to: ['info@advancewaterproofing.com.au'],
         reply_to: email,
         subject: `New Quote Request - ${name}`,

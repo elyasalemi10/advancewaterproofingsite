@@ -6,11 +6,11 @@ import { Chatbot } from './components/Chatbot'
 import { StickyBookingBar } from './components/StickyBookingBar'
 import Home from './pages/Home'
 import Booking from './pages/Booking'
-import Admin from './pages/Admin'
 import AcceptBooking from './pages/AcceptBooking'
 import ManageBookings from './pages/ManageBookings'
 import CancelBooking from './pages/CancelBooking'
 import Shortcuts from './pages/Shortcuts'
+import ManageQuote from './pages/ManageQuote'
 import NotFound from './pages/NotFound'
 import RapidSeal from './pages/services/RapidSeal'
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
@@ -39,14 +39,14 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-background">
       <Header isScrolled={isScrolled} />
-      <main>
+      <main className="pt-20 sm:pt-24">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
-          <Route path="/admin" element={<Admin />} />
           <Route path="/accept-booking" element={<AcceptBooking />} />
           <Route path="/manage-booking" element={<ManageBookings />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
+          <Route path="/quoteid" element={<ManageQuote />} />
           <Route path="/shortcuts" element={<Shortcuts />} />
           <Route path="/services/rapidseal" element={<RapidSeal />} />
           <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />
