@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { getQuoteById, type Quote } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -14,13 +15,20 @@ export default function ManageQuote() {
   const [success, setSuccess] = useState('')
   const [quoteFile, setQuoteFile] = useState<File | null>(null)
   const [note, setNote] = useState('')
+  const [quote, setQuote] = useState<Quote | null>(null)
+  const quoteId = searchParams.get('id') || ''
 
-  const email = searchParams.get('email') || ''
-  const date = searchParams.get('date') || ''
-  const time = searchParams.get('time') || ''
-  const address = searchParams.get('address') || ''
-  const service = searchParams.get('service') || ''
-  const job = searchParams.get('job') || 'Quote'
+  useEffect(() => {
+    const load = async () => {
+      if (!quoteId) return
+      const data = await getQuoteById(quoteId)
+      if (!data) {
+        setError('Quote not found')
+      }
+      setQuote(data)
+    }
+    load()
+  }, [quoteId])
 
   const sendQuote = async () => {
     if (!quoteFile) {
@@ -38,8 +46,8 @@ export default function ManageQuote() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          to: email,
-          date, time, address, service, job,
+          to: quote?.email,
+          date: '', time: '', address: '', service: quote?.subject || 'Quote', job: 'Quote',
           message: note,
           pdfBase64: base64,
           pdfFilename: quoteFile.name
@@ -74,8 +82,8 @@ export default function ManageQuote() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          to: email,
-          date, time, address, service, job,
+          to: quote?.email,
+          date: '', time: '', address: '', service: quote?.subject || 'Quote', job: 'Quote',
           message: note,
           declined: true
         })
@@ -125,23 +133,23 @@ export default function ManageQuote() {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label>Customer Email</Label>
-                <Input value={email} readOnly />
+                <Input value={quote?.email || ''} readOnly />
               </div>
               <div>
                 <Label>Service</Label>
-                <Input value={service} readOnly />
+                <Input value={quote?.subject || 'Quote'} readOnly />
               </div>
               <div>
                 <Label>Date</Label>
-                <Input value={date} readOnly />
+                <Input value={''} readOnly />
               </div>
               <div>
                 <Label>Time</Label>
-                <Input value={time} readOnly />
+                <Input value={''} readOnly />
               </div>
               <div className="md:col-span-2">
                 <Label>Address</Label>
-                <Input value={address} readOnly />
+                <Input value={''} readOnly />
               </div>
             </div>
 

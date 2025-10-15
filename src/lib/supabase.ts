@@ -26,6 +26,34 @@ export interface Booking {
   end_time?: string
 }
 
+export interface Quote {
+  id: string
+  quote_id: string
+  name: string
+  email: string
+  phone?: string
+  subject: string
+  message: string
+  status: 'pending' | 'sent' | 'declined'
+  created_at: string
+  updated_at?: string
+}
+
+export async function getQuoteById(quoteId: string) {
+  const { data, error } = await supabase
+    .from('quotes')
+    .select('*')
+    .eq('quote_id', quoteId)
+    .single()
+
+  if (error) {
+    console.error('Error fetching quote:', error)
+    return null
+  }
+
+  return data as Quote
+}
+
 // Create a new booking
 export async function createBooking(data: Omit<Booking, 'id' | 'created_at' | 'updated_at' | 'status'>) {
   const { data: booking, error } = await supabase

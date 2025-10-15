@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { bookingId } = req.body;
+    const { bookingId, cancel } = req.body;
     
     if (!bookingId) {
       return res.status(400).json({ error: 'Booking ID required' });
@@ -44,11 +44,49 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    if (booking.status !== 'pending') {
-      return res.status(400).json({ error: 'Booking already processed' });
+    if (!cancel) {
+      if (booking.status !== 'pending') {
+        return res.status(400).json({ error: 'Booking already processed' });
+      }
     }
 
-    // Create Cal.com event for OWNER ONLY (no customer as attendee)
+    // If cancelling, skip Cal.com creation and set status cancelled
+    if (cancel) {
+      const { error: cancelErr } = await supabase
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('booking_id', bookingId)
+      if (cancelErr) {
+        return res.status(500).json({ error: 'Failed to cancel booking' })
+      }
+
+      const dateObj = new Date(booking.date);
+      const formattedDate = dateObj.toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const formattedTime = new Date(booking.preferred_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' });
+
+      const cancelHTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Booking Cancelled</title></head><body style="margin:0;padding:0;background:#ffffff;font-family:Arial,sans-serif;"><table width="100%" style="background:#ffffff"><tr><td align="center"><table width="520" style="margin:0 auto;color:#000"><tr><td align="center" style="padding:20px 0"><img src="https://1c0ffbcd95.imgdist.com/pub/bfra/mob408ok/to3/bcy/p08/logo-removebg-preview.png" width="156" alt="Logo" style="display:block;height:auto;border:0"></td></tr><tr><td align="center" style="padding:10px"><h1 style="color:#3585c3;font-size:32px;font-weight:700;margin:0;">Booking Cancelled</h1></td></tr><tr><td style="padding:20px;text-align:center;font-size:16px;color:#101112;">Your booking scheduled for ${formattedDate} at ${formattedTime} has been cancelled. If this is unexpected, please contact us.</td></tr></table></td></tr></table></body></html>`;
+
+      try {
+        const emailResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+          body: JSON.stringify({
+            from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
+            to: [booking.email],
+            subject: 'Your Booking Has Been Cancelled',
+            html: cancelHTML
+          })
+        })
+        if (!emailResponse.ok) {
+          const err = await emailResponse.json()
+          console.error('Cancel email failed', err)
+        }
+      } catch (e) {
+        console.error('Cancel email error', e)
+      }
+
+      return res.status(200).json({ success: true, message: 'Booking cancelled and customer notified' })
+    }
     let calBookingUid = null;
     
     try {

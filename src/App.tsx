@@ -45,6 +45,7 @@ function AppShell() {
           <Route path="/booking" element={<Booking />} />
           <Route path="/accept-booking" element={<AcceptBooking />} />
           <Route path="/manage-booking" element={<ManageBookings />} />
+          <Route path="/manage-quotes" element={<ManageQuote />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
           <Route path="/quoteid" element={<ManageQuote />} />
           <Route path="/shortcuts" element={<Shortcuts />} />

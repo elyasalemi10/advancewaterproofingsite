@@ -1,3 +1,15 @@
+import { createClient } from '@supabase/supabase-js'
+
+function getSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co'
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24'
+  return createClient(supabaseUrl, supabaseKey)
+}
+
+function generateQuoteId() {
+  return `QUOTE-${Date.now()}-${Math.random().toString(36).substring(2, 9).toUpperCase()}`
+}
+
 export default async function handler(req, res) {
   // CORS headers - must be set for all responses
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -17,11 +29,32 @@ export default async function handler(req, res) {
 
   try {
     const { name, email, phone, subject, message } = req.body;
+    const quoteId = generateQuoteId();
     
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
     
     const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au';
-    const manageUrl = `${baseUrl}/quoteid`;
+    const manageUrl = `${baseUrl}/manage-quotes?id=${quoteId}`;
+
+    // Store quote in DB (quotes table)
+    try {
+      const supabase = getSupabaseClient()
+      const { error } = await supabase.from('quotes').insert([{
+        quote_id: quoteId,
+        name,
+        email,
+        phone,
+        subject: subject || 'General Inquiry',
+        message,
+        status: 'pending'
+      }])
+      if (error) {
+        console.error('Supabase quotes insert error:', error)
+      }
+    } catch (dbErr) {
+      console.error('Quotes DB error:', dbErr)
+      // Continue even if DB fails
+    }
     const emailHTML = `
 <!DOCTYPE html>
 <html lang="en">

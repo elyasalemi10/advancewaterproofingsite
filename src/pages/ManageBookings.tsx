@@ -21,6 +21,9 @@ export default function ManageBookings() {
   const [showDeclineForm, setShowDeclineForm] = useState(false)
   const [quoteFile, setQuoteFile] = useState<File | null>(null)
   const [quoteMessage, setQuoteMessage] = useState('')
+  const [suggestOpen, setSuggestOpen] = useState(false)
+  const [suggestDate, setSuggestDate] = useState<Date | undefined>()
+  const [suggestTime, setSuggestTime] = useState('')
 
   const bookingId = searchParams.get('id')
 
@@ -127,6 +130,41 @@ export default function ManageBookings() {
     } catch (err) {
       console.error(err)
       setError('Failed to send quote')
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const sendSuggestion = async () => {
+    if (!booking || !suggestDate || !suggestTime) {
+      setError('Select a date and time to suggest')
+      return
+    }
+    try {
+      setProcessing(true)
+      setError('')
+
+      const response = await fetch('/api/suggest-booking-time', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookingId: booking.booking_id,
+          date: suggestDate.toISOString(),
+          time: suggestTime
+        })
+      })
+
+      if (response.ok) {
+        setSuccess('Suggested a new time to the customer ✅')
+        setSuggestOpen(false)
+        setSuggestDate(undefined)
+        setSuggestTime('')
+      } else {
+        const err = await response.json()
+        setError(err.error || 'Failed to suggest time')
+      }
+    } catch (e) {
+      setError('Failed to suggest time')
     } finally {
       setProcessing(false)
     }
@@ -395,6 +433,15 @@ export default function ManageBookings() {
                     Accept
                   </Button>
 
+                  <Button
+                    variant="outline"
+                    onClick={() => setSuggestOpen(true)}
+                    disabled={processing}
+                  >
+                    <Clock className="w-4 h-4 mr-2" />
+                    Suggest Other Time
+                  </Button>
+
                   <Button 
                     onClick={() => setShowDeclineForm(true)}
                     disabled={processing}
@@ -462,6 +509,31 @@ export default function ManageBookings() {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        )}
+
+        {suggestOpen && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Suggest a Different Time</CardTitle>
+              <CardDescription>Pick a date and time to propose to the customer</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Select Date</Label>
+                  <input type="date" className="mt-2 border rounded px-3 py-2 w-full" onChange={(e) => setSuggestDate(e.target.value ? new Date(e.target.value) : undefined)} />
+                </div>
+                <div>
+                  <Label>Time</Label>
+                  <input type="time" className="mt-2 border rounded px-3 py-2 w-full" onChange={(e) => setSuggestTime(e.target.value)} />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button onClick={sendSuggestion} disabled={processing || !suggestDate || !suggestTime}>Send Suggestion</Button>
+                <Button variant="ghost" onClick={() => setSuggestOpen(false)}>Cancel</Button>
+              </div>
             </CardContent>
           </Card>
         )}
