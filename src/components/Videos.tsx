@@ -96,9 +96,9 @@ export default function Videos() {
               className={`overflow-hidden group transition-all duration-300 ${video.isSlideshow ? '' : 'cursor-pointer hover:shadow-xl'}`}
               onClick={() => handleVideoClick(index)}
             >
-              <div className={`relative ${index === 0 ? 'h-80' : 'h-64'} overflow-hidden bg-black`}>
+              <div className={`relative ${index === 0 ? 'h-80' : 'h-64'} overflow-hidden`} style={{ backgroundColor: '#005082' }}>
                 {video.isSlideshow ? (
-                  <div className="relative w-full h-full bg-black">
+                  <div className="relative w-full h-full" style={{ backgroundColor: '#005082' }}>
                     {slideshowMedia[currentSlide].type === 'video' ? (
                       <video
                         key={currentSlide}
