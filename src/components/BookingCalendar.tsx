@@ -211,7 +211,7 @@ export function BookingCalendar() {
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="grid md:grid-cols-2 gap-4 sm:gap-6 items-start">
             {/* Calendar */}
-            <div className="w-full md:max-w-md relative z-0">
+            <div className="w-full md:w-[320px] flex-none relative z-0 overflow-hidden">
               <Label className="mb-2 block">Select Date</Label>
               <Calendar
                 mode="single"
@@ -233,7 +233,7 @@ export function BookingCalendar() {
             </div>
 
             {/* Time Slots & Form */}
-            <div className="space-y-3 sm:space-y-4 relative z-0">
+            <div className="space-y-3 sm:space-y-4 relative z-0 md:min-w-0">
 
               <div>
                 <Label className="mb-2 flex items-center gap-2 text-sm sm:text-base">
