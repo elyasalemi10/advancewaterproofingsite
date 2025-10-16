@@ -525,18 +525,18 @@ export default function ManageBookings() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
+              <div className="grid md:grid-cols-2 gap-6 items-start">
+                <div className="w-full md:w-[320px] flex-none relative z-0 overflow-hidden">
                   <Label className="mb-2 block">Select Date</Label>
                   <Calendar
                     mode="single"
                     selected={suggestDate}
                     onSelect={setSuggestDate}
                     disabled={(date) => date < new Date() || date.getDay() === 0}
-                    className="rounded-md border"
+                    className="rounded-md border w-full"
                   />
                 </div>
-                <div>
+                <div className="relative z-0 md:min-w-0">
                   <Label className="mb-2 block">Preferred Start Time</Label>
                   <Select value={suggestTime} onValueChange={setSuggestTime}>
                     <SelectTrigger>
