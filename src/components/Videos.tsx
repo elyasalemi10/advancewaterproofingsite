@@ -96,7 +96,7 @@ export default function Videos() {
               className={`overflow-hidden group transition-all duration-300 ${video.isSlideshow ? '' : 'cursor-pointer hover:shadow-xl'}`}
               onClick={() => handleVideoClick(index)}
             >
-              <div className="relative h-64 overflow-hidden">
+              <div className={`relative ${index === 0 ? 'h-80' : 'h-64'} overflow-hidden bg-black`}>
                 {video.isSlideshow ? (
                   <div className="relative w-full h-full bg-black">
                     {slideshowMedia[currentSlide].type === 'video' ? (
@@ -173,7 +173,7 @@ export default function Videos() {
                     {video.thumbnail.endsWith('.webm') ? (
                       <video
                         src={video.thumbnail}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className={`w-full h-full ${index === 0 ? 'object-contain' : 'object-cover'} group-hover:scale-105 transition-transform duration-300`}
                         muted
                         loop
                         autoPlay
@@ -183,7 +183,7 @@ export default function Videos() {
                       <img
                         src={video.thumbnail}
                         alt={video.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        className={`w-full h-full ${index === 0 ? 'object-contain' : 'object-cover'} group-hover:scale-105 transition-transform duration-300`}
                       />
                     )}
                     

@@ -37,9 +37,14 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
+    const offsetScroll = (el: HTMLElement) => {
+      const y = el.getBoundingClientRect().top + window.scrollY
+      const offset = 140 // account for opening hours bar + navbar height
+      window.scrollTo({ top: Math.max(y - offset, 0), behavior: 'smooth' })
+    }
     if (location.hash) {
       const el = document.getElementById(location.hash.replace('#', ''))
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      if (el) offsetScroll(el)
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
