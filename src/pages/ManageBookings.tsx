@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw } from 'lucide-react'
-import { Calendar } from '@/components/ui/calendar'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/supabase'
 import { cancelCalBooking } from '@/lib/calcom'
 import { Button } from '@/components/ui/button'
@@ -23,9 +21,7 @@ export default function ManageBookings() {
   const [showDeclineForm, setShowDeclineForm] = useState(false)
   const [quoteFile, setQuoteFile] = useState<File | null>(null)
   const [quoteMessage, setQuoteMessage] = useState('')
-  const [suggestOpen, setSuggestOpen] = useState(false)
-  const [suggestDate, setSuggestDate] = useState<Date | undefined>()
-  const [suggestTime, setSuggestTime] = useState('')
+  // Suggest time feature temporarily disabled
 
   const bookingId = searchParams.get('id')
 
@@ -138,40 +134,7 @@ export default function ManageBookings() {
     }
   }
 
-  const sendSuggestion = async () => {
-    if (!booking || !suggestDate || !suggestTime) {
-      setError('Select a date and time to suggest')
-      return
-    }
-    try {
-      setProcessing(true)
-      setError('')
-
-      const response = await fetch('/api/suggest-booking-time', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
-        body: JSON.stringify({
-          bookingId: booking.booking_id,
-          date: suggestDate.toISOString(),
-          time: suggestTime
-        })
-      })
-
-      if (response.ok) {
-        setSuccess('Suggested a new time to the customer ✅')
-        setSuggestOpen(false)
-        setSuggestDate(undefined)
-        setSuggestTime('')
-      } else {
-        const err = await response.json()
-        setError(err.error || 'Failed to suggest time')
-      }
-    } catch (e) {
-      setError('Failed to suggest time')
-    } finally {
-      setProcessing(false)
-    }
-  }
+  // sendSuggestion removed
 
   const handleDecline = async () => {
     if (!booking) return
@@ -368,7 +331,7 @@ export default function ManageBookings() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Calendar className="w-5 h-5 text-primary mt-0.5" />
+                  <CalendarIcon className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="text-sm text-slate-600">Date</p>
                     <p className="font-semibold">{formatDate(booking.date)}</p>
@@ -436,14 +399,7 @@ export default function ManageBookings() {
                     Accept
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => setSuggestOpen(true)}
-                    disabled={processing}
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Suggest Other Time
-                  </Button>
+                  {/* Suggest Other Time temporarily removed */}
 
                   <Button 
                     onClick={() => setShowDeclineForm(true)}
@@ -516,47 +472,7 @@ export default function ManageBookings() {
           </Card>
         )}
 
-        {suggestOpen && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Suggest a Different Time</CardTitle>
-              <CardDescription>
-                Sorry we are not available at the requested time. Suggest an alternative below. The customer will receive a detailed email with the context and your suggested time.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-6 items-start">
-                <div className="w-full md:w-[320px] flex-none relative z-0 overflow-hidden">
-                  <Label className="mb-2 block">Select Date</Label>
-                  <Calendar
-                    mode="single"
-                    selected={suggestDate}
-                    onSelect={setSuggestDate}
-                    disabled={(date) => date < new Date() || date.getDay() === 0}
-                    className="rounded-md border w-full"
-                  />
-                </div>
-                <div className="relative z-0 md:min-w-0">
-                  <Label className="mb-2 block">Preferred Start Time</Label>
-                  <Select value={suggestTime} onValueChange={setSuggestTime}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a time slot" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'].map((t) => (
-                        <SelectItem key={t} value={t}>{t}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <Button onClick={sendSuggestion} disabled={processing || !suggestDate || !suggestTime}>Send Suggestion</Button>
-                <Button variant="ghost" onClick={() => setSuggestOpen(false)}>Cancel</Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* Suggest Other Time UI removed */}
 
         {/* Quote Actions */}
         {booking.status === 'pending' && booking.is_inspection === false && (
