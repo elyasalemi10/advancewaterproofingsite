@@ -90,6 +90,9 @@
     letter-spacing: var(--tracking-normal);
   }
 
+  /* Global scroll padding to account for fixed header */
+  html { scroll-padding-top: 180px; }
+
   a, button { @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded; }
 }
 
