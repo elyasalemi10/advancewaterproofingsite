@@ -32,7 +32,7 @@ export default function Videos() {
     {
       title: 'The hidden cost of shortcuts',
       description: 'Why your choice of waterproofing applicator is a multi-million dollar decision',
-      thumbnail: '/videothumbnail.jpeg',
+      thumbnail: '/videothumbnail.png',
       videoFile: null,
       videoUrl: null,
       internalLink: '/shortcuts'
