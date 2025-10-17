@@ -119,7 +119,7 @@ export default function Header({ isScrolled }: HeaderProps) {
       </div>
 
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t animate-fade-in">
+        <div className="lg:hidden bg-white border-t animate-fade-in overflow-y-auto max-h-[80vh]">
           <div className="max-w-7xl mx-auto px-4 py-4 space-y-2">
             <Link 
               to="/" 

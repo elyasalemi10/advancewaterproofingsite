@@ -4,7 +4,6 @@ import { CheckCircle2, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-r
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import CTA from '@/components/CTA'
-import FAQ from '@/components/FAQ'
 import { setSEO } from '@/lib/seo'
 
 export default function CaulkingSolutions() {
@@ -241,7 +240,6 @@ export default function CaulkingSolutions() {
         </div>
       </section>
 
-      <FAQ />
       <CTA />
     </main>
   )

@@ -43,6 +43,15 @@ export default function RapidSeal() {
     { title: 'UV‑stable clear sealer', desc: 'Expert application for lasting protection' },
   ]
 
+  const benefits = [
+    'Completed in ~1/3 the time of traditional rebuilds',
+    'Typically ~1/2 the cost of tile replacement',
+    'Minimal disruption – no jackhammers, reduced noise and dust',
+    'Complies with AS 4654.2:2012, AS 3740:2021 and NCC',
+    'Warranty up to 15 years: subject to terms and conditions',
+    'Attractive, low‑maintenance finish'
+  ]
+
   return (
     <main className="pt-28">
       <section className="bg-muted/50 py-12">
