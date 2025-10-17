@@ -22,12 +22,6 @@ VITE_SUPABASE_URL=https://ryhrxlblccjjjowpubyv.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzMzAzNDcsImV4cCI6MjA3NTkwNjM0N30.CLnaJ7Lj6tq9voFaRDpTtGjE0RXPGB87TSCKkZbppSc
 ```
 
-### Vonage (Nexmo) SMS
-```
-VONAGE_API_KEY=e6e76726
-VONAGE_API_SECRET=$lllkalFp!Cu5Ciuowfhl
-```
-
 ### Public base URL
 ```
 PUBLIC_BASE_URL=https://advancewaterproofing.com.au
