@@ -237,7 +237,7 @@ export default async function handler(req, res) {
 
     const payload = {
       from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
-      to: ['info@advancewaterproofing.com.au', to],
+      to: [to],
       subject: declined ? 'Your Quote Status' : 'Your Quote from Advance Waterproofing',
       html: emailHTML,
       attachments: !declined && pdfBase64 && pdfFilename ? [{ filename: pdfFilename, content: pdfBase64 }] : undefined
