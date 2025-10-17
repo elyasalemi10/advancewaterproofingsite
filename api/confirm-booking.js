@@ -158,7 +158,12 @@ export default async function handler(req, res) {
         if (booking.phone) {
           const smsText = `Please confirm/reschedule your job at ${booking.address}\n\nWe’re booked at ${booking.address} on ${new Date(booking.date).toLocaleDateString('en-AU')}.\n\nPlease note a $150 (metro) or $250 (regional) fee applies if the site isn’t ready for work to begin.\n\nTap below to confirm or reschedule.\n\n${url}`
           try {
-            const body = new URLSearchParams({ from: 'AdvanceWP', text: smsText, to: booking.phone, api_key: process.env.VONAGE_API_KEY || '', api_secret: process.env.VONAGE_API_SECRET || '' })
+            let digits = String(booking.phone || '').replace(/\D/g, '')
+            if (digits.startsWith('0')) digits = '61' + digits.slice(1)
+            if (!digits.startsWith('61')) {
+              if (digits.length === 9 || digits.length === 10) digits = '61' + digits.replace(/^0/, '')
+            }
+            const body = new URLSearchParams({ from: 'AdvanceWP', text: smsText, to: digits, api_key: process.env.VONAGE_API_KEY || '', api_secret: process.env.VONAGE_API_SECRET || '' })
             const smsResp = await fetch('https://rest.nexmo.com/sms/json', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body })
             if (!smsResp.ok) console.error('Immediate SMS failed', await smsResp.text())
           } catch (e) { console.error('Immediate SMS error', e) }

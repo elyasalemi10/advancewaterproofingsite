@@ -223,7 +223,7 @@ export function BookingCalendar() {
                 mode="single"
                 selected={selectedDate}
                 onSelect={setSelectedDate}
-                disabled={(date) => date < new Date() || date.getDay() === 0}
+                disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
                 className="rounded-md border w-full"
               />
               {selectedDate && (

@@ -33,6 +33,20 @@ export default async function handler(req, res) {
         .update({ customer_confirmed_at: new Date().toISOString() })
         .eq('id', booking.id)
       if (updErr) return res.status(500).json({ error: 'Failed to confirm' })
+      // Notify admin
+      try {
+        const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+          body: JSON.stringify({
+            from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
+            to: ['info@advancewaterproofing.com.au'],
+            subject: `Customer Confirmed Booking - ${booking.name}`,
+            html: `<p>The customer has confirmed the booking for ${booking.address} on ${new Date(booking.date).toLocaleDateString('en-AU')}.</p>`
+          })
+        })
+      } catch {}
       return res.status(200).json({ success: true, status: 'confirmed' })
     }
 
@@ -40,9 +54,23 @@ export default async function handler(req, res) {
       if (!newTime) return res.status(400).json({ error: 'newTime required' })
       const { error: updErr } = await supabase
         .from('bookings')
-        .update({ customer_reschedule_requested_at: new Date().toISOString(), customer_rescheduled_time: newTime })
+        .update({ customer_reschedule_requested_at: new Date().toISOString(), customer_rescheduled_time: newTime, status: 'pending' })
         .eq('id', booking.id)
       if (updErr) return res.status(500).json({ error: 'Failed to reschedule' })
+      // Notify admin
+      try {
+        const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
+          body: JSON.stringify({
+            from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
+            to: ['info@advancewaterproofing.com.au'],
+            subject: `Reschedule Requested - ${booking.name}`,
+            html: `<p>The customer has requested a reschedule for ${booking.address}.<br/>New time requested: ${new Date(newTime).toLocaleString('en-AU')}<br/>Please review and accept/decline.</p>`
+          })
+        })
+      } catch {}
       return res.status(200).json({ success: true, status: 'rescheduled' })
     }
 

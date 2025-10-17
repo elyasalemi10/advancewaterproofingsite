@@ -507,7 +507,7 @@ export default function ManageBookings() {
                     mode="single"
                     selected={suggestDate}
                     onSelect={setSuggestDate}
-                    disabled={(date) => date < new Date() || date.getDay() === 0}
+                    disabled={(date) => date < new Date() || date.getDay() === 0 || date.getDay() === 6}
                     className="rounded-md border w-full"
                   />
                 </div>

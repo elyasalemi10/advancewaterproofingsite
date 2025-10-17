@@ -237,12 +237,23 @@ function buildReminderEmailHTML(booking, url) {
 
 async function sendVonageSMS({ to, text }) {
   try {
+    // Normalize AU mobile: accept formats like 0426 967 982, 0426967982, 61426967982
+    let digits = (to || '').replace(/\D/g, '')
+    if (digits.startsWith('0')) {
+      digits = '61' + digits.slice(1)
+    }
+    if (!digits.startsWith('61')) {
+      // assume AU if missing
+      if (digits.length === 9 || digits.length === 10) {
+        digits = '61' + digits.replace(/^0/, '')
+      }
+    }
     const apiKey = process.env.VONAGE_API_KEY
     const apiSecret = process.env.VONAGE_API_SECRET
     const body = new URLSearchParams({
       from: 'AdvanceWP',
       text,
-      to,
+      to: digits,
       api_key: apiKey || '',
       api_secret: apiSecret || ''
     })
