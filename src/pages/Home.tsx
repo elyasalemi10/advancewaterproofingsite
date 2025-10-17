@@ -40,7 +40,7 @@ export default function Home() {
     const offsetScroll = (el: HTMLElement) => {
       const y = el.getBoundingClientRect().top + window.scrollY
       // account for opening hours bar + navbar height
-      const offset = 120
+      const offset = 96
       window.scrollTo({ top: Math.max(y - offset, 0), behavior: 'smooth' })
     }
     if (location.hash) {

@@ -42,7 +42,7 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-background">
       <Header isScrolled={isScrolled} />
-      <main className="pt-20 sm:pt-24">
+      <main className="pt-16 sm:pt-20">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Booking />} />

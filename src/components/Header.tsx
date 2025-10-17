@@ -32,7 +32,7 @@ export default function Header({ isScrolled }: HeaderProps) {
       'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
       isScrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'
     )}>
-      <div className="bg-secondary text-white py-2">
+      <div className="bg-secondary text-white py-1">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 text-sm">
             <div className="flex items-center gap-4">
@@ -54,10 +54,10 @@ export default function Header({ isScrolled }: HeaderProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded">
-              <img src="/logo.webp" alt="Advance Waterproofing logo" className="h-12 md:h-14 w-auto" />
+              <img src="/logo.webp" alt="Advance Waterproofing logo" className="h-10 md:h-12 w-auto" />
               <span className="sr-only">Advance Waterproofing</span>
             </Link>
           </div>
