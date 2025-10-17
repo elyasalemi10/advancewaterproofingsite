@@ -31,25 +31,16 @@ export default function RapidSeal() {
   }, [])
 
   const steps = [
-    'Inspection & moisture mapping',
-    'Grinding & surface preparation',
-    'Detailing & crack repairs',
-    'Primer application',
-    'Self‑levelling compound (where required)',
-    'First waterproof membrane',
-    'Second waterproof membrane (cross‑rolled)',
-    'Epoxy body coat',
-    'Decorative flake finish (optional)',
-    'UV‑stable clear sealer'
-  ]
-
-  const benefits = [
-    'Completed in ~1/3 the time of traditional rebuilds',
-    'Typically ~1/2 the cost of tile replacement',
-    'Minimal disruption – no jackhammers, reduced noise and dust',
-    'Complies with AS 4654.2:2012, AS 3740:2021 and NCC',
-    'Warranty up to 15 years: subject to terms and conditions',
-    'Attractive, low‑maintenance finish'
+    { title: 'Inspection & moisture mapping', desc: 'Completed in ~1/3 the time of traditional rebuilds' },
+    { title: 'Grinding & surface preparation', desc: 'Typically ~1/2 the cost of tile replacement' },
+    { title: 'Detailing & crack repairs', desc: 'Minimal disruption – no jackhammers, reduced noise and dust' },
+    { title: 'Primer application' },
+    { title: 'Self‑levelling compound (where required)' },
+    { title: 'First waterproof membrane', desc: 'Attractive, low‑maintenance finish ' },
+    { title: 'Second waterproof membrane (Subjected to waterproofing method)', desc: 'Expert application for lasting protection. Warranty up to 15 years: subject to terms and conditions' },
+    { title: 'Epoxy body coat or other Advance protective caoating (APC)', desc: 'Expert application for lasting protection' },
+    { title: 'Decorative flake finish (optional)', desc: 'Expert application for lasting protection' },
+    { title: 'UV‑stable clear sealer', desc: 'Expert application for lasting protection' },
   ]
 
   return (
@@ -85,13 +76,10 @@ export default function RapidSeal() {
 
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-8">Our 10‑Step RapidSeal™ Process</h2>
+          <h2 className="text-3xl font-bold text-center mb-8">Our 10‑Step RapidSeal™️ Process</h2>
           <div className="max-w-3xl mx-auto">
-            <ProcessTimeline 
-              steps={steps.map((title, index) => ({
-                title,
-                description: benefits[index] || 'Expert application for lasting protection'
-              }))}
+            <ProcessTimeline
+              steps={steps.map(s => ({ title: s.title, description: s.desc }))}
             />
           </div>
         </div>
