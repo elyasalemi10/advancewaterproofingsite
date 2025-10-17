@@ -308,7 +308,7 @@ export default async function handler(req, res) {
           const emailResp = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
-            body: JSON.stringify({ from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>', to: [booking.email], subject: 'Action Required: Confirm/Reschedule', html: emailHTML })
+            body: JSON.stringify({ from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>', to: [booking.email], subject: `URGENT: ${booking.service}`, html: emailHTML })
           })
           if (!emailResp.ok) {
             console.error('Resend failed', await emailResp.text())

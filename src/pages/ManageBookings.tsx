@@ -63,10 +63,7 @@ export default function ManageBookings() {
       setProcessing(true)
       setError('')
       
-      // Call confirm-booking API which will:
-      // 1. Update status in Supabase
-      // 2. Create Cal.com event for owner (no customer attendees)
-      // 3. Send confirmation email to customer via Zoho
+      // Call confirm-booking API which will update status and notify customer
       const response = await fetch('/api/confirm-booking', {
         method: 'POST',
         headers: {
@@ -78,7 +75,7 @@ export default function ManageBookings() {
       
       if (response.ok) {
         const result = await response.json()
-        setSuccess('Booking confirmed! Calendar event created and customer notified. ✅')
+        setSuccess('Booking confirmed! Customer notified. ✅')
         setTimeout(() => loadBooking(), 1500)
       } else {
         const errorData = await response.json()

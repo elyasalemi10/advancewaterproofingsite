@@ -70,10 +70,7 @@ export default function Footer() {
         <div className="pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm text-center md:text-left">© {currentYear} Advance Waterproofing and Caulking Solution. All rights reserved.</p>
-            <div className="flex gap-6 text-sm">
-              <a href="#" className="text-white/60 hover:text-primary transition-colors">Privacy Policy</a>
-              <a href="#" className="text-white/60 hover:text-primary transition-colors">Terms of Service</a>
-            </div>
+            <div className="flex gap-6 text-sm"></div>
           </div>
           <p className="text-white/40 text-xs text-center mt-4">VBA Registered Building Practitioner | Certified Waterproofers | Fully Insured</p>
         </div>
