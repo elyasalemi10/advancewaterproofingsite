@@ -8,8 +8,8 @@ import { Card, CardContent } from '@/components/ui/card'
 export default function BalconyLeakDetection() {
   useEffect(() => {
     setSEO({
-      title: 'Balcony Leak Detection & Reporting | Thermal & Moisture Diagnostics',
-      description: 'Comprehensive balcony leak detection with moisture mapping and clear reporting to identify causes and scope repairs.',
+      title: 'Leak Detection & Reporting | Thermal & Moisture Diagnostics',
+      description: 'Comprehensive leak detection with moisture mapping and clear reporting to identify causes and scope repairs.',
     })
   }, [])
 
@@ -35,7 +35,7 @@ export default function BalconyLeakDetection() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-secondary">Balcony Leak Detection & Reporting</h1>
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-secondary">Leak Detection & Reporting</h1>
               <p className="text-lg text-muted-foreground mt-4 leading-relaxed">
                 Don't guess where the water is coming from. Our diagnostic services use advanced moisture detection and thermal imaging to pinpoint the exact source of balcony leaks, saving you time and money on targeted repairs.
               </p>
@@ -48,7 +48,7 @@ export default function BalconyLeakDetection() {
             <div className="relative">
               <img
                 src="/balcony-leak-detected.webp"
-                alt="Thermal imaging of balcony leak detection"
+                alt="Thermal imaging of leak detection"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
               <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg border-2 border-primary">

@@ -18,7 +18,11 @@ export default function Videos() {
     { type: 'video', src: '/slideshow/leaking.webm' }
   ]
 
-  // Removed auto-advance - manual navigation only
+  // Faster slideshow advance
+  useEffect(() => {
+    const id = setInterval(() => setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length), 2500)
+    return () => clearInterval(id)
+  }, [slideshowMedia.length])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)
