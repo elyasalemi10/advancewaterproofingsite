@@ -25,9 +25,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
-  -- Cal.com integration columns
-  cal_booking_uid TEXT,
-  cal_event_type_id INTEGER,
+  -- Booking metadata
   is_inspection BOOLEAN DEFAULT true,
   preferred_time TEXT,
   end_time TEXT
@@ -35,13 +33,10 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Add indexes for faster queries
 CREATE INDEX IF NOT EXISTS idx_bookings_booking_id ON bookings(booking_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_cal_uid ON bookings(cal_booking_uid);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
 
 -- If the table already exists, just add the missing columns:
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_booking_uid TEXT;
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_event_type_id INTEGER;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_inspection BOOLEAN DEFAULT true;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS preferred_time TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS end_time TEXT;
@@ -110,8 +105,6 @@ You should see these columns:
 - status (text)
 - created_at (timestamp with time zone)
 - updated_at (timestamp with time zone)
-- cal_booking_uid (text)
-- cal_event_type_id (integer)
 - is_inspection (boolean)
 - preferred_time (text)
 - end_time (text)
@@ -122,7 +115,7 @@ You should see these columns:
 -- Test insert (should work)
 INSERT INTO bookings (
   booking_id, name, email, phone, address, service, date, time, notes, 
-  status, cal_booking_uid, cal_event_type_id, is_inspection, preferred_time, end_time
+  status, is_inspection, preferred_time, end_time
 ) VALUES (
   'TEST-123',
   'Test Customer',
@@ -134,8 +127,6 @@ INSERT INTO bookings (
   '9:00 AM',
   'Test notes',
   'pending',
-  NULL,
-  3637831,
   true,
   '2025-10-15T09:00:00+11:00',
   '2025-10-15T10:00:00+11:00'
@@ -150,22 +141,12 @@ DELETE FROM bookings WHERE booking_id = 'TEST-123';
 
 ## Why This Was Failing
 
-The Supabase insert in the API was trying to insert into columns that didn't exist:
-- `cal_booking_uid`
-- `cal_event_type_id`
-- `is_inspection`
-- `preferred_time`
-- `end_time`
-
-Without these columns, the insert would fail silently (logged to console but not visible to user).
+The Supabase insert in the API was trying to insert into columns that didn't exist. Ensure the columns above are present.
 
 ## After Running the SQL
 
 1. ✅ The table will have all required columns
 2. ✅ Bookings will be stored successfully
-3. ✅ Cal.com integration will work
-4. ✅ Admin can manage bookings from email links
-5. ✅ All data is persisted properly
 
 ## Redeploy
 

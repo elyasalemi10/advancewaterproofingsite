@@ -6,6 +6,7 @@
 CREATE TABLE IF NOT EXISTS bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   booking_id TEXT UNIQUE NOT NULL,
+  customer_access_token TEXT UNIQUE,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT NOT NULL,
@@ -17,25 +18,31 @@ CREATE TABLE IF NOT EXISTS bookings (
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'cancelled')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  cal_booking_uid TEXT,
-  cal_event_type_id INTEGER,
   is_inspection BOOLEAN DEFAULT true,
   preferred_time TEXT,
-  end_time TEXT
+  end_time TEXT,
+  pre_job_reminder_sent_at TIMESTAMP WITH TIME ZONE,
+  customer_confirmed_at TIMESTAMP WITH TIME ZONE,
+  customer_reschedule_requested_at TIMESTAMP WITH TIME ZONE,
+  customer_rescheduled_time TEXT
 );
 
 -- Add indexes for faster queries
 CREATE INDEX IF NOT EXISTS idx_bookings_booking_id ON bookings(booking_id);
-CREATE INDEX IF NOT EXISTS idx_bookings_cal_uid ON bookings(cal_booking_uid);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bookings_token ON bookings(customer_access_token);
+CREATE INDEX IF NOT EXISTS idx_bookings_preferred_time ON bookings(preferred_time);
 
 -- If the table already exists, add missing columns
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_booking_uid TEXT;
-ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cal_event_type_id INTEGER;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_inspection BOOLEAN DEFAULT true;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS preferred_time TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS end_time TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_access_token TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pre_job_reminder_sent_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_confirmed_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_reschedule_requested_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_rescheduled_time TEXT;
 
 -- Create trigger function for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()

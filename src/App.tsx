@@ -7,6 +7,7 @@ import { StickyBookingBar } from './components/StickyBookingBar'
 import Home from './pages/Home'
 import Booking from './pages/Booking'
 import AcceptBooking from './pages/AcceptBooking'
+import CustomerBooking from './pages/CustomerBooking'
 import ManageBookings from './pages/ManageBookings'
 import CancelBooking from './pages/CancelBooking'
 import Shortcuts from './pages/Shortcuts'
@@ -46,6 +47,7 @@ function AppShell() {
           <Route path="/" element={<Home />} />
           <Route path="/booking" element={<Booking />} />
           <Route path="/accept-booking" element={<AcceptBooking />} />
+          <Route path="/customer/:token" element={<CustomerBooking />} />
           <Route path="/manage-booking" element={<ProtectedRoute><ManageBookings /></ProtectedRoute>} />
           <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />

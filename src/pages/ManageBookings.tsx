@@ -4,7 +4,6 @@ import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle
 import { Calendar } from '@/components/ui/calendar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/supabase'
-import { cancelCalBooking } from '@/lib/calcom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -179,16 +178,6 @@ export default function ManageBookings() {
     try {
       setProcessing(true)
       setError('')
-      
-      // Cancel Cal.com booking if exists
-      if (booking.cal_booking_uid) {
-        try {
-          await cancelCalBooking(booking.cal_booking_uid, declineReason || 'Declined by admin')
-        } catch (calError) {
-          console.error('Failed to cancel Cal.com booking:', calError)
-          // Continue even if Cal.com cancellation fails
-        }
-      }
       
       // Update status in Supabase
       const updated = await updateBookingStatus(bookingId!, 'cancelled')
@@ -395,21 +384,7 @@ export default function ManageBookings() {
               </div>
             )}
 
-            {/* Cal.com Info */}
-            {booking.cal_booking_uid && (
-              <div className="pt-4 border-t">
-                <p className="text-sm text-slate-600 mb-2">Cal.com Booking</p>
-                <p className="text-xs font-mono text-slate-500">{booking.cal_booking_uid}</p>
-                <a 
-                  href="https://app.cal.com/bookings/upcoming" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline"
-                >
-                  View in Cal.com Dashboard →
-                </a>
-              </div>
-            )}
+            
           </CardContent>
         </Card>
 

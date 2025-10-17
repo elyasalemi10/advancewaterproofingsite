@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import crypto from 'crypto'
 
 // Initialize Supabase (will be created fresh in each request)
 function getSupabaseClient() {
@@ -32,13 +33,10 @@ export default async function handler(req, res) {
     const { name, email, phone, address, service, date, time, notes, isInspection, startTime, endTime } = req.body;
     
     const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
-    const CAL_API_KEY = process.env.CAL_API_KEY || 'cal_live_30cc62be183a46889753a4e6b4683971';
     const bookingId = generateBookingId();
+  const customerAccessToken = crypto.randomBytes(24).toString('hex');
     
-    // Determine event type (Job = 1 hour, Quote = 10 min)
-    const eventTypeId = isInspection ? 3637831 : 3629145;
-    
-    // Store in Supabase - Cal.com booking will be created AFTER owner confirms
+    // Store in Supabase
     const supabase = getSupabaseClient();
     let dbSuccess = false;
     let dbErrorMessage = null;
@@ -46,6 +44,7 @@ export default async function handler(req, res) {
     try {
       const { data, error } = await supabase.from('bookings').insert([{
         booking_id: bookingId,
+        customer_access_token: customerAccessToken,
         name, 
         email, 
         phone, 
@@ -55,8 +54,6 @@ export default async function handler(req, res) {
         time, 
         notes,
         status: 'pending',
-        cal_booking_uid: null, // Will be set when owner confirms
-        cal_event_type_id: eventTypeId,
         is_inspection: isInspection,
         preferred_time: startTime,
         end_time: endTime
@@ -314,7 +311,7 @@ export default async function handler(req, res) {
       return res.status(response.status || 500).json({ error: 'Failed to send email', details: data, dbSuccess, dbErrorMessage });
     }
 
-    return res.status(200).json({ success: true, bookingId, dbSuccess, dbErrorMessage, data });
+    return res.status(200).json({ success: true, bookingId, customerAccessToken, dbSuccess, dbErrorMessage, data });
 
   } catch (error) {
     console.error('Function error:', error);

@@ -5,6 +5,12 @@
       "maxDuration": 10
     }
   },
+  "crons": [
+    {
+      "path": "/api/reminder-cron",
+      "schedule": "0 5 * * *" 
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
