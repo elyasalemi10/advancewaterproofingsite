@@ -211,13 +211,8 @@ export default async function handler(req, res) {
 													<tr>
 														<td>
 															<div style="color:#101112;font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:400;line-height:1.2;text-align:center;">
-																<p style="margin: 0; margin-bottom: 16px;">Please find your quote attached. See the details below:</p>
-																<p style="margin: 0; margin-bottom: 16px;">
-																	Date: ${date}<br>
-																	Time: ${time}<br>
-																	Address: ${address}<br>
-																	Service: ${service}
-																</p>
+                                            <p style="margin: 0; margin-bottom: 16px;">Please find your quote attached.</p>
+                                            <p style="margin: 0; margin-bottom: 16px;"></p>
 																<p style="margin: 0;">Message: ${safeMessage}</p>
 														</div>
 													</td>
