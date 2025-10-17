@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import toast from 'react-hot-toast'
-import { isWithinWorkingHours } from '@/lib/calcom'
 
 // Working hours: 7 AM - 6 PM (last job at 5 PM for 1 hour)
 const timeSlots = [
@@ -37,6 +36,13 @@ const services = [
 ]
 
 export function BookingCalendar() {
+  function isWithinWorkingHours(datetime: string): boolean {
+    const date = new Date(datetime)
+    const day = date.getDay()
+    const hour = date.getHours()
+    if (day === 0 || day === 6) return false
+    return hour >= 7 && hour < 18
+  }
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
