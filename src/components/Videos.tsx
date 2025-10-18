@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Card, CardContent } from './ui/card'
 
 export default function Videos() {
   const [playingVideo, setPlayingVideo] = useState<number | null>(null)
-  const [currentSlide, setCurrentSlide] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(8)
   const navigate = useNavigate()
 
   const slideshowMedia = [
@@ -15,14 +15,11 @@ export default function Videos() {
     { type: 'image', src: '/slideshow/defect4.jpeg' },
     { type: 'image', src: '/slideshow/defect5.jpeg' },
     { type: 'image', src: '/slideshow/defect6.jpeg' },
+    { type: 'image', src: '/slideshow/defect7.jpeg' },
+    { type: 'image', src: '/slideshow/defect8.jpeg' },
+    { type: 'image', src: '/slideshow/defect9.jpeg' },
     { type: 'video', src: '/slideshow/leaking.webm' }
   ]
-
-  // Faster slideshow advance
-  useEffect(() => {
-    const id = setInterval(() => setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length), 2500)
-    return () => clearInterval(id)
-  }, [slideshowMedia.length])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slideshowMedia.length)
@@ -44,7 +41,7 @@ export default function Videos() {
     {
       title: 'What happens when you choose a cheap applicator',
       description: 'See the real consequences of cutting corners on waterproofing expertise',
-      thumbnail: '/thumbnailleak.png',
+      thumbnail: '/slideshow/defect9.jpeg',
       videoFile: null,
       videoUrl: null,
       internalLink: null,
@@ -108,7 +105,7 @@ export default function Videos() {
                         key={currentSlide}
                         src={slideshowMedia[currentSlide].src}
                         className="w-full h-full object-cover"
-                        autoPlay
+                        // autoplay disabled
                         muted
                         loop
                         playsInline
