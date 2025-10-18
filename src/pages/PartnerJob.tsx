@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle } from 'lucide-react'
+import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 export default function PartnerJob() {
   const { id } = useParams()
@@ -142,6 +143,9 @@ export default function PartnerJob() {
             )}
           </CardContent>
         </Card>
+        <div className="mt-6 text-center">
+          <Button variant="ghost" onClick={() => (window.location.href = '/partners')}>← Back to My Jobs</Button>
+        </div>
       </div>
     </div>
   )

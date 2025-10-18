@@ -29,6 +29,7 @@ import BathroomShowerWaterproofing from './pages/services/BathroomShowerWaterpro
 import PlanterBoxWaterproofing from './pages/services/PlanterBoxWaterproofing'
 import RoofDeckPodiumWaterproofing from './pages/services/RoofDeckPodiumWaterproofing'
 import MaintenancePlans from './pages/services/MaintenancePlans'
+import GCalCallback from './pages/GCalCallback'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -77,6 +78,7 @@ function AppShell() {
           <Route path="/services/roof-deck-podium-waterproofing" element={<RoofDeckPodiumWaterproofing />} />
           
           <Route path="/services/maintenance-plans" element={<MaintenancePlans />} />
+          <Route path="/gcal/callback" element={<GCalCallback />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
