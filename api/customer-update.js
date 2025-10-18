@@ -33,17 +33,33 @@ export default async function handler(req, res) {
         .update({ customer_confirmed_at: new Date().toISOString() })
         .eq('id', booking.id)
       if (updErr) return res.status(500).json({ error: 'Failed to confirm' })
-      // Notify admin
+      // Notify admin (styled email)
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+        const formattedDate = new Date(booking.date).toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+        const formattedTime = booking.preferred_time ? new Date(booking.preferred_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' }) : booking.time
+        const adminHTML = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}</style></head><body>
+  <table role="presentation" width="100%" style="background:#fff"><tr><td>
+    <table role="presentation" align="center" width="600" style="margin:0 auto;color:#000">
+      <tr><td style="text-align:center;padding:16px 0"><img src="https://683f2eb45c.imgdist.com/pub/bfra/xmaci52l/e90/92q/kmw/logo-removebg-preview.png" width="156" alt="Logo"/></td></tr>
+      <tr><td style="padding:10px 16px;text-align:center"><h1 style="margin:0;color:#3585c3;font-size:32px;font-weight:700">Customer Confirmed</h1></td></tr>
+      <tr><td style="padding:10px 16px"><hr style="border:none;border-top:1px solid #ddd"/></td></tr>
+      <tr><td style="padding:10px 16px;text-align:center;font-size:16px;color:#101112">
+        <p style="margin:0 0 12px">The customer has confirmed the booking.</p>
+        <p style="margin:0 0 12px">Date: ${formattedDate}<br>Time: ${formattedTime}<br>Address: ${booking.address}<br>Service: ${booking.service}</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
           body: JSON.stringify({
             from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
             to: ['info@advancewaterproofing.com.au'],
-            subject: `Customer Confirmed Booking - ${booking.name}`,
-            html: `<p>The customer has confirmed the booking for ${booking.address} on ${new Date(booking.date).toLocaleDateString('en-AU')}.</p>`
+            subject: `Customer Confirmed - ${booking.name}`,
+            html: adminHTML
           })
         })
       } catch {}
@@ -57,9 +73,25 @@ export default async function handler(req, res) {
         .update({ customer_reschedule_requested_at: new Date().toISOString(), customer_rescheduled_time: newTime, status: 'pending' })
         .eq('id', booking.id)
       if (updErr) return res.status(500).json({ error: 'Failed to reschedule' })
-      // Notify admin
+      // Notify admin (styled email)
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+        const formattedNew = new Date(newTime).toLocaleString('en-AU')
+        const adminHTML = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}</style></head><body>
+  <table role="presentation" width="100%" style="background:#fff"><tr><td>
+    <table role="presentation" align="center" width="600" style="margin:0 auto;color:#000">
+      <tr><td style="text-align:center;padding:16px 0"><img src="https://683f2eb45c.imgdist.com/pub/bfra/xmaci52l/e90/92q/kmw/logo-removebg-preview.png" width="156" alt="Logo"/></td></tr>
+      <tr><td style="padding:10px 16px;text-align:center"><h1 style="margin:0;color:#3585c3;font-size:32px;font-weight:700">Reschedule Requested</h1></td></tr>
+      <tr><td style="padding:10px 16px"><hr style="border:none;border-top:1px solid #ddd"/></td></tr>
+      <tr><td style="padding:10px 16px;text-align:center;font-size:16px;color:#101112">
+        <p style="margin:0 0 12px">The customer has requested a new time.</p>
+        <p style="margin:0 0 12px">New requested time: ${formattedNew}<br>Address: ${booking.address}<br>Service: ${booking.service}</p>
+        <p style="margin:0 0 12px">Please review in Manage Booking and accept or decline.</p>
+      </td></tr>
+    </table>
+  </td></tr></table>
+</body></html>`
         await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
@@ -67,7 +99,7 @@ export default async function handler(req, res) {
             from: 'Advance Waterproofing <jobs@advancewaterproofing.com.au>',
             to: ['info@advancewaterproofing.com.au'],
             subject: `Reschedule Requested - ${booking.name}`,
-            html: `<p>The customer has requested a reschedule for ${booking.address}.<br/>New time requested: ${new Date(newTime).toLocaleString('en-AU')}<br/>Please review and accept/decline.</p>`
+            html: adminHTML
           })
         })
       } catch {}
