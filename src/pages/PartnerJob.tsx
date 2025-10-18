@@ -11,6 +11,17 @@ export default function PartnerJob() {
       try {
         const partnerId = localStorage.getItem('partner_id') || ''
         if (!partnerId) throw new Error('Please log in as a partner to view this job')
+
+        // Try cache first
+        const cached = localStorage.getItem(`partner_jobs_${partnerId}`)
+        if (cached) {
+          try {
+            const arr = JSON.parse(cached)
+            const found = (arr || []).find((x: any) => x.booking_id === id)
+            if (found) setJob(found)
+          } catch {}
+        }
+
         const resp = await fetch(`/api/partners?action=job&partnerId=${encodeURIComponent(partnerId)}&bookingId=${encodeURIComponent(id || '')}`)
         const data = await resp.json()
         if (!resp.ok) throw new Error(data.error || 'Failed to load')

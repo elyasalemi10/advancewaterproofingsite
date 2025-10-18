@@ -24,9 +24,20 @@ export default function Partners() {
     const load = async () => {
       const pid = partnerId || localStorage.getItem('partner_id') || ''
       if (!pid) return
-      const resp = await fetch(`/api/partners?action=jobs&partnerId=${encodeURIComponent(partnerId)}`)
-      const data = await resp.json()
-      if (resp.ok) setJobs(data.jobs || [])
+      try {
+        // Use cached jobs first
+        const cached = localStorage.getItem(`partner_jobs_${pid}`)
+        if (cached) {
+          try { setJobs(JSON.parse(cached) || []) } catch {}
+        }
+
+        const resp = await fetch(`/api/partners?action=jobs&partnerId=${encodeURIComponent(pid)}`)
+        const data = await resp.json()
+        if (resp.ok) {
+          setJobs(data.jobs || [])
+          try { localStorage.setItem(`partner_jobs_${pid}`, JSON.stringify(data.jobs || [])) } catch {}
+        }
+      } catch {}
     }
     load()
   }, [partnerId])

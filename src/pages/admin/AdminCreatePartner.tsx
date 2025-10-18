@@ -31,7 +31,12 @@ export default function AdminCreatePartner() {
     <main className="pt-28">
       <div className="max-w-2xl mx-auto px-4">
         <Card>
-          <CardHeader><CardTitle>Create Partner</CardTitle></CardHeader>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" onClick={() => (window.location.href = '/admin')}>← Back</Button>
+              <CardTitle>Create Partner</CardTitle>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-4">
             <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
             <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />

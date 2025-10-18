@@ -112,7 +112,10 @@ export default function PartnersAdmin() {
                   })}
                 </div>
                 <div>
-                  <Button onClick={() => updateAccess(p.id, Array.from(p._selected || []))}>Save Permissions</Button>
+                  <Button onClick={async () => {
+                    await updateAccess(p.id, Array.from(p._selected || []))
+                    alert('Permissions updated successfully')
+                  }}>Save Permissions</Button>
                 </div>
               </CardContent>
             </Card>
