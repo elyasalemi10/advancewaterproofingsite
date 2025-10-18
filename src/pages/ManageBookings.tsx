@@ -418,54 +418,56 @@ export default function ManageBookings() {
             </CardHeader>
             <CardContent>
               {!showDeclineForm ? (
-                <div className="grid md:grid-cols-5 gap-3">
-                  <Button 
-                    onClick={handleAccept}
-                    disabled={processing}
-                    className="bg-green-600 hover:bg-green-700"
-                  >
-                    {processing ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                    )}
-                    Accept
-                  </Button>
+                <div>
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <Button 
+                      onClick={handleAccept}
+                      disabled={processing}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {processing ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      ) : (
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                      )}
+                      Accept
+                    </Button>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => setSuggestOpen(true)}
-                    disabled={processing}
-                    className="min-w-[220px]"
-                  >
-                    <Clock className="w-4 h-4 mr-2" />
-                    Suggest Other Time
-                  </Button>
+                    <Button 
+                      onClick={() => setShowDeclineForm(true)}
+                      disabled={processing}
+                      variant="destructive"
+                    >
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Decline
+                    </Button>
 
-                  <Button 
-                    onClick={() => setShowDeclineForm(true)}
-                    disabled={processing}
-                    variant="destructive"
-                  >
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Decline
-                  </Button>
-
-                  <Button 
-                    variant="outline"
-                    onClick={() => window.location.href = `mailto:${booking.email}?subject=Re: Booking Request ${booking.booking_id}`}
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </Button>
-
-                  <Button 
-                    variant="outline"
-                    onClick={() => window.location.href = `tel:${booking.phone}`}
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call
-                  </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => setSuggestOpen(true)}
+                      disabled={processing}
+                      className="min-w-[220px]"
+                    >
+                      <Clock className="w-4 h-4 mr-2" />
+                      Suggest Other Time
+                    </Button>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.location.href = `mailto:${booking.email}?subject=Re: Booking Request ${booking.booking_id}`}
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Email
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => window.location.href = `tel:${booking.phone}`}
+                    >
+                      <Phone className="w-4 h-4 mr-2" />
+                      Call
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
