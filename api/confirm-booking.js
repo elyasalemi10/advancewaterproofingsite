@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { requireAuth } from './_auth.js'
+import { requireAuth } from '../lib/serverAuth.js'
 import crypto from 'crypto'
 
 // Initialize Supabase

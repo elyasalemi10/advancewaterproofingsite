@@ -9,7 +9,7 @@ export default function Admin() {
   const [stats, setStats] = useState({ total: 0, pending: 0, accepted: 0, cancelled: 0 })
   const [jobs, setJobs] = useState<any[]>([])
   const [quotes, setQuotes] = useState<Quote[]>([])
-  const [activeTab, setActiveTab] = useState<'jobs' | 'quotes'>('jobs')
+  const [activeTab, setActiveTab] = useState<'jobs' | 'quotes' | 'finished'>('jobs')
   useEffect(() => {
     ;(async () => {
       try {
@@ -85,6 +85,7 @@ export default function Admin() {
           <div className="flex gap-2">
             <Button variant={activeTab === 'jobs' ? 'default' : 'outline'} onClick={() => setActiveTab('jobs')}>Jobs</Button>
             <Button variant={activeTab === 'quotes' ? 'default' : 'outline'} onClick={() => setActiveTab('quotes')}>Quotes</Button>
+            <Button variant={activeTab === 'finished' ? 'default' : 'outline'} onClick={() => setActiveTab('finished')}>Finished</Button>
           </div>
         </div>
 
@@ -119,6 +120,23 @@ export default function Admin() {
               </Card>
             ))}
             {quotes.length === 0 && <div className="text-muted-foreground">No quotes found.</div>}
+          </div>
+        )}
+
+        {activeTab === 'finished' && (
+          <div className="grid gap-4">
+            {jobs.filter((j) => j.status === 'finished' || j.status === 'accepted' && false).map((j) => (
+              <Card key={j.booking_id} onClick={() => (window.location.href = `/admin/${j.booking_id}`)} className="cursor-pointer">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{j.service}</div>
+                    <div className="text-sm text-muted-foreground">{j.address}</div>
+                  </div>
+                  <div className={`px-3 py-1 rounded text-sm bg-slate-100 text-slate-700`}>finished</div>
+                </CardContent>
+              </Card>
+            ))}
+            {jobs.filter((j) => j.status === 'finished').length === 0 && <div className="text-muted-foreground">No finished jobs yet.</div>}
           </div>
         )}
         

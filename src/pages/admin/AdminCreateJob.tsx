@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Calendar as CalendarIcon, Clock, MapPin, Phone, Mail, User, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -48,6 +49,7 @@ function isWithinWorkingHours(datetime: string): boolean {
 }
 
 export default function AdminCreateJob() {
+  const navigate = useNavigate()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -147,6 +149,9 @@ export default function AdminCreateJob() {
       <div className="container mx-auto px-4">
         <Card className="max-w-4xl mx-auto">
           <CardHeader className="p-4 sm:p-6">
+            <div className="mb-2">
+              <Button variant="ghost" onClick={() => navigate('/admin')}>← Back to Admin</Button>
+            </div>
             <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
               <CalendarIcon className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
               Create Job (Admin)

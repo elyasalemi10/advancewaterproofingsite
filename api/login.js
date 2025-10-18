@@ -1,4 +1,4 @@
-import { signJWT } from './_auth.js'
+import { signJWT } from '../lib/serverAuth.js'
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true')

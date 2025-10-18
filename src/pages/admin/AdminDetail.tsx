@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
-import { getBookingByBookingId, getQuoteById, updateBookingStatus, deleteBooking, deleteQuote, type Booking, type Quote } from '@/lib/supabase'
+import { getBookingByBookingId, getQuoteById, updateBookingStatus, deleteBooking, deleteQuote, getJobFiles, getQuoteFiles, type Booking, type Quote, type JobFile, type QuoteFile } from '@/lib/supabase'
 import { CheckCircle, XCircle, Mail, Phone, Calendar as CalendarIcon, Clock, MapPin, FileUp, Trash2 } from 'lucide-react'
 
 export default function AdminDetail() {
@@ -29,6 +29,9 @@ export default function AdminDetail() {
   const [switchService, setSwitchService] = useState('')
   const [switchDate, setSwitchDate] = useState('')
   const [switchTime, setSwitchTime] = useState('')
+  const [finishOpen, setFinishOpen] = useState(false)
+  const [finishStep, setFinishStep] = useState<0 | 1>(0)
+  const [files, setFiles] = useState<Array<JobFile | QuoteFile>>([])
 
   const isQuote = useMemo(() => !!quote && !booking, [quote, booking])
 
@@ -49,6 +52,25 @@ export default function AdminDetail() {
     }
     load()
   }, [id])
+
+  useEffect(() => {
+    const loadFiles = async () => {
+      if (booking?.booking_id) {
+        try {
+          const resp = await fetch(`/api/files?bookingId=${encodeURIComponent(booking.booking_id)}`, { headers: { Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` } })
+          const data = await resp.json()
+          setFiles(data.files || [])
+        } catch {}
+      } else if (quote?.quote_id) {
+        try {
+          const resp = await fetch(`/api/files?quoteId=${encodeURIComponent(quote.quote_id)}`, { headers: { Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` } })
+          const data = await resp.json()
+          setFiles(data.files || [])
+        } catch {}
+      }
+    }
+    loadFiles()
+  }, [booking?.booking_id, quote?.quote_id])
 
   const handleAccept = async () => {
     if (!booking) return
@@ -160,145 +182,180 @@ export default function AdminDetail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-6">
           <Button variant="ghost" onClick={() => navigate('/admin')}>← Back to Admin</Button>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-2xl">{booking ? 'Job Details' : 'Quote Details'}</CardTitle>
-              <Badge className={`${statusColors[(booking?.status || quote?.status) || 'pending']} px-4 py-1`}>
-                {(booking?.status || quote?.status || '').toUpperCase()}
-              </Badge>
-            </div>
-            <CardDescription>
-              ID: <span className="font-mono">{booking?.booking_id || quote?.quote_id}</span>
-              {booking && (
-                <span className="ml-4">• Type: <strong>{booking.is_inspection ? 'Job' : 'Quote'}</strong></span>
-              )}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm text-slate-600">Email</p>
-                  <p className="font-semibold break-all select-text" style={{ pointerEvents: 'none' }}>{booking?.email || quote?.email}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* Left: Details */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl">{booking ? 'Job Details' : 'Quote Details'}</CardTitle>
+                  <Badge className={`${statusColors[(booking?.status || quote?.status) || 'pending']} px-4 py-1`}>
+                    {(booking?.status || quote?.status || '').toUpperCase()}
+                  </Badge>
                 </div>
-              </div>
-              {(booking?.phone || quote?.phone) && (
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-slate-600">Phone</p>
-                    <p className="font-semibold select-text" style={{ pointerEvents: 'none' }}>{booking?.phone || quote?.phone}</p>
+                <CardDescription>
+                  ID: <span className="font-mono">{booking?.booking_id || quote?.quote_id}</span>
+                  {booking && (
+                    <span className="ml-4">• Type: <strong>{booking.is_inspection ? 'Job' : 'Quote'}</strong></span>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  {booking && (
+                    <div className="flex items-start gap-3">
+                      <UserIcon />
+                      <div>
+                        <p className="text-sm text-slate-600">Full Name</p>
+                        <p className="font-semibold">{booking.name}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-5 h-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="text-sm text-slate-600">Email</p>
+                      <p className="font-semibold break-all select-text" style={{ pointerEvents: 'none' }}>{booking?.email || quote?.email}</p>
+                    </div>
                   </div>
+                  {(booking?.phone || quote?.phone) && (
+                    <div className="flex items-start gap-3">
+                      <Phone className="w-5 h-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm text-slate-600">Phone</p>
+                        <p className="font-semibold select-text" style={{ pointerEvents: 'none' }}>{booking?.phone || quote?.phone}</p>
+                      </div>
+                    </div>
+                  )}
+                  {booking && (
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm text-slate-600">Address</p>
+                        <p className="font-semibold">{booking.address}</p>
+                      </div>
+                    </div>
+                  )}
+                  {booking && (
+                    <div className="flex items-start gap-3">
+                      <CalendarIcon className="w-5 h-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm text-slate-600">Date</p>
+                        <p className="font-semibold">{new Date(booking.date).toLocaleDateString('en-AU')}</p>
+                      </div>
+                    </div>
+                  )}
+                  {(booking?.preferred_time || booking?.time) && (
+                    <div className="flex items-start gap-3">
+                      <Clock className="w-5 h-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm text-slate-600">Time</p>
+                        <p className="font-semibold">{formatTo12Hour(booking?.preferred_time || booking?.time || '')}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-              {booking && (
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-slate-600">Address</p>
-                    <p className="font-semibold">{booking.address}</p>
+
+                {booking?.notes && (
+                  <div className="pt-2 border-t">
+                    <p className="text-sm text-slate-600 mb-2">Notes</p>
+                    <p className="text-slate-800 bg-slate-50 p-3 rounded-lg">{booking.notes}</p>
                   </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Actions</CardTitle>
+                <CardDescription>{isQuote ? 'Send or decline quote, contact customer' : 'Accept/decline, contact customer'}</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-wrap gap-3">
+                  {!isQuote && booking?.status === 'pending' && (
+                    <Button onClick={handleAccept} disabled={processing} className="bg-green-600 hover:bg-green-700">
+                      <CheckCircle className="w-4 h-4 mr-2" /> Accept
+                    </Button>
+                  )}
+                  {!isQuote && booking && (
+                    <Button variant="destructive" onClick={handleCancel} disabled={processing}>
+                      <XCircle className="w-4 h-4 mr-2" /> Cancel
+                    </Button>
+                  )}
+                  <Button variant="outline" onClick={() => (window.location.href = `mailto:${booking?.email || quote?.email}`)}>
+                    <Mail className="w-4 h-4 mr-2" /> Email
+                  </Button>
+                  {(booking?.phone || quote?.phone) && (
+                    <Button variant="outline" onClick={() => (window.location.href = `tel:${booking?.phone || quote?.phone}`)}>
+                      <Phone className="w-4 h-4 mr-2" /> Call
+                    </Button>
+                  )}
                 </div>
-              )}
-              {booking && (
-                <div className="flex items-start gap-3">
-                  <CalendarIcon className="w-5 h-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-slate-600">Date</p>
-                    <p className="font-semibold">{new Date(booking.date).toLocaleDateString('en-AU')}</p>
+
+                <div className="pt-2 border-t flex flex-wrap gap-3">
+                  {isQuote && (
+                    <>
+                      <Button onClick={() => setSendQuoteOpen(true)} className="flex items-center">
+                        <FileUp className="w-4 h-4 mr-2" /> Send Quote
+                      </Button>
+                      <Button variant="destructive" onClick={() => setDeclineOpen(true)}>
+                        <XCircle className="w-4 h-4 mr-2" /> Decline Quote
+                      </Button>
+                      <Button variant="outline" onClick={() => setSwitchToJobOpen(true)}>Switch to Job</Button>
+                    </>
+                  )}
+                  {!isQuote && (
+                    <Button variant="secondary" onClick={() => setFinishOpen(true)}>Finish Job</Button>
+                  )}
+                </div>
+
+                <div className="pt-2 border-t">
+                  <Button variant="destructive" onClick={() => setConfirmDeleteOpen(true)} className="flex items-center">
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete {isQuote ? 'Quote' : 'Job'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right: Job Files */}
+          {!isQuote && (
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Job Files</CardTitle>
+                  <CardDescription>Files related to this job (coming soon)</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {files.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">No files yet.</div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {files.map((f) => (
+                        <li key={(f as any).id || f.url}>
+                          <a href={f.url} target="_blank" rel="noreferrer" className="text-primary underline">{f.filename}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-4">
+                    <form method="post" action="/api/upload" encType="multipart/form-data">
+                      <input type="hidden" name="bookingId" value={booking?.booking_id || ''} />
+                      <input type="file" name="files" multiple className="block mb-2" />
+                      <Button type="submit" size="sm">Upload</Button>
+                    </form>
                   </div>
-                </div>
-              )}
-              {(booking?.preferred_time || booking?.time) && (
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="text-sm text-slate-600">Time</p>
-                    <p className="font-semibold">{booking?.preferred_time || booking?.time}</p>
-                  </div>
-                </div>
-              )}
+                </CardContent>
+              </Card>
             </div>
-
-            {booking?.notes && (
-              <div className="pt-2 border-t">
-                <p className="text-sm text-slate-600 mb-2">Notes</p>
-                <p className="text-slate-800 bg-slate-50 p-3 rounded-lg">{booking.notes}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Right side actions mimic job page, with modifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Actions</CardTitle>
-            <CardDescription>{isQuote ? 'Send or decline quote, contact customer' : 'Accept/decline, contact customer'}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-wrap gap-3">
-              {!isQuote && booking?.status === 'pending' && (
-                <Button onClick={handleAccept} disabled={processing} className="bg-green-600 hover:bg-green-700">
-                  <CheckCircle className="w-4 h-4 mr-2" /> Accept
-                </Button>
-              )}
-              {!isQuote && booking && (
-                <Button variant="destructive" onClick={handleCancel} disabled={processing}>
-                  <XCircle className="w-4 h-4 mr-2" /> Cancel
-                </Button>
-              )}
-              <Button variant="outline" onClick={() => (window.location.href = `mailto:${booking?.email || quote?.email}`)}>
-                <Mail className="w-4 h-4 mr-2" /> Email
-              </Button>
-              {(booking?.phone || quote?.phone) && (
-                <Button variant="outline" onClick={() => (window.location.href = `tel:${booking?.phone || quote?.phone}`)}>
-                  <Phone className="w-4 h-4 mr-2" /> Call
-                </Button>
-              )}
-            </div>
-
-            <div className="pt-2 border-t flex flex-wrap gap-3">
-              {isQuote && (
-                <Button variant="outline" onClick={() => setSwitchToJobOpen(true)}>Switch to Job</Button>
-              )}
-              <Button onClick={() => setSendQuoteOpen(true)} className="flex items-center">
-                <FileUp className="w-4 h-4 mr-2" /> Send Quote
-              </Button>
-              {isQuote && (
-                <Button variant="destructive" onClick={() => setDeclineOpen(true)}>
-                  <XCircle className="w-4 h-4 mr-2" /> Decline Quote
-                </Button>
-              )}
-            </div>
-
-            {/* Delete */}
-            <div className="pt-2 border-t">
-              <Button variant="destructive" onClick={() => setConfirmDeleteOpen(true)} className="flex items-center">
-                <Trash2 className="w-4 h-4 mr-2" /> Delete {isQuote ? 'Quote' : 'Job'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Right column placeholder for Job Files */}
-        {!isQuote && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Job Files</CardTitle>
-              <CardDescription>Files related to this job (coming soon)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-sm text-muted-foreground">No files yet.</div>
-            </CardContent>
-          </Card>
-        )}
+          )}
+        </div>
 
         {/* Confirm Delete Popup */}
         {confirmDeleteOpen && (
@@ -409,9 +466,59 @@ export default function AdminDetail() {
             </div>
           </div>
         )}
+
+        {/* Finish Job Fullscreen */}
+        {!isQuote && finishOpen && (
+          <div className="fixed inset-0 z-50 bg-white">
+            <div className="p-4">
+              <Button variant="ghost" onClick={() => setFinishOpen(false)}>✕</Button>
+            </div>
+            <div className="max-w-2xl mx-auto p-6">
+              <h2 className="text-2xl font-semibold mb-4">Finish Job</h2>
+              {!finishStep && (
+                <div className="space-y-4">
+                  <Label>After Photos (optional)</Label>
+                  <input type="file" multiple accept="image/*" />
+                  <div className="flex justify-end">
+                    <Button onClick={() => setFinishStep(1)}>Next</Button>
+                  </div>
+                </div>
+              )}
+              {finishStep === 1 && (
+                <div className="space-y-4">
+                  <Label>Send Invoice?</Label>
+                  <input type="file" accept="application/pdf" />
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={() => setFinishStep(0)}>Back</Button>
+                    <Button onClick={() => setFinishOpen(false)}>Finish</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
+}
+
+function UserIcon() {
+  return (
+    <svg className="w-5 h-5 text-primary mt-0.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z" fill="currentColor"/>
+      <path d="M4 22c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  )
+}
+
+function formatTo12Hour(input: string): string {
+  if (!input) return ''
+  const date = new Date(input)
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: true })
+  }
+  // If already a string like "7:00 AM", return as-is
+  return input
 }
 
 

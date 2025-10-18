@@ -37,6 +37,24 @@ export interface Quote {
   updated_at?: string
 }
 
+export interface JobFile {
+  id?: string
+  booking_id: string
+  url: string
+  filename: string
+  content_type?: string
+  created_at?: string
+}
+
+export interface QuoteFile {
+  id?: string
+  quote_id: string
+  url: string
+  filename: string
+  content_type?: string
+  created_at?: string
+}
+
 export async function getQuoteById(quoteId: string) {
   const { data, error } = await supabase
     .from('quotes')
@@ -165,5 +183,25 @@ export async function deleteQuote(quoteId: string) {
   }
 
   return true
+}
+
+export async function getJobFiles(bookingId: string) {
+  const { data, error } = await supabase
+    .from('job_files')
+    .select('*')
+    .eq('booking_id', bookingId)
+    .order('created_at', { ascending: false })
+  if (error) return [] as JobFile[]
+  return (data || []) as JobFile[]
+}
+
+export async function getQuoteFiles(quoteId: string) {
+  const { data, error } = await supabase
+    .from('quote_files')
+    .select('*')
+    .eq('quote_id', quoteId)
+    .order('created_at', { ascending: false })
+  if (error) return [] as QuoteFile[]
+  return (data || []) as QuoteFile[]
 }
 

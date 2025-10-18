@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
-import { requireAuth } from './_auth.js'
+import { requireAuth } from '../lib/serverAuth.js'
 
 function getSupabase() {
   const url = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co'
