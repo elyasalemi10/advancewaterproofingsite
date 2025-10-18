@@ -27,7 +27,6 @@ import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
 import BathroomShowerWaterproofing from './pages/services/BathroomShowerWaterproofing'
 import PlanterBoxWaterproofing from './pages/services/PlanterBoxWaterproofing'
 import RoofDeckPodiumWaterproofing from './pages/services/RoofDeckPodiumWaterproofing'
-import ExpansionJointSealing from './pages/services/ExpansionJointSealing'
 import MaintenancePlans from './pages/services/MaintenancePlans'
 
 function ScrollToTop() {
@@ -74,7 +73,7 @@ function AppShell() {
           <Route path="/services/bathroom-shower-waterproofing" element={<BathroomShowerWaterproofing />} />
           <Route path="/services/planter-box-waterproofing" element={<PlanterBoxWaterproofing />} />
           <Route path="/services/roof-deck-podium-waterproofing" element={<RoofDeckPodiumWaterproofing />} />
-          <Route path="/services/expansion-joint-sealing" element={<ExpansionJointSealing />} />
+          
           <Route path="/services/maintenance-plans" element={<MaintenancePlans />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
