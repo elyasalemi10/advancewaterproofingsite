@@ -21,6 +21,7 @@ import Partners from './pages/Partners'
 import PartnerJob from './pages/PartnerJob'
 import AdminCreateJob from './pages/admin/AdminCreateJob'
 import AdminCreatePartner from './pages/admin/AdminCreatePartner'
+import PartnersAdmin from './pages/admin/PartnersAdmin'
 // Blog removed
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
@@ -59,6 +60,7 @@ function AppShell() {
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
           <Route path="/admin/create-job" element={<ProtectedRoute><AdminCreateJob /></ProtectedRoute>} />
           <Route path="/admin/create-partner" element={<ProtectedRoute><AdminCreatePartner /></ProtectedRoute>} />
+          <Route path="/admin/partners" element={<ProtectedRoute><PartnersAdmin /></ProtectedRoute>} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/partners/:id" element={<PartnerJob />} />
           <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />

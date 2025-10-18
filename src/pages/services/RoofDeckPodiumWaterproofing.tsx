@@ -121,7 +121,7 @@ export default function RoofDeckPodiumWaterproofing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <img
-                src="/comprohensive-benefits.png"
+                src="/comprehensive-benefits.png"
                 alt="Professional waterproofing installation on roof deck"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />

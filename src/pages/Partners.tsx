@@ -17,11 +17,13 @@ export default function Partners() {
     const data = await resp.json()
     if (!resp.ok) { setError(data.error || 'Login failed'); return }
     setPartnerId(data.partnerId)
+    try { localStorage.setItem('partner_id', data.partnerId) } catch {}
   }
 
   useEffect(() => {
     const load = async () => {
-      if (!partnerId) return
+      const pid = partnerId || localStorage.getItem('partner_id') || ''
+      if (!pid) return
       const resp = await fetch(`/api/partners?action=jobs&partnerId=${encodeURIComponent(partnerId)}`)
       const data = await resp.json()
       if (resp.ok) setJobs(data.jobs || [])

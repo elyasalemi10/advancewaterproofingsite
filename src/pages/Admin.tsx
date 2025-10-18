@@ -65,7 +65,7 @@ export default function Admin() {
           <Button variant="outline" onClick={() => (window.location.href = '/admin/create-partner')}>
             <UserPlus className="w-5 h-5 mr-2" /> Create Partner
           </Button>
-          <Button variant="outline" onClick={() => (window.location.href = '/partners')}>
+          <Button variant="outline" onClick={() => (window.location.href = '/admin/partners')}>
             Partners
           </Button>
         </div>

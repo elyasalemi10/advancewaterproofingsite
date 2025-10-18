@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import toast from 'react-hot-toast'
 
-// Working hours: 7 AM - 6 PM (last job at 5 PM for 1 hour)
+// Working hours: 7 AM - 4 PM (last job at 4 PM for 1 hour)
 const timeSlots = [
   '7:00 AM',
   '8:00 AM',
@@ -21,7 +21,6 @@ const timeSlots = [
   '2:00 PM',
   '3:00 PM',
   '4:00 PM',
-  '5:00 PM',
 ]
 
 const services = [
@@ -32,6 +31,7 @@ const services = [
   'Planter Box Waterproofing',
   'Roof Deck & Podium Waterproofing',
   'Preventative Maintenance Plans',
+  'Other',
 ]
 
 export function BookingCalendar() {
@@ -46,7 +46,7 @@ export function BookingCalendar() {
     const day = date.getDay()
     const hour = date.getHours()
     if (day === 0 || day === 6) return false
-    return hour >= 7 && hour < 18
+    return hour >= 7 && hour < 16
   }
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedTime, setSelectedTime] = useState('')
@@ -58,6 +58,7 @@ export function BookingCalendar() {
     phone: '',
     address: '',
     service: '',
+    otherService: '',
     notes: '',
   })
 
@@ -71,6 +72,10 @@ export function BookingCalendar() {
 
     if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.service) {
       toast.error('Please fill in all required fields')
+      return
+    }
+    if (formData.service === 'Other' && !formData.otherService.trim()) {
+      toast.error('Please describe what you are looking for')
       return
     }
 
@@ -110,7 +115,7 @@ export function BookingCalendar() {
           email: formData.email,
           phone: formData.phone,
           address: formData.address,
-          service: formData.service,
+          service: formData.service === 'Other' ? `Other: ${formData.otherService.trim()}` : formData.service,
           date: formatLocalDateYYYYMMDD(selectedDate),
           time: selectedTime,
           notes: formData.notes,
@@ -132,6 +137,7 @@ export function BookingCalendar() {
           phone: '',
           address: '',
           service: '',
+          otherService: '',
           notes: '',
         })
       } else {
@@ -339,6 +345,19 @@ export function BookingCalendar() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {formData.service === 'Other' && (
+                <div>
+                  <Label htmlFor="otherService" className="text-sm sm:text-base">What are you looking for?</Label>
+                  <Input
+                    id="otherService"
+                    value={formData.otherService}
+                    onChange={(e) => setFormData({ ...formData, otherService: e.target.value })}
+                    placeholder="What are you looking for?"
+                    required
+                  />
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="notes" className="text-sm sm:text-base">Additional Notes</Label>

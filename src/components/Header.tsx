@@ -58,7 +58,7 @@ export default function Header({ isScrolled }: HeaderProps) {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              <span>Mon–Fri 7:00am–6:00pm</span>
+              <span>Mon–Fri 7:00am–4:00pm</span>
             </div>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function Header({ isScrolled }: HeaderProps) {
                 Services <ChevronDown className="w-4 h-4" />
               </button>
               {openServices && (
-                <div onMouseLeave={() => setOpenServices(false)} className="absolute left-0 mt-2 w-[360px] bg-white rounded-lg border shadow-lg p-2">
+                <div className="absolute left-0 mt-2 w-[360px] bg-white rounded-lg border shadow-lg p-2">
                   {services.map((s) => (
                     <Link 
                       key={s.path} 
