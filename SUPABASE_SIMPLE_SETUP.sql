@@ -146,3 +146,7 @@ CREATE POLICY "partners service role manage" ON partners FOR ALL USING (true) WI
 DROP POLICY IF EXISTS "partner_job_permissions service role manage" ON partner_job_permissions;
 CREATE POLICY "partner_job_permissions service role manage" ON partner_job_permissions FOR ALL USING (true) WITH CHECK (true);
 
+-- Partner Google Calendar integration fields
+ALTER TABLE partners ADD COLUMN IF NOT EXISTS gcal_refresh_token TEXT;
+ALTER TABLE partners ADD COLUMN IF NOT EXISTS gcal_email TEXT;
+

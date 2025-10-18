@@ -23,6 +23,91 @@ export default async function handler(req, res) {
   const { action } = req.query
 
   try {
+    // Partner Google OAuth - generate authorize URL
+    if (action === 'oauth-authorize' && req.method === 'GET') {
+      const { partnerId, redirectUri } = req.query
+      if (!partnerId || !redirectUri) return res.status(400).json({ error: 'partnerId and redirectUri required' })
+      const clientId = process.env.GCAL_CLIENT_ID || ''
+      if (!clientId) return res.status(500).json({ error: 'Missing GCAL_CLIENT_ID' })
+      const scope = encodeURIComponent('https://www.googleapis.com/auth/calendar.events')
+      const url = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&access_type=offline&prompt=consent&state=${encodeURIComponent(partnerId)}`
+      return res.status(200).json({ url })
+    }
+
+    // Partner Google OAuth - exchange code for refresh token and store
+    if (action === 'oauth-exchange' && req.method === 'POST') {
+      const { partnerId, code, redirectUri } = req.body
+      if (!partnerId || !code || !redirectUri) return res.status(400).json({ error: 'partnerId, code and redirectUri required' })
+      const clientId = process.env.GCAL_CLIENT_ID || ''
+      const clientSecret = process.env.GCAL_CLIENT_SECRET || ''
+      if (!clientId || !clientSecret) return res.status(500).json({ error: 'Missing Google credentials' })
+      const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: redirectUri,
+          grant_type: 'authorization_code',
+        }).toString(),
+      })
+      const tokens = await tokenResp.json()
+      if (!tokenResp.ok) return res.status(400).json({ error: tokens.error || 'Token exchange failed', details: tokens })
+      const refresh = tokens.refresh_token || ''
+      if (!refresh) return res.status(400).json({ error: 'No refresh token received. Ensure prompt=consent & access_type=offline.' })
+      const supabase = getSupabase()
+      const { error } = await supabase.from('partners').update({ gcal_refresh_token: refresh }).eq('id', partnerId)
+      if (error) return res.status(400).json({ error: error.message })
+      return res.status(200).json({ success: true })
+    }
+
+    // Partner - add event to their calendar using stored refresh token
+    if (action === 'add-calendar-event' && req.method === 'POST') {
+      const { partnerId, bookingId } = req.body
+      if (!partnerId || !bookingId) return res.status(400).json({ error: 'partnerId and bookingId required' })
+      const supabase = getSupabase()
+      const { data: partner, error: perr } = await supabase.from('partners').select('*').eq('id', partnerId).single()
+      if (perr || !partner) return res.status(404).json({ error: 'Partner not found' })
+      if (!partner.gcal_refresh_token) return res.status(401).json({ error: 'Partner not connected to Google Calendar' })
+      const { data: booking, error: berr } = await supabase.from('bookings').select('*').eq('booking_id', bookingId).single()
+      if (berr || !booking) return res.status(404).json({ error: 'Booking not found' })
+      if (!booking.preferred_time) return res.status(400).json({ error: 'No scheduled time for booking' })
+
+      // Get access token via refresh
+      const clientId = process.env.GCAL_CLIENT_ID || ''
+      const clientSecret = process.env.GCAL_CLIENT_SECRET || ''
+      const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          refresh_token: partner.gcal_refresh_token,
+          grant_type: 'refresh_token',
+        }).toString(),
+      })
+      const tdata = await tokenResp.json()
+      if (!tokenResp.ok || !tdata.access_token) return res.status(400).json({ error: 'Failed to get access token' })
+
+      const start = new Date(booking.preferred_time)
+      const end = new Date(start.getTime() + 60 * 60 * 1000)
+      const body = {
+        summary: booking.service,
+        description: `- ${booking.service}\n- ${booking.address}\n- ${booking.name}\n- ${booking.email}\n- ${booking.phone}`,
+        location: booking.address || '',
+        start: { dateTime: start.toISOString() },
+        end: { dateTime: end.toISOString() },
+      }
+      const evResp = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tdata.access_token}` },
+        body: JSON.stringify(body),
+      })
+      const ev = await evResp.json()
+      if (!evResp.ok) return res.status(evResp.status).json({ error: 'Failed to create partner event', details: ev })
+      return res.status(200).json({ success: true, eventId: ev.id })
+    }
     if (action === 'create' && req.method === 'POST') {
       const auth = requireAuth(req, res)
       if (!auth) return

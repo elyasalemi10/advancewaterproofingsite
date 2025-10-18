@@ -13,6 +13,31 @@ export default function PartnerJob() {
   useEffect(() => {
     const load = async () => {
       try {
+        // If returned from OAuth, exchange code and add event
+        const params = new URLSearchParams(window.location.search)
+        const code = params.get('code')
+        const state = params.get('state')
+        const pendingAdd = localStorage.getItem('partner_add_event_booking')
+        if (code && state && pendingAdd) {
+          try {
+            const ex = await fetch('/api/partners?action=oauth-exchange', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ partnerId: state, code, redirectUri: `${window.location.origin}/partners/${id}` })
+            })
+            if (ex.ok) {
+              await fetch('/api/partners?action=add-calendar-event', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ partnerId: state, bookingId: pendingAdd })
+              })
+              try { localStorage.removeItem('partner_add_event_booking') } catch {}
+              // clean query
+              const url = new URL(window.location.href)
+              url.search = ''
+              window.history.replaceState({}, '', url.toString())
+            }
+          } catch {}
+        }
+
         const partnerId = localStorage.getItem('partner_id') || ''
         if (!partnerId) throw new Error('Please log in as a partner to view this job')
 
@@ -165,8 +190,18 @@ export default function PartnerJob() {
         </Card>
         <div className="mt-6 flex items-center justify-between">
           <Button variant="outline" onClick={() => {
-            const url = buildGoogleCalendarUrl()
-            if (url) window.open(url, '_blank')
+            const partnerId = localStorage.getItem('partner_id') || ''
+            if (!partnerId) return alert('Please log in again')
+            const redirectUri = `${window.location.origin}/partners/${id}`
+            fetch(`/api/partners?action=oauth-authorize&partnerId=${encodeURIComponent(partnerId)}&redirectUri=${encodeURIComponent(redirectUri)}`)
+              .then(r => r.json())
+              .then(d => {
+                if (d.url) {
+                  // Store intent to add event after OAuth redirect
+                  try { localStorage.setItem('partner_add_event_booking', String(id)) } catch {}
+                  window.location.href = d.url
+                }
+              }).catch(() => alert('Unable to start Google authorization'))
           }} disabled={!job || !job.preferred_time}>
             Add to my Google Calendar
           </Button>
