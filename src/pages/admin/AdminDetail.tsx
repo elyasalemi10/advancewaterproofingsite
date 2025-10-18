@@ -32,6 +32,9 @@ export default function AdminDetail() {
   const [finishOpen, setFinishOpen] = useState(false)
   const [finishStep, setFinishStep] = useState<0 | 1>(0)
   const [files, setFiles] = useState<Array<JobFile | QuoteFile>>([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const [pendingFiles, setPendingFiles] = useState<FileList | null>(null)
 
   const isQuote = useMemo(() => !!quote && !booking, [quote, booking])
 
@@ -71,6 +74,31 @@ export default function AdminDetail() {
     }
     loadFiles()
   }, [booking?.booking_id, quote?.quote_id])
+
+  const handleUpload = async () => {
+    if (!pendingFiles || !pendingFiles.length || !booking?.booking_id) return
+    setUploading(true)
+    setUploadError('')
+    try {
+      const form = new FormData()
+      form.append('bookingId', booking.booking_id)
+      Array.from(pendingFiles).forEach((f) => form.append('files', f))
+      const resp = await fetch('/api/upload', { method: 'POST', headers: { Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` }, body: form })
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}))
+        throw new Error(err.error || 'Upload failed')
+      }
+      // Refresh list from backend to persist items
+      const listResp = await fetch(`/api/files?bookingId=${encodeURIComponent(booking.booking_id)}`, { headers: { Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` } })
+      const list = await listResp.json().catch(() => ({ files: [] }))
+      setFiles(list.files || [])
+      setPendingFiles(null)
+    } catch (e: any) {
+      setUploadError(e?.message || 'Upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleAccept = async () => {
     if (!booking) return
@@ -338,18 +366,28 @@ export default function AdminDetail() {
                   ) : (
                     <ul className="space-y-2">
                       {files.map((f) => (
-                        <li key={(f as any).id || f.url}>
-                          <a href={f.url} target="_blank" rel="noreferrer" className="text-primary underline">{f.filename}</a>
+                        <li key={(f as any).id || f.url} className="flex items-center justify-between gap-3 rounded border p-2">
+                          <div className="truncate">
+                            <a href={f.url} target="_blank" rel="noreferrer" className="text-primary underline truncate inline-block max-w-[14rem]">
+                              {f.filename}
+                            </a>
+                            {f.content_type && <span className="ml-2 text-xs text-muted-foreground">({f.content_type})</span>}
+                          </div>
+                          <div>
+                            <a href={f.url} target="_blank" rel="noreferrer">
+                              <Button variant="outline" size="sm">Download</Button>
+                            </a>
+                          </div>
                         </li>
                       ))}
                     </ul>
                   )}
                   <div className="mt-4">
-                    <form method="post" action="/api/upload" encType="multipart/form-data">
-                      <input type="hidden" name="bookingId" value={booking?.booking_id || ''} />
-                      <input type="file" name="files" multiple className="block mb-2" />
-                      <Button type="submit" size="sm">Upload</Button>
-                    </form>
+                    {uploadError && <div className="text-sm text-red-600 mb-2">{uploadError}</div>}
+                    <input type="file" multiple className="block mb-2" onChange={(e) => setPendingFiles(e.target.files)} />
+                    <Button size="sm" onClick={handleUpload} disabled={uploading || !pendingFiles || !pendingFiles.length}>
+                      {uploading ? 'Uploading...' : 'Upload'}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
