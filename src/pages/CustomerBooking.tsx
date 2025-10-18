@@ -27,7 +27,7 @@ export default function CustomerBooking() {
     const load = async () => {
       try {
         setLoading(true)
-        const resp = await fetch(`/api/customer-booking?token=${encodeURIComponent(token || '')}`)
+        const resp = await fetch(`/api/customer?token=${encodeURIComponent(token || '')}`)
         const data = await resp.json()
         if (!resp.ok) throw new Error(data.error || 'Failed to load')
         setBooking(data.booking)
@@ -43,7 +43,7 @@ export default function CustomerBooking() {
   const handleConfirm = async () => {
     try {
       setStatusMsg('Saving...')
-      const resp = await fetch('/api/customer-update', {
+      const resp = await fetch('/api/customer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, action: 'confirm' })
@@ -72,7 +72,7 @@ export default function CustomerBooking() {
       dt.setHours(hours, minutes || 0, 0, 0)
       const newTimeISO = dt.toISOString()
       setStatusMsg('Saving...')
-      const resp = await fetch('/api/customer-update', {
+      const resp = await fetch('/api/customer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, action: 'reschedule', newTime: newTimeISO })

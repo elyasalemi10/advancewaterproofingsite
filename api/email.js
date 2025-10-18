@@ -56,6 +56,25 @@ export default async function handler(req, res) {
     }
   }
 
+  if (type === 'get-quote') {
+    try {
+      const auth = requireAuth(req, res)
+      if (!auth) return
+      const quoteId = req.query.id || req.query.quote_id
+      if (!quoteId) return res.status(400).json({ error: 'Missing quote id' })
+      const supabase = getSupabaseClient()
+      const { data, error } = await supabase
+        .from('quotes')
+        .select('*')
+        .eq('quote_id', quoteId)
+        .single()
+      if (error || !data) return res.status(404).json({ error: 'Quote not found' })
+      return res.status(200).json({ quote: data })
+    } catch (e) {
+      return res.status(500).json({ error: 'Internal server error' })
+    }
+  }
+
   return res.status(400).json({ error: 'Unsupported email type' })
 }
 

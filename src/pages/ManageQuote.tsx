@@ -22,7 +22,7 @@ export default function ManageQuote() {
     const load = async () => {
       if (!quoteId) return
       try {
-        const resp = await fetch(`/api/get-quote?id=${encodeURIComponent(quoteId)}`, {
+        const resp = await fetch(`/api/email?type=get-quote&id=${encodeURIComponent(quoteId)}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` }
         })
         if (resp.ok) {
