@@ -31,7 +31,6 @@ const services = [
   'Bathroom & Shower Waterproofing',
   'Planter Box Waterproofing',
   'Roof Deck & Podium Waterproofing',
-  'Expansion Joint Sealing',
   'Preventative Maintenance Plans',
 ]
 

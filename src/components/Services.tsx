@@ -10,7 +10,6 @@ export default function Services() {
     { icon: ShieldCheck, title: 'Bathroom & Shower Waterproofing', desc: 'Compliant wet‑area systems that protect your home or business.', path: '/services/bathroom-shower-waterproofing' },
     { icon: Leaf, title: 'Planter Box Waterproofing', desc: 'Root‑resistant membranes and drainage for lasting performance.', path: '/services/planter-box-waterproofing' },
     { icon: Building2, title: 'Roof Deck & Podium Waterproofing', desc: 'Robust systems for exposed, trafficable surfaces.', path: '/services/roof-deck-podium-waterproofing' },
-    { icon: Expand, title: 'Expansion Joint Sealing', desc: 'Durable movement joints to prevent leaks and cracking.', path: '/services/expansion-joint-sealing' },
     { icon: Hammer, title: 'Preventative Maintenance Plans', desc: 'Proactive inspections and sealing programs.', path: '/services/maintenance-plans' }
   ]
 

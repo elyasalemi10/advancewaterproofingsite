@@ -15,7 +15,6 @@ const services = [
   { label: 'Bathroom & Shower Waterproofing', path: '/services/bathroom-shower-waterproofing' },
   { label: 'Planter Box Waterproofing', path: '/services/planter-box-waterproofing' },
   { label: 'Roof Deck & Podium Waterproofing', path: '/services/roof-deck-podium-waterproofing' },
-  { label: 'Expansion Joint Sealing', path: '/services/expansion-joint-sealing' },
   { label: 'Preventative Maintenance Plans', path: '/services/maintenance-plans' }
 ]
 

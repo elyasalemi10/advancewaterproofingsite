@@ -187,7 +187,7 @@ export default function CaulkingSolutions() {
             </p>
             <div className="text-sm text-muted-foreground">
               Related services: <Link to="/services/rapidseal" className="text-primary underline hover:text-primary/80">RapidSeal™</Link> ·{' '}
-              <Link to="/services/expansion-joint-sealing" className="text-primary underline hover:text-primary/80">Expansion Joint Sealing</Link> ·{' '}
+              
               <Link to="/services/maintenance-plans" className="text-primary underline hover:text-primary/80">Maintenance Plans</Link>
             </div>
           </div>

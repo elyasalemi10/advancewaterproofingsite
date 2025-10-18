@@ -58,34 +58,33 @@ export default function Admin() {
           </div>
         </div>
 
-        <div className="mb-8">
-          <Button onClick={() => (window.location.href = '/booking')}>
-            <PlusCircle className="w-5 h-5 mr-2" /> Create Job
-          </Button>
-        </div>
-
-        <div className="grid gap-4">
-          {jobs.map((j) => (
-            <Card key={j.booking_id}><CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <div className="font-semibold">{j.service}</div>
-                <div className="text-sm text-muted-foreground">{j.address}</div>
-              </div>
-              <Button variant="outline" onClick={() => (window.location.href = `/manage-booking?id=${j.booking_id}`)}>Open</Button>
-            </CardContent></Card>
-          ))}
-          {jobs.length === 0 && <div className="text-muted-foreground">No jobs found.</div>}
-        </div>
-
-        
-        <div className="mt-8 flex gap-3">
+        <div className="mb-8 flex gap-3">
           <Button onClick={() => (window.location.href = '/admin/create-job')}>
             <PlusCircle className="w-5 h-5 mr-2" /> Create Job
           </Button>
           <Button variant="outline" onClick={() => (window.location.href = '/admin/create-partner')}>
             <UserPlus className="w-5 h-5 mr-2" /> Create Partner
           </Button>
+          <Button variant="outline" onClick={() => (window.location.href = '/partners')}>
+            Partners
+          </Button>
         </div>
+
+        <div className="grid gap-4">
+          {jobs.map((j) => (
+            <Card key={j.booking_id} onClick={() => (window.location.href = `/manage-booking?id=${j.booking_id}`)} className="cursor-pointer">
+              <CardContent className="p-4 flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">{j.service}</div>
+                  <div className="text-sm text-muted-foreground">{j.address}</div>
+                </div>
+                <div className={`px-3 py-1 rounded text-sm ${j.status === 'accepted' ? 'bg-green-100 text-green-700' : j.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{j.status}</div>
+              </CardContent>
+            </Card>
+          ))}
+          {jobs.length === 0 && <div className="text-muted-foreground">No jobs found.</div>}
+        </div>
+        
       </div>
     </div>
   )

@@ -121,7 +121,7 @@ export default function RoofDeckPodiumWaterproofing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <img
-                src="/roof-deck-project.webp"
+                src="/comprohensive-benefits.png"
                 alt="Professional waterproofing installation on roof deck"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
@@ -202,8 +202,7 @@ export default function RoofDeckPodiumWaterproofing() {
             ))}
           </div>
           <div className="mt-10 text-center text-sm text-muted-foreground">
-            Related services: <Link to="/services/planter-box-waterproofing" className="text-primary underline font-medium">Planter Box Waterproofing</Link> ·{' '}
-            <Link to="/services/expansion-joint-sealing" className="text-primary underline font-medium">Expansion Joint Sealing</Link>
+            Related services: <Link to="/services/planter-box-waterproofing" className="text-primary underline font-medium">Planter Box Waterproofing</Link>
           </div>
         </div>
       </section>
