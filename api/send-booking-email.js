@@ -79,7 +79,9 @@ export default async function handler(req, res) {
     }
 
     // Build message body (only after successful DB insert)
-    const dateObj = new Date(date);
+    // date is YYYY-MM-DD from client (local). Construct local date safely.
+    const [yy, mm, dd] = String(date).split('-').map(Number)
+    const dateObj = (yy && mm && dd) ? new Date(yy, (mm - 1), dd) : new Date(date);
     const formattedDate = dateObj.toLocaleDateString('en-AU', { 
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });

@@ -36,6 +36,12 @@ const services = [
 ]
 
 export function BookingCalendar() {
+  function formatLocalDateYYYYMMDD(d: Date): string {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
   function isWithinWorkingHours(datetime: string): boolean {
     const date = new Date(datetime)
     const day = date.getDay()
@@ -106,7 +112,7 @@ export function BookingCalendar() {
           phone: formData.phone,
           address: formData.address,
           service: formData.service,
-          date: selectedDate.toISOString(),
+          date: formatLocalDateYYYYMMDD(selectedDate),
           time: selectedTime,
           notes: formData.notes,
           isInspection: isInspection,
