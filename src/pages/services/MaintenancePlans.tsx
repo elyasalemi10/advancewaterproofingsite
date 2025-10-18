@@ -154,7 +154,7 @@ export default function MaintenancePlans() {
           <h2 className="text-3xl font-bold mb-6">The Cost of Neglect</h2>
           <div className="grid md:grid-cols-3 gap-8 mt-10">
             <div className="bg-white p-6 rounded-lg shadow-md">
-              <div className="text-4xl font-bold text-red-600 mb-2">$50,000+</div>
+              <div className="text-4xl font-bold text-red-600 mb-2">$25,000+</div>
               <p className="text-sm text-muted-foreground">Average cost of emergency balcony leak repairs</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">

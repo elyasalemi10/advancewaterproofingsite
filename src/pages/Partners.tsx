@@ -56,11 +56,14 @@ export default function Partners() {
           <h1 className="text-3xl font-bold mb-6">My Jobs</h1>
           <div className="grid gap-4">
             {jobs.map((j) => (
-              <Card key={j.booking_id}>
-                <CardContent className="p-4">
-                  <div className="font-semibold">{j.service}</div>
-                  <div className="text-sm text-muted-foreground">{j.address}</div>
-                  <div className="text-sm">{new Date(j.date).toLocaleDateString('en-AU')}</div>
+              <Card key={j.booking_id} onClick={() => (window.location.href = `/partners/${j.booking_id}`)} className="cursor-pointer">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{j.service}</div>
+                    <div className="text-sm text-muted-foreground">{j.address}</div>
+                    <div className="text-sm">{new Date(j.date).toLocaleDateString('en-AU')}</div>
+                  </div>
+                  <div className={`px-3 py-1 rounded text-sm ${j.status === 'accepted' ? 'bg-green-100 text-green-700' : j.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{j.status}</div>
                 </CardContent>
               </Card>
             ))}

@@ -24,7 +24,7 @@ export default function AdminCreatePartner() {
     const resp = await fetch('/api/partners?action=create', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` }, body: JSON.stringify({ username, password, bookingIds }) })
     const data = await resp.json()
     if (!resp.ok) { setMsg(data.error || 'Failed'); return }
-    setMsg('Partner created')
+    setMsg('SUCCESS')
   }
 
   return (
@@ -49,7 +49,16 @@ export default function AdminCreatePartner() {
               </div>
             </div>
             <Button onClick={submit}>Create Partner</Button>
-            {msg && <div className="text-sm text-muted-foreground">{msg}</div>}
+            {msg && (
+              msg === 'SUCCESS' ? (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                  <svg className="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+                  <p className="text-green-800">Partner created ✅</p>
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground">{msg}</div>
+              )
+            )}
           </CardContent>
         </Card>
       </div>

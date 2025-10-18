@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Phone, Mail, Clock, Menu, X, ChevronDown } from 'lucide-react'
 import { Button } from './ui/button'
@@ -21,6 +21,18 @@ const services = [
 export default function Header({ isScrolled }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openServices, setOpenServices] = useState(false)
+  const servicesRef = useRef<HTMLDivElement | null>(null)
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!openServices) return
+      const t = e.target as Node
+      if (servicesRef.current && !servicesRef.current.contains(t)) {
+        setOpenServices(false)
+      }
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [openServices])
   const location = useLocation()
   
   // Check if current path is a service page
@@ -71,7 +83,7 @@ export default function Header({ isScrolled }: HeaderProps) {
             >
               Home
             </Link>
-            <div className="relative">
+            <div className="relative" ref={servicesRef}>
               <button 
                 onClick={() => setOpenServices((s) => !s)} 
                 className={cn(

@@ -59,6 +59,38 @@ export default async function handler(req, res) {
       return res.status(200).json({ jobs: (data || []).map((r) => r.bookings) })
     }
 
+    if (action === 'list' && req.method === 'GET') {
+      const auth = requireAuth(req, res)
+      if (!auth) return
+      const { data, error } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
+      if (error) return res.status(400).json({ error: error.message })
+      return res.status(200).json({ partners: data || [] })
+    }
+
+    if (action === 'delete' && req.method === 'POST') {
+      const auth = requireAuth(req, res)
+      if (!auth) return
+      const { partnerId } = req.body
+      if (!partnerId) return res.status(400).json({ error: 'partnerId required' })
+      const { error } = await supabase.from('partners').delete().eq('id', partnerId)
+      if (error) return res.status(400).json({ error: error.message })
+      return res.status(200).json({ success: true })
+    }
+
+    if (action === 'update-access' && req.method === 'POST') {
+      const auth = requireAuth(req, res)
+      if (!auth) return
+      const { partnerId, bookingIds } = req.body
+      if (!partnerId || !Array.isArray(bookingIds)) return res.status(400).json({ error: 'partnerId and bookingIds required' })
+      await supabase.from('partner_job_permissions').delete().eq('partner_id', partnerId)
+      if (bookingIds.length) {
+        const rows = bookingIds.map((b) => ({ partner_id: partnerId, booking_id: b }))
+        const { error } = await supabase.from('partner_job_permissions').insert(rows)
+        if (error) return res.status(400).json({ error: error.message })
+      }
+      return res.status(200).json({ success: true })
+    }
+
     return res.status(405).json({ error: 'Unsupported route' })
   } catch (e) {
     return res.status(500).json({ error: 'Server error' })

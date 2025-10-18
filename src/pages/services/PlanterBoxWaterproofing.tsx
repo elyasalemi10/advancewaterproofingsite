@@ -145,47 +145,7 @@ export default function PlanterBoxWaterproofing() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-green-50 to-lime-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1">
-              <img
-                src="/planter-box-landscape.jpg"
-                alt="Beautiful rooftop garden with proper waterproofing"
-                className="rounded-lg shadow-xl w-full h-[400px] object-cover"
-              />
-            </div>
-            <div className="order-1 md:order-2">
-              <h2 className="text-3xl font-bold mb-6">Why Proper Waterproofing Matters</h2>
-              <p className="text-lg text-muted-foreground mb-4">
-                Planter boxes present unique challenges that standard waterproofing can't handle:
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Constant moisture from soil and irrigation</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Aggressive plant roots seeking water sources</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Heavy soil and water weight loads</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Chemical exposure from fertilizers</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-primary mt-0.5 flex-shrink-0" />
-                  <span>Difficult access for repairs once established</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       <section className="py-12 bg-background">
         <div className="max-w-4xl mx-auto px-4 text-center">

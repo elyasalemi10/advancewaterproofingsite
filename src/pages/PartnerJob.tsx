@@ -9,7 +9,7 @@ export default function PartnerJob() {
   useEffect(() => {
     const load = async () => {
       try {
-        const resp = await fetch(`/api/customer-booking?token=${encodeURIComponent(id || '')}`)
+        const resp = await fetch(`/api/customer?token=${encodeURIComponent(id || '')}`)
         const data = await resp.json()
         if (!resp.ok) throw new Error(data.error || 'Failed to load')
         setJob(data.booking)
@@ -35,6 +35,7 @@ export default function PartnerJob() {
             <div><strong>Time:</strong> {job.time}</div>
             <div><strong>Notes:</strong> {job.notes || '—'}</div>
           </div>
+          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900">Restricted partner view. Actions are disabled.</div>
         </div>
       </section>
     </main>
