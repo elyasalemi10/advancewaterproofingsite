@@ -95,8 +95,8 @@ export default function CaulkingSolutions() {
     },
     {
       image: '/waterproofingwrong.jpeg',
-      title: 'Wrong Waterproofing',
-      description: 'Using incompatible waterproofing materials results in shrinkage, discoloration, and complete seal failure.'
+      title: 'Sealent vs Caulking',
+      description: 'Caulks are low-performance, low-flexibility materials for static, interior joints, while sealants are high-performance, elastomeric materials (like silicone and polyurethane) designed for dynamic, exterior joints subject to significant movement'
     }
   ]
 

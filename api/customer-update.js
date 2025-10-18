@@ -68,9 +68,19 @@ export default async function handler(req, res) {
 
     if (action === 'reschedule') {
       if (!newTime) return res.status(400).json({ error: 'newTime required' })
+      const dt = new Date(newTime)
+      const formattedDate = dt.toISOString() // ISO parseable date/time
+      const formattedTime = dt.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
       const { error: updErr } = await supabase
         .from('bookings')
-        .update({ customer_reschedule_requested_at: new Date().toISOString(), customer_rescheduled_time: newTime, status: 'pending' })
+        .update({
+          customer_reschedule_requested_at: new Date().toISOString(),
+          customer_rescheduled_time: newTime,
+          status: 'pending',
+          preferred_time: newTime,
+          date: formattedDate,
+          time: formattedTime
+        })
         .eq('id', booking.id)
       if (updErr) return res.status(500).json({ error: 'Failed to reschedule' })
       // Notify admin (styled email)
