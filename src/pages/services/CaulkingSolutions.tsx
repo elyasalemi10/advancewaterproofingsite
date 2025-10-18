@@ -96,7 +96,8 @@ export default function CaulkingSolutions() {
     {
       image: '/waterproofingwrong.jpeg',
       title: 'Sealent vs Caulking',
-      description: 'Caulks are low-performance, low-flexibility materials for static, interior joints, while sealants are high-performance, elastomeric materials (like silicone and polyurethane) designed for dynamic, exterior joints subject to significant movement'
+      description: 'Caulks are low-performance, low-flexibility materials for static, interior joints, while sealants are high-performance, elastomeric materials (like silicone and polyurethane) designed for dynamic, exterior joints subject to significant movement',
+      href: '/sealent-vs-caulking.html'
     }
   ]
 
@@ -220,7 +221,9 @@ export default function CaulkingSolutions() {
                   />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold text-secondary mb-2">{item.title}</h3>
+                  <h3 className="text-xl font-bold text-secondary mb-2">
+                    {item.href ? <a href={item.href} className="hover:underline">{item.title}</a> : item.title}
+                  </h3>
                   <p className="text-muted-foreground text-sm">{item.description}</p>
                 </CardContent>
               </Card>
