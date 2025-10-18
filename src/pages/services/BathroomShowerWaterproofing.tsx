@@ -57,7 +57,7 @@ export default function BathroomShowerWaterproofing() {
             </div>
             <div className="relative">
               <img
-                src="/bathroom-tile.webp"
+                src="/bathroom-tile.jpg"
                 alt="Modern waterproofed bathroom shower"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />
@@ -137,7 +137,7 @@ export default function BathroomShowerWaterproofing() {
             </div>
             <div>
               <img
-                src="/bathroom-shower.webp"
+                src="/bathroom-shower.jpeg"
                 alt="Waterproofing membrane application in bathroom"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />

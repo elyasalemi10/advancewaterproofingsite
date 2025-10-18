@@ -117,7 +117,7 @@ export default function PlanterBoxWaterproofing() {
             </div>
             <div>
               <img
-                src="/planter-box-rooftop.webp"
+                src="/planter-box-rooftop.jpg"
                 alt="Waterproofing installation in planter box"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
@@ -150,7 +150,7 @@ export default function PlanterBoxWaterproofing() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <img
-                src="/planter-box-landscape.webp"
+                src="/planter-box-landscape.jpg"
                 alt="Beautiful rooftop garden with proper waterproofing"
                 className="rounded-lg shadow-xl w-full h-[400px] object-cover"
               />
