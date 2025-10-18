@@ -9,31 +9,54 @@ function getSupabase() {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   if (req.method === 'OPTIONS') return res.status(200).end()
   const auth = requireAuth(req, res)
   if (!auth) return
-  const { bookingId, quoteId } = req.query
-  if (!bookingId && !quoteId) return res.status(400).json({ error: 'bookingId or quoteId required' })
   const supabase = getSupabase()
-  try {
-    const account = process.env.CLOUDFLARE_ACCOUNT_ID || ''
-    const bucket = process.env.CLOUDFLARE_R2_BUCKET || ''
-    const base = `https://${account}.r2.cloudflarestorage.com/${bucket}`
-    if (bookingId) {
-      const { data } = await supabase.from('job_files').select('*').eq('booking_id', bookingId).order('created_at', { ascending: false })
-      const files = (data || []).map((f) => ({ ...f, url: `${base}/${f.url}` }))
-      return res.status(200).json({ files })
+  if (req.method === 'GET') {
+    const { bookingId, quoteId } = req.query
+    if (!bookingId && !quoteId) return res.status(400).json({ error: 'bookingId or quoteId required' })
+    try {
+      const account = process.env.CLOUDFLARE_ACCOUNT_ID || ''
+      const bucket = process.env.CLOUDFLARE_R2_BUCKET || ''
+      const base = `https://${account}.r2.cloudflarestorage.com/${bucket}`
+      if (bookingId) {
+        const { data } = await supabase.from('job_files').select('*').eq('booking_id', bookingId).order('created_at', { ascending: false })
+        const files = (data || []).map((f) => ({ ...f, url: `${base}/${f.url}` }))
+        return res.status(200).json({ files })
+      }
+      if (quoteId) {
+        const { data } = await supabase.from('quote_files').select('*').eq('quote_id', quoteId).order('created_at', { ascending: false })
+        const files = (data || []).map((f) => ({ ...f, url: `${base}/${f.url}` }))
+        return res.status(200).json({ files })
+      }
+      return res.status(400).json({ error: 'Invalid request' })
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to load files' })
     }
-    if (quoteId) {
-      const { data } = await supabase.from('quote_files').select('*').eq('quote_id', quoteId).order('created_at', { ascending: false })
-      const files = (data || []).map((f) => ({ ...f, url: `${base}/${f.url}` }))
-      return res.status(200).json({ files })
-    }
-    return res.status(400).json({ error: 'Invalid request' })
-  } catch (e) {
-    return res.status(500).json({ error: 'Failed to load files' })
   }
+
+  if (req.method === 'POST') {
+    try {
+      const { bookingId, quoteId, items } = req.body || {}
+      if (!Array.isArray(items) || (!bookingId && !quoteId)) return res.status(400).json({ error: 'bookingId or quoteId and items required' })
+      if (bookingId) {
+        const rows = items.map((i) => ({ booking_id: bookingId, url: i.key || i.url, filename: i.filename, content_type: i.contentType || i.content_type }))
+        await supabase.from('job_files').insert(rows)
+      }
+      if (quoteId) {
+        const rows = items.map((i) => ({ quote_id: quoteId, url: i.key || i.url, filename: i.filename, content_type: i.contentType || i.content_type }))
+        await supabase.from('quote_files').insert(rows)
+      }
+      return res.status(200).json({ success: true })
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to save files' })
+    }
+  }
+
+  return res.status(405).json({ error: 'Method not allowed' })
 }
 
 

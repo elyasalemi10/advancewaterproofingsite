@@ -71,13 +71,21 @@ export default async function handler(req, res) {
       uploaded.push({ key, url: key, filename: f.filename, contentType: f.mime })
     }
 
-    // Store URLs in Supabase
-    const supabase = getSupabase()
-    if (bookingId) {
-      await supabase.from('job_files').insert(uploaded.map(u => ({ booking_id: bookingId, url: u.url, filename: u.filename, content_type: u.contentType })))
-    }
-    if (quoteId) {
-      await supabase.from('quote_files').insert(uploaded.map(u => ({ quote_id: quoteId, url: u.url, filename: u.filename, content_type: u.contentType })))
+    // Persist via files endpoint to avoid duplication of logic
+    const persist = await fetch(`${req.headers.origin || ''}/api/files`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': req.headers.authorization || '' },
+      body: JSON.stringify({ bookingId, quoteId, items: uploaded })
+    }).catch(() => null)
+    if (!persist || !persist.ok) {
+      // Fallback to direct supabase insert
+      const supabase = getSupabase()
+      if (bookingId) {
+        await supabase.from('job_files').insert(uploaded.map(u => ({ booking_id: bookingId, url: u.url, filename: u.filename, content_type: u.contentType })))
+      }
+      if (quoteId) {
+        await supabase.from('quote_files').insert(uploaded.map(u => ({ quote_id: quoteId, url: u.url, filename: u.filename, content_type: u.contentType })))
+      }
     }
 
     return res.status(200).json({ uploaded })
