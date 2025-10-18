@@ -50,7 +50,13 @@ export default function PartnersAdmin() {
 
   async function changePassword(id: string, newPassword: string) {
     const auth = localStorage.getItem('aw_auth') || ''
-    await fetch('/api/partners?action=change-password', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` }, body: JSON.stringify({ partnerId: id, newPassword }) })
+    const resp = await fetch('/api/partners?action=change-password', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` }, body: JSON.stringify({ partnerId: id, newPassword }) })
+    if (resp.ok) {
+      alert('Password updated successfully')
+    } else {
+      const data = await resp.json().catch(() => ({}))
+      alert(`Failed to update password: ${data.error || 'Unknown error'}`)
+    }
   }
 
   return (
@@ -84,7 +90,7 @@ export default function PartnersAdmin() {
                 </div>
 
                 <div className="text-sm">Permissions</div>
-                <div className="grid md:grid-cols-2 gap-2">
+                <div className="grid md:grid-cols-2 gap-2 max-h-64 overflow-auto p-1 border rounded">
                   {jobs.map((j) => {
                     const checked = p._selected?.has(j.booking_id)
                     return (
@@ -97,7 +103,10 @@ export default function PartnersAdmin() {
                             setPartners(prev => prev.map((pp, i) => i === idx ? { ...pp, _selected: next } : pp))
                           }}
                         />
-                        <span className="text-sm">{j.booking_id} — {j.service}</span>
+                        <span className="text-sm">
+                          {j.service}
+                          <span className="text-muted-foreground ml-2">{j.address}</span>
+                        </span>
                       </label>
                     )
                   })}

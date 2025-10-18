@@ -62,9 +62,30 @@ export default async function handler(req, res) {
     if (action === 'list' && req.method === 'GET') {
       const auth = requireAuth(req, res)
       if (!auth) return
-      const { data, error } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
+      const { data: partners, error } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
       if (error) return res.status(400).json({ error: error.message })
-      return res.status(200).json({ partners: data || [] })
+      const { data: perms } = await supabase.from('partner_job_permissions').select('partner_id, booking_id')
+      const partnerIdToBookings = new Map()
+      for (const r of perms || []) {
+        if (!partnerIdToBookings.has(r.partner_id)) partnerIdToBookings.set(r.partner_id, [])
+        partnerIdToBookings.get(r.partner_id).push(r.booking_id)
+      }
+      const enriched = (partners || []).map(p => ({ ...p, assigned: partnerIdToBookings.get(p.id) || [] }))
+      return res.status(200).json({ partners: enriched })
+    }
+
+    if (action === 'job' && (req.method === 'GET' || req.method === 'POST')) {
+      const partnerId = req.method === 'GET' ? req.query.partnerId : req.body.partnerId
+      const bookingId = req.method === 'GET' ? req.query.bookingId : req.body.bookingId
+      if (!partnerId || !bookingId) return res.status(400).json({ error: 'partnerId and bookingId required' })
+      const { data, error } = await supabase
+        .from('partner_job_permissions')
+        .select('booking_id, bookings:booking_id(*)')
+        .eq('partner_id', partnerId)
+        .eq('booking_id', bookingId)
+        .single()
+      if (error || !data) return res.status(404).json({ error: 'Not found' })
+      return res.status(200).json({ booking: data.bookings })
     }
 
     if (action === 'delete' && req.method === 'POST') {
@@ -88,6 +109,16 @@ export default async function handler(req, res) {
         const { error } = await supabase.from('partner_job_permissions').insert(rows)
         if (error) return res.status(400).json({ error: error.message })
       }
+      return res.status(200).json({ success: true })
+    }
+
+    if (action === 'change-password' && req.method === 'POST') {
+      const auth = requireAuth(req, res)
+      if (!auth) return
+      const { partnerId, newPassword } = req.body
+      if (!partnerId || !newPassword) return res.status(400).json({ error: 'partnerId and newPassword required' })
+      const { error } = await supabase.from('partners').update({ password_hash: hashPassword(newPassword) }).eq('id', partnerId)
+      if (error) return res.status(400).json({ error: error.message })
       return res.status(200).json({ success: true })
     }
 
