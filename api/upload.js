@@ -1,5 +1,6 @@
 import { requireAuth } from '../lib/serverAuth.js'
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import Busboy from 'busboy'
 import { createClient } from '@supabase/supabase-js'
 
 function getSupabase() {
@@ -28,7 +29,7 @@ export const config = {
 
 function parseMultipart(req) {
   return new Promise((resolve, reject) => {
-    const busboy = new (require('busboy'))({ headers: req.headers })
+    const busboy = new Busboy({ headers: req.headers })
     const files = []
     const fields = {}
     busboy.on('file', (name, file, info) => {
@@ -81,8 +82,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ uploaded })
   } catch (e) {
-    console.error(e)
-    return res.status(500).json({ error: 'Upload failed' })
+    console.error('Upload error:', e)
+    return res.status(500).json({ error: 'Upload failed', details: e?.message || String(e) })
   }
 }
 
