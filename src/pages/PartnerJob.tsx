@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 export default function PartnerJob() {
   const { id } = useParams()
@@ -36,22 +39,111 @@ export default function PartnerJob() {
   if (error) return <div className="pt-28 text-center text-red-600">{error}</div>
   if (!job) return <div className="pt-28 text-center">Loading...</div>
 
+  const statusColors: Record<string, string> = {
+    pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    accepted: 'bg-green-100 text-green-800 border-green-200',
+    cancelled: 'bg-red-100 text-red-800 border-red-200',
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-AU', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    })
+  }
+  const formatTime = (timeString: string) => {
+    if (!timeString) return ''
+    const date = new Date(timeString)
+    return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
+  }
+
   return (
-    <main className="pt-28">
-      <section className="py-12">
-        <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-3xl font-bold mb-4">Job Overview</h1>
-          <div className="space-y-2">
-            <div><strong>Service:</strong> {job.service}</div>
-            <div><strong>Address:</strong> {job.address}</div>
-            <div><strong>Date:</strong> {new Date(job.date).toLocaleDateString('en-AU')}</div>
-            <div><strong>Time:</strong> {job.time}</div>
-            <div><strong>Notes:</strong> {job.notes || '—'}</div>
-          </div>
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-900">Restricted partner view. Actions are disabled.</div>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Job Overview</h1>
+          <p className="text-slate-600">Restricted partner view (read-only)</p>
         </div>
-      </section>
-    </main>
+
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl">Booking Details</CardTitle>
+              <Badge className={`${statusColors[job.status || 'pending']} px-4 py-1`}>
+                {(job.status || 'pending').toUpperCase()}
+              </Badge>
+            </div>
+            <CardDescription>
+              {/* Booking ID intentionally hidden in partner view */}
+              {job.is_inspection !== undefined && (
+                <span className="ml-0">
+                  Type: <strong>{job.is_inspection ? 'Job' : 'Quote'}</strong>
+                </span>
+              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <User className="w-5 h-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm text-slate-600">Customer Name</p>
+                  <p className="font-semibold">{job.name}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm text-slate-600">Email</p>
+                  <p className="font-semibold break-all select-text" style={{ pointerEvents: 'none' }}>{job.email}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm text-slate-600">Phone</p>
+                  <p className="font-semibold select-text" style={{ pointerEvents: 'none' }}>{job.phone}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                <div>
+                  <p className="text-sm text-slate-600">Address</p>
+                  <p className="font-semibold">{job.address}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="flex items-start gap-3">
+                  <CalendarIcon className="w-5 h-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="text-sm text-slate-600">Date</p>
+                    <p className="font-semibold">{formatDate(job.date)}</p>
+                  </div>
+                </div>
+                {job.preferred_time && (
+                  <div className="flex items-start gap-3">
+                    <Clock className="w-5 h-5 text-primary mt-0.5" />
+                    <div>
+                      <p className="text-sm text-slate-600">Preferred Time</p>
+                      <p className="font-semibold">{formatTime(job.preferred_time)}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {job.notes && (
+              <div className="pt-4 border-t">
+                <p className="text-sm text-slate-600 mb-2">Additional Notes</p>
+                <p className="text-slate-800 bg-slate-50 p-3 rounded-lg">{job.notes}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }
 
