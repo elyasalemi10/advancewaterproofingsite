@@ -14,9 +14,11 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { type } = req.query
+  if (req.method !== 'POST' && !(req.method === 'GET' && type === 'get-quote')) {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
   if (type === 'contact') {
     try {
       const { name, email, phone, subject, message } = req.body;
