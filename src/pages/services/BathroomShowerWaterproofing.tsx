@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { ShowerHead, Shield, Wrench, CheckCircle2, Droplet, Home } from 'lucide-react'
 import { setSEO } from '@/lib/seo'
 import CTA from '@/components/CTA'
-import FAQ from '@/components/FAQ'
 import { Card, CardContent } from '@/components/ui/card'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 
@@ -161,7 +160,6 @@ export default function BathroomShowerWaterproofing() {
         </div>
       </section>
 
-      <FAQ />
       
       <section className="py-8 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 text-center">

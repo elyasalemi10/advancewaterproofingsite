@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Building2, Shield, Sun, CheckCircle2, Layers, Footprints } from 'lucide-react'
 import { setSEO } from '@/lib/seo'
 import CTA from '@/components/CTA'
-import FAQ from '@/components/FAQ'
 import { Card, CardContent } from '@/components/ui/card'
 import { BeforeAfterSlider } from '@/components/BeforeAfterSlider'
 
@@ -209,7 +208,6 @@ export default function RoofDeckPodiumWaterproofing() {
         </div>
       </section>
 
-      <FAQ />
       <CTA />
     </main>
   )
