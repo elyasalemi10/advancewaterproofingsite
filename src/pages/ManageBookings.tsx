@@ -436,6 +436,7 @@ export default function ManageBookings() {
                     variant="outline"
                     onClick={() => setSuggestOpen(true)}
                     disabled={processing}
+                    className="min-w-[220px]"
                   >
                     <Clock className="w-4 h-4 mr-2" />
                     Suggest Other Time
