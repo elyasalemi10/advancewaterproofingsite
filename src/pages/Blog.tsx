@@ -14,7 +14,7 @@ export default function Blog() {
     setLoading(true)
     try {
       const params = query ? `?q=${encodeURIComponent(query)}` : ''
-      const resp = await fetch(`/api/get-blogs${params}`)
+      const resp = await fetch(`/api/blog${params}`)
       const data = await resp.json()
       if (resp.ok) setBlogs(data.blogs || [])
     } finally {

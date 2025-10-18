@@ -32,7 +32,7 @@ function BlogCreateInner() {
     try {
       setLoading(true)
       setError('')
-      const resp = await fetch('/api/create-blog', {
+      const resp = await fetch('/api/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({ title, content, thumbnailUrl })

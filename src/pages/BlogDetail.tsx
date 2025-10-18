@@ -9,7 +9,7 @@ export default function BlogDetail() {
   useEffect(() => {
     const load = async () => {
       try {
-        const resp = await fetch(`/api/get-blog?slug=${encodeURIComponent(slug || '')}`)
+        const resp = await fetch(`/api/blog?slug=${encodeURIComponent(slug || '')}`)
         const data = await resp.json()
         if (!resp.ok) throw new Error(data.error || 'Failed to load')
         setBlog(data.blog)
