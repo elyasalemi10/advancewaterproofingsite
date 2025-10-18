@@ -63,7 +63,8 @@ export default async function handler(req, res) {
             status: 'pending',
             preferred_time: newTime,
             date: formattedDate,
-            time: formattedTime
+            time: formattedTime,
+            gcal_event_id: null
           })
           .eq('id', booking.id)
         if (updErr) return res.status(500).json({ error: 'Failed to reschedule' })

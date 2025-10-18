@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   booking_id TEXT UNIQUE NOT NULL,
   customer_access_token TEXT UNIQUE,
+  gcal_event_id TEXT,
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT NOT NULL,
@@ -39,6 +40,7 @@ ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_inspection BOOLEAN DEFAULT true
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS preferred_time TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS end_time TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_access_token TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS gcal_event_id TEXT;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS pre_job_reminder_sent_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_confirmed_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE bookings ADD COLUMN IF NOT EXISTS customer_reschedule_requested_at TIMESTAMP WITH TIME ZONE;

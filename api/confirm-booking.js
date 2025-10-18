@@ -1,11 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
 import { requireAuth } from './_auth.js'
+import crypto from 'crypto'
 
 // Initialize Supabase
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   return createClient(supabaseUrl, supabaseKey);
+}
+
+async function getGoogleAccessToken() {
+  try {
+    const refreshToken = process.env.GCAL_REFRESH_TOKEN || ''
+    const clientId = process.env.GCAL_CLIENT_ID || ''
+    const clientSecret = process.env.GCAL_CLIENT_SECRET || ''
+    if (!refreshToken || !clientId || !clientSecret) return null
+    const tokenResp = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      }).toString(),
+    })
+    const data = await tokenResp.json()
+    if (!tokenResp.ok || !data.access_token) return null
+    return data.access_token
+  } catch {
+    return null
+  }
 }
 
 export default async function handler(req, res) {
@@ -60,6 +85,23 @@ export default async function handler(req, res) {
         .eq('booking_id', bookingId)
       if (cancelErr) {
         return res.status(500).json({ error: 'Failed to cancel booking' })
+      }
+
+      // Delete Google Calendar event if exists
+      try {
+        if (booking.gcal_event_id) {
+          const accessToken = await getGoogleAccessToken()
+          if (accessToken) {
+            const calId = process.env.GCAL_CALENDAR_ID || 'primary'
+            await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events/${encodeURIComponent(booking.gcal_event_id)}`, {
+              method: 'DELETE',
+              headers: { Authorization: `Bearer ${accessToken}` },
+            })
+            await supabase.from('bookings').update({ gcal_event_id: null }).eq('booking_id', bookingId)
+          }
+        }
+      } catch (e) {
+        // ignore calendar deletion errors
       }
 
       const dateObj = new Date(booking.date);
@@ -200,6 +242,33 @@ export default async function handler(req, res) {
     if (updateError) {
       console.error('Failed to update booking:', updateError);
       return res.status(500).json({ error: 'Failed to update booking status' });
+    }
+
+    // Create Google Calendar event (1h, no attendees) after acceptance
+    try {
+      const accessToken = await getGoogleAccessToken()
+      if (accessToken && booking.preferred_time) {
+        const start = new Date(booking.preferred_time)
+        const end = new Date(start.getTime() + 60 * 60 * 1000)
+        const calId = process.env.GCAL_CALENDAR_ID || 'primary'
+        const body = {
+          summary: booking.service,
+          description: `- ${booking.service}\n- ${booking.address}\n- ${booking.name}\n- ${booking.email}\n- ${booking.phone}`,
+          start: { dateTime: start.toISOString() },
+          end: { dateTime: end.toISOString() },
+        }
+        const evResp = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+          body: JSON.stringify(body),
+        })
+        const ev = await evResp.json()
+        if (evResp.ok && ev && ev.id) {
+          await supabase.from('bookings').update({ gcal_event_id: ev.id }).eq('booking_id', bookingId)
+        }
+      }
+    } catch (e) {
+      // ignore calendar create errors
     }
 
     // Confirmation email
