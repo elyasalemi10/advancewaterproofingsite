@@ -20,14 +20,13 @@ function BlogCreateInner() {
   const [title, setTitle] = useState('')
   const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [content, setContent] = useState('')
-  const [isHtml, setIsHtml] = useState(false)
+  // HTML mode removed; Markdown only
   const [uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
   const insertToken = (token: string) => {
-    if (isHtml) return
     setContent((prev) => prev + (prev.endsWith('\n') ? '' : '\n') + token)
   }
 
@@ -36,7 +35,7 @@ function BlogCreateInner() {
       setUploading(true)
       const fileExt = file.name.split('.').pop() || 'jpg'
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
-      const { data, error: upErr } = await supabase.storage.from('blog-thumbnails').upload(fileName, file, { cacheControl: '3600', upsert: false })
+      const { data, error: upErr } = await supabase.storage.from('blog-thumbnails').upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type })
       if (upErr) throw upErr
       const { data: pub } = supabase.storage.from('blog-thumbnails').getPublicUrl(data.path)
       setThumbnailUrl(pub.publicUrl)
@@ -52,7 +51,7 @@ function BlogCreateInner() {
     try {
       setLoading(true)
       setError('')
-      const payloadContent = isHtml ? `<!--HTML--->\n${content}` : content
+      const payloadContent = content
       const resp = await fetch('/api/blog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
@@ -95,14 +94,17 @@ function BlogCreateInner() {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <input id="isHtml" type="checkbox" checked={isHtml} onChange={(e) => setIsHtml(e.target.checked)} />
-              <label htmlFor="isHtml" className="text-sm">Paste HTML instead of Markdown</label>
-            </div>
+            {/* Markdown only */}
             <div>
-              <label className="block text-sm mb-1">Content {isHtml ? '(HTML)' : '(Markdown supported)'}</label>
-              {!isHtml && <EditorToolbar onInsert={insertToken} />}
+              <label className="block text-sm mb-1">Content (Markdown supported)</label>
+              <EditorToolbar onInsert={insertToken} />
               <Textarea value={content} onChange={(e) => setContent(e.target.value)} rows={16} required />
+              {content && (
+                <div className="mt-4 p-4 border rounded-lg bg-muted/30">
+                  <div className="text-sm font-semibold mb-2">Preview</div>
+                  <div className="prose max-w-none whitespace-pre-wrap">{content}</div>
+                </div>
+              )}
             </div>
             {error && <div className="text-red-600 text-sm">{error}</div>}
             <Button type="submit" disabled={loading || uploading}>{loading ? 'Publishing...' : 'Publish'}</Button>

@@ -56,7 +56,7 @@ export default function PlanterBoxWaterproofing() {
             </div>
             <div className="relative">
               <img
-                src="/planter-box-garden.webp"
+                src="/planterbox.jpeg"
                 alt="Modern rooftop planter boxes with waterproofing"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />

@@ -70,8 +70,8 @@ export default function BlogDetail() {
   if (error) return <div className="pt-28 text-center text-red-600">{error}</div>
   if (!blog) return <div className="pt-28 text-center">Loading...</div>
 
-  const isHtml = typeof blog.content === 'string' && blog.content.startsWith('<!--HTML--->')
-  const raw = isHtml ? blog.content.replace(/^<!--HTML--->\n?/, '') : blog.content
+  const isHtml = false
+  const raw = blog.content
 
   const srcDoc = isHtml ? `<!doctype html><html><head><meta charset=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"/>\n<style>body{margin:0;padding:16px;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,\"Helvetica Neue\",Arial,\"Noto Sans\",\"Apple Color Emoji\",\"Segoe UI Emoji\"}</style></head><body>`
       + raw +
@@ -85,16 +85,9 @@ export default function BlogDetail() {
         )}
         <h1 className="text-4xl font-bold mb-2">{blog.title}</h1>
         <p className="text-sm text-muted-foreground mb-6">{formatDate(blog.created_at)}</p>
-        {isHtml ? (
-          <iframe
-            sandbox="allow-scripts"
-            srcDoc={srcDoc}
-            style={{ width: '100%', border: 'none', height: iframeHeight }}
-            title="Blog Content"
-          />
-        ) : (
+        {
           <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: renderedHtml }} />
-        )}
+        }
         <div className="mt-10 p-4 border rounded-lg text-sm text-muted-foreground">
           Looking for waterproofing services? Visit our website to learn more about how we can help. <a href="/" className="text-primary underline">Advance Waterproofing</a>
         </div>
