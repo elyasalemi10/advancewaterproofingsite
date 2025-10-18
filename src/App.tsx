@@ -19,9 +19,7 @@ import RapidSeal from './pages/services/RapidSeal'
 import Admin from './pages/Admin'
 import Partners from './pages/Partners'
 import PartnerJob from './pages/PartnerJob'
-import Blog from './pages/Blog'
-import BlogCreate from './pages/BlogCreate'
-import BlogDetail from './pages/BlogDetail'
+// Blog removed
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
 import BathroomShowerWaterproofing from './pages/services/BathroomShowerWaterproofing'
@@ -68,9 +66,7 @@ function AppShell() {
           <Route path="/quoteid" element={<ManageQuote />} />
           <Route path="/shortcuts" element={<Shortcuts />} />
           <Route path="/services/rapidseal" element={<RapidSeal />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/create" element={<ProtectedRoute><BlogCreate /></ProtectedRoute>} />
-          <Route path="/blog/:slug" element={<BlogDetail />} />
+          
           <Route path="/services/caulking-solutions" element={<CaulkingSolutions />} />
           <Route path="/services/balcony-leak-detection" element={<BalconyLeakDetection />} />
           <Route path="/services/bathroom-shower-waterproofing" element={<BathroomShowerWaterproofing />} />
