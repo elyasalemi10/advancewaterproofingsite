@@ -4,7 +4,7 @@ import crypto from 'crypto'
 // Initialize Supabase (will be created fresh in each request)
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co';
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24';
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   return createClient(supabaseUrl, supabaseKey);
 }
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   try {
     const { name, email, phone, address, service, date, time, notes, isInspection, startTime, endTime } = req.body;
     
-    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co';
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
     const bookingId = generateBookingId();
   const customerAccessToken = crypto.randomBytes(24).toString('hex');
     

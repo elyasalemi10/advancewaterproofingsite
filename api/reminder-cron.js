@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co'
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24'
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   return createClient(supabaseUrl, supabaseKey)
 }
 
@@ -210,7 +210,7 @@ export default async function handler(req, res) {
         const url = `${baseUrl}/customer/${booking.customer_access_token}`
         const emailHTML = buildReminderEmailHTML(booking, url)
 
-        const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
         try {
           const emailResp = await fetch('https://api.resend.com/emails', {
             method: 'POST',
