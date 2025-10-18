@@ -126,7 +126,7 @@ export default function ManageBookings() {
       const fileArrayBuffer = await quoteFile.arrayBuffer()
       const base64 = btoa(String.fromCharCode(...new Uint8Array(fileArrayBuffer)))
 
-      const response = await fetch('/api/send-quote-email', {
+      const response = await fetch('/api/email?type=quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
         body: JSON.stringify({
