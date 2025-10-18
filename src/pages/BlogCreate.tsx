@@ -35,10 +35,18 @@ function BlogCreateInner() {
       setUploading(true)
       const fileExt = file.name.split('.').pop() || 'jpg'
       const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`
+      // Try simple upload to 'blog-thumbnails' bucket
       const { data, error: upErr } = await supabase.storage.from('blog-thumbnails').upload(fileName, file, { cacheControl: '3600', upsert: true, contentType: file.type })
       if (upErr) throw upErr
+      // If bucket is public, use public URL; otherwise, create a signed URL
       const { data: pub } = supabase.storage.from('blog-thumbnails').getPublicUrl(data.path)
-      setThumbnailUrl(pub.publicUrl)
+      if (pub?.publicUrl) {
+        setThumbnailUrl(pub.publicUrl)
+      } else {
+        const { data: signed, error: sErr } = await supabase.storage.from('blog-thumbnails').createSignedUrl(data.path, 60 * 60 * 24 * 365)
+        if (sErr || !signed?.signedUrl) throw sErr || new Error('Failed to create signed URL')
+        setThumbnailUrl(signed.signedUrl)
+      }
     } catch (e: any) {
       setError('Failed to upload thumbnail. Please try again.')
     } finally {
