@@ -9,7 +9,9 @@ export default function PartnerJob() {
   useEffect(() => {
     const load = async () => {
       try {
-        const resp = await fetch(`/api/customer?token=${encodeURIComponent(id || '')}`)
+        const partnerId = localStorage.getItem('partner_id') || ''
+        if (!partnerId) throw new Error('Please log in as a partner to view this job')
+        const resp = await fetch(`/api/partners?action=job&partnerId=${encodeURIComponent(partnerId)}&bookingId=${encodeURIComponent(id || '')}`)
         const data = await resp.json()
         if (!resp.ok) throw new Error(data.error || 'Failed to load')
         setJob(data.booking)

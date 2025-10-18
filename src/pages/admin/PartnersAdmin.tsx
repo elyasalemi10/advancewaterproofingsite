@@ -3,11 +3,14 @@ import { setSEO } from '@/lib/seo'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
+import { useNavigate } from 'react-router-dom'
 
 export default function PartnersAdmin() {
   const [partners, setPartners] = useState<any[]>([])
   const [jobs, setJobs] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     setSEO({ title: 'Partners | Admin', description: 'Manage partners and job access' })
@@ -26,7 +29,7 @@ export default function PartnersAdmin() {
       ])
       const p = await pResp.json()
       const a = await aResp.json()
-      if (pResp.ok) setPartners(p.partners || [])
+      if (pResp.ok) setPartners((p.partners || []).map((pr: any) => ({ ...pr, _selected: new Set<string>(pr.assigned || []) })))
       if (aResp.ok) setJobs(a.bookings || [])
     } finally {
       setLoading(false)
@@ -39,23 +42,30 @@ export default function PartnersAdmin() {
     await refresh()
   }
 
-  async function updateAccess(id: string, bookingIdsCsv: string) {
-    const bookingIds = bookingIdsCsv.split(',').map(s => s.trim()).filter(Boolean)
+  async function updateAccess(id: string, bookingIds: string[]) {
     const auth = localStorage.getItem('aw_auth') || ''
     await fetch('/api/partners?action=update-access', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` }, body: JSON.stringify({ partnerId: id, bookingIds }) })
     await refresh()
+  }
+
+  async function changePassword(id: string, newPassword: string) {
+    const auth = localStorage.getItem('aw_auth') || ''
+    await fetch('/api/partners?action=change-password', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${auth}` }, body: JSON.stringify({ partnerId: id, newPassword }) })
   }
 
   return (
     <main className="pt-28">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Partners</h1>
-          <Button variant="outline" onClick={refresh} disabled={loading}>Refresh</Button>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" onClick={() => navigate('/admin')}>← Back</Button>
+            <h1 className="text-3xl font-bold">Partners</h1>
+          </div>
+          <div />
         </div>
 
         <div className="grid gap-4">
-          {partners.map((p) => (
+          {partners.map((p, idx) => (
             <Card key={p.id}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -63,27 +73,37 @@ export default function PartnersAdmin() {
                   <Button variant="destructive" onClick={() => deletePartner(p.id)}>Delete</Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-sm">Password (hash stored). Show to partner: not stored in plaintext.</div>
-                <div>
-                  <div className="text-sm mb-2">Grant access to booking IDs (comma separated)</div>
-                  <div className="flex gap-2">
-                    <Input id={`access-${p.id}`} placeholder="BOOK-..., BOOK-..." />
-                    <Button onClick={() => {
-                      const el = document.getElementById(`access-${p.id}`) as HTMLInputElement | null
-                      updateAccess(p.id, el?.value || '')
-                    }}>Update Access</Button>
-                  </div>
+              <CardContent className="space-y-4">
+                <div className="text-sm">Change Password</div>
+                <div className="flex gap-2">
+                  <Input id={`pwd-${p.id}`} type="password" placeholder="New password" />
+                  <Button onClick={() => {
+                    const el = document.getElementById(`pwd-${p.id}`) as HTMLInputElement | null
+                    changePassword(p.id, el?.value || '')
+                  }}>Change Password</Button>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  Recent jobs (click to copy ID):
-                  <div className="mt-2 grid md:grid-cols-2 gap-2">
-                    {jobs.slice(0, 10).map((j) => (
-                      <button key={j.booking_id} className="text-left p-2 border rounded hover:bg-muted" onClick={() => navigator.clipboard.writeText(j.booking_id)}>
-                        {j.booking_id} — {j.service} — {j.address}
-                      </button>
-                    ))}
-                  </div>
+
+                <div className="text-sm">Permissions</div>
+                <div className="grid md:grid-cols-2 gap-2">
+                  {jobs.map((j) => {
+                    const checked = p._selected?.has(j.booking_id)
+                    return (
+                      <label key={j.booking_id} className="flex items-center gap-2 p-2 border rounded">
+                        <Checkbox
+                          checked={!!checked}
+                          onCheckedChange={(v) => {
+                            const next = new Set<string>(p._selected || [])
+                            if (v) next.add(j.booking_id); else next.delete(j.booking_id)
+                            setPartners(prev => prev.map((pp, i) => i === idx ? { ...pp, _selected: next } : pp))
+                          }}
+                        />
+                        <span className="text-sm">{j.booking_id} — {j.service}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+                <div>
+                  <Button onClick={() => updateAccess(p.id, Array.from(p._selected || []))}>Save Permissions</Button>
                 </div>
               </CardContent>
             </Card>

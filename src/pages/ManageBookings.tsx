@@ -432,19 +432,6 @@ export default function ManageBookings() {
                     Accept
                   </Button>
 
-                  <Button 
-                    onClick={handleCancel}
-                    disabled={processing}
-                    variant="destructive"
-                  >
-                    {processing ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <Ban className="w-4 h-4 mr-2" />
-                    )}
-                    Cancel
-                  </Button>
-
                   <Button
                     variant="outline"
                     onClick={() => setSuggestOpen(true)}
@@ -621,6 +608,20 @@ export default function ManageBookings() {
                     <p className="text-slate-600">
                       This booking has already been accepted.
                     </p>
+                    <div>
+                      <Button 
+                        onClick={handleCancel}
+                        disabled={processing}
+                        variant="destructive"
+                      >
+                        {processing ? (
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        ) : (
+                          <Ban className="w-4 h-4 mr-2" />
+                        )}
+                        Cancel Booking
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <>
