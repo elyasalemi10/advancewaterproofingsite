@@ -19,6 +19,8 @@ import RapidSeal from './pages/services/RapidSeal'
 import Admin from './pages/Admin'
 import Partners from './pages/Partners'
 import PartnerJob from './pages/PartnerJob'
+import AdminCreateJob from './pages/admin/AdminCreateJob'
+import AdminCreatePartner from './pages/admin/AdminCreatePartner'
 // Blog removed
 import CaulkingSolutions from './pages/services/CaulkingSolutions'
 import BalconyLeakDetection from './pages/services/BalconyLeakDetection'
