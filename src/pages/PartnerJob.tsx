@@ -57,6 +57,26 @@ export default function PartnerJob() {
     return date.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
   }
 
+  function toGCalDate(dt: Date) {
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${dt.getUTCFullYear()}${pad(dt.getUTCMonth() + 1)}${pad(dt.getUTCDate())}T${pad(dt.getUTCHours())}${pad(dt.getUTCMinutes())}${pad(dt.getUTCSeconds())}Z`
+  }
+
+  function buildGoogleCalendarUrl() {
+    try {
+      const start = job.preferred_time ? new Date(job.preferred_time) : (job.date ? new Date(job.date) : null)
+      if (!start || Number.isNaN(start.getTime())) return ''
+      const end = new Date(start.getTime() + 60 * 60 * 1000)
+      const dates = `${toGCalDate(start)}/${toGCalDate(end)}`
+      const text = encodeURIComponent(job.service || 'Job')
+      const details = encodeURIComponent(`- ${job.service}\n- ${job.address}\n- ${job.name}\n- ${job.email}\n- ${job.phone}`)
+      const location = encodeURIComponent(job.address || '')
+      return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dates}&details=${details}&location=${location}`
+    } catch {
+      return ''
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 py-12 px-4">
       <div className="max-w-3xl mx-auto">
@@ -143,7 +163,13 @@ export default function PartnerJob() {
             )}
           </CardContent>
         </Card>
-        <div className="mt-6 text-center">
+        <div className="mt-6 flex items-center justify-between">
+          <Button variant="outline" onClick={() => {
+            const url = buildGoogleCalendarUrl()
+            if (url) window.open(url, '_blank')
+          }} disabled={!job || !job.preferred_time}>
+            Add to my Google Calendar
+          </Button>
           <Button variant="ghost" onClick={() => (window.location.href = '/partners')}>← Back to My Jobs</Button>
         </div>
       </div>
