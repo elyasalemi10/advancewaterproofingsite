@@ -31,7 +31,7 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem('aw_auth', data.token)
       }
-      const fallback = '/manage-booking'
+      const fallback = '/admin'
       let target = fallback
       try {
         const stored = sessionStorage.getItem('aw_redirect_to')

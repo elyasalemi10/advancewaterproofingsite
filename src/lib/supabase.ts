@@ -52,6 +52,21 @@ export async function getQuoteById(quoteId: string) {
   return data as Quote
 }
 
+// Get all quotes (for admin)
+export async function getAllQuotes() {
+  const { data, error } = await supabase
+    .from('quotes')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching quotes:', error)
+    throw error
+  }
+
+  return data as Quote[]
+}
+
 // Create a new booking
 export async function createBooking(data: Omit<Booking, 'id' | 'created_at' | 'updated_at' | 'status'>) {
   const { data: booking, error } = await supabase
@@ -131,6 +146,21 @@ export async function deleteBooking(bookingId: string) {
 
   if (error) {
     console.error('Error deleting booking:', error)
+    throw error
+  }
+
+  return true
+}
+
+// Delete a quote
+export async function deleteQuote(quoteId: string) {
+  const { error } = await supabase
+    .from('quotes')
+    .delete()
+    .eq('quote_id', quoteId)
+
+  if (error) {
+    console.error('Error deleting quote:', error)
     throw error
   }
 

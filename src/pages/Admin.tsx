@@ -3,10 +3,13 @@ import { setSEO } from '@/lib/seo'
 import { Shield, PlusCircle, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { getAllQuotes, type Quote } from '@/lib/supabase'
 
 export default function Admin() {
   const [stats, setStats] = useState({ total: 0, pending: 0, accepted: 0, cancelled: 0 })
   const [jobs, setJobs] = useState<any[]>([])
+  const [quotes, setQuotes] = useState<Quote[]>([])
+  const [activeTab, setActiveTab] = useState<'jobs' | 'quotes'>('jobs')
   useEffect(() => {
     ;(async () => {
       try {
@@ -16,6 +19,14 @@ export default function Admin() {
           setStats(data.stats)
           setJobs(data.bookings || [])
         }
+      } catch {}
+    })()
+  }, [])
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const q = await getAllQuotes()
+        setQuotes(q || [])
       } catch {}
     })()
   }, [])
@@ -70,20 +81,46 @@ export default function Admin() {
           </Button>
         </div>
 
-        <div className="grid gap-4">
-          {jobs.map((j) => (
-            <Card key={j.booking_id} onClick={() => (window.location.href = `/manage-booking?id=${j.booking_id}`)} className="cursor-pointer">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div>
-                  <div className="font-semibold">{j.service}</div>
-                  <div className="text-sm text-muted-foreground">{j.address}</div>
-                </div>
-                <div className={`px-3 py-1 rounded text-sm ${j.status === 'accepted' ? 'bg-green-100 text-green-700' : j.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{j.status}</div>
-              </CardContent>
-            </Card>
-          ))}
-          {jobs.length === 0 && <div className="text-muted-foreground">No jobs found.</div>}
+        <div className="border-b mb-4">
+          <div className="flex gap-2">
+            <Button variant={activeTab === 'jobs' ? 'default' : 'outline'} onClick={() => setActiveTab('jobs')}>Jobs</Button>
+            <Button variant={activeTab === 'quotes' ? 'default' : 'outline'} onClick={() => setActiveTab('quotes')}>Quotes</Button>
+          </div>
         </div>
+
+        {activeTab === 'jobs' && (
+          <div className="grid gap-4">
+            {jobs.map((j) => (
+              <Card key={j.booking_id} onClick={() => (window.location.href = `/admin/${j.booking_id}`)} className="cursor-pointer">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{j.service}</div>
+                    <div className="text-sm text-muted-foreground">{j.address}</div>
+                  </div>
+                  <div className={`px-3 py-1 rounded text-sm ${j.status === 'accepted' ? 'bg-green-100 text-green-700' : j.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{j.status}</div>
+                </CardContent>
+              </Card>
+            ))}
+            {jobs.length === 0 && <div className="text-muted-foreground">No jobs found.</div>}
+          </div>
+        )}
+
+        {activeTab === 'quotes' && (
+          <div className="grid gap-4">
+            {quotes.map((q) => (
+              <Card key={q.quote_id} onClick={() => (window.location.href = `/admin/${q.quote_id}`)} className="cursor-pointer">
+                <CardContent className="p-4 flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{q.subject || 'Quote'}</div>
+                    <div className="text-sm text-muted-foreground">{q.email}</div>
+                  </div>
+                  <div className={`px-3 py-1 rounded text-sm ${q.status === 'sent' ? 'bg-green-100 text-green-700' : q.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{q.status}</div>
+                </CardContent>
+              </Card>
+            ))}
+            {quotes.length === 0 && <div className="text-muted-foreground">No quotes found.</div>}
+          </div>
+        )}
         
       </div>
     </div>

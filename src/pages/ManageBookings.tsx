@@ -34,6 +34,13 @@ export default function ManageBookings() {
       setLoading(false)
       return
     }
+    // Redirect to new admin detail route
+    try {
+      if (bookingId) {
+        navigate(`/admin/${bookingId}`, { replace: true })
+        return
+      }
+    } catch {}
     loadBooking()
   }, [bookingId])
 
@@ -658,13 +665,13 @@ export default function ManageBookings() {
           </Card>
         )}
 
-        {/* Back Button */}
+        {/* Back Button to Admin */}
         <div className="mt-6 text-center">
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/admin')}
           >
-            ← Back to Home
+            ← Back to Admin
           </Button>
         </div>
       </div>

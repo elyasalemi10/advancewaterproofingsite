@@ -17,6 +17,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import RapidSeal from './pages/services/RapidSeal'
 import Admin from './pages/Admin'
+import AdminDetail from './pages/admin/AdminDetail'
 import Partners from './pages/Partners'
 import PartnerJob from './pages/PartnerJob'
 import AdminCreateJob from './pages/admin/AdminCreateJob'
@@ -47,6 +48,7 @@ function AppShell() {
   }, [])
   const { pathname } = useLocation()
   const hideChatbot = pathname.startsWith('/admin') || pathname.startsWith('/partners') || pathname.startsWith('/customer')
+  const hideStickyBar = pathname.startsWith('/admin') || pathname.startsWith('/partners') || pathname.startsWith('/customer')
   return (
     <div className="min-h-screen bg-background">
       <Header isScrolled={isScrolled} />
@@ -61,6 +63,7 @@ function AppShell() {
           <Route path="/admin/create-job" element={<ProtectedRoute><AdminCreateJob /></ProtectedRoute>} />
           <Route path="/admin/create-partner" element={<ProtectedRoute><AdminCreatePartner /></ProtectedRoute>} />
           <Route path="/admin/partners" element={<ProtectedRoute><PartnersAdmin /></ProtectedRoute>} />
+          <Route path="/admin/:id" element={<ProtectedRoute><AdminDetail /></ProtectedRoute>} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/partners/:id" element={<PartnerJob />} />
           <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />
@@ -82,7 +85,7 @@ function AppShell() {
       </main>
       <Footer />
       {!hideChatbot && <Chatbot />}
-      <StickyBookingBar />
+      {!hideStickyBar && <StickyBookingBar />}
     </div>
   )
 }

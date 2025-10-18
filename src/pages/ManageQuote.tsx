@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import type { Quote } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { Loader2, FileUp, CheckCircle, XCircle } from 'lucide-react'
 
 export default function ManageQuote() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const [processing, setProcessing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
@@ -19,6 +20,12 @@ export default function ManageQuote() {
   const quoteId = searchParams.get('id') || ''
 
   useEffect(() => {
+    // Redirect to new admin detail route
+    const id = searchParams.get('id')
+    if (id) {
+      navigate(`/admin/${id}`, { replace: true })
+      return
+    }
     const load = async () => {
       if (!quoteId) return
       try {
