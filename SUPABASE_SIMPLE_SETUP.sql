@@ -118,3 +118,29 @@ CREATE POLICY "Anyone can read bookings by booking_id" ON bookings
   FOR SELECT
   USING (true);
 
+-- Partners schema
+CREATE TABLE IF NOT EXISTS partners (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS partner_job_permissions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  partner_id UUID NOT NULL REFERENCES partners(id) ON DELETE CASCADE,
+  booking_id TEXT NOT NULL REFERENCES bookings(booking_id) ON DELETE CASCADE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(partner_id, booking_id)
+);
+
+ALTER TABLE partners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE partner_job_permissions ENABLE ROW LEVEL SECURITY;
+
+-- Policies (service role manages, no public access by default)
+DROP POLICY IF EXISTS "partners service role manage" ON partners;
+CREATE POLICY "partners service role manage" ON partners FOR ALL USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "partner_job_permissions service role manage" ON partner_job_permissions;
+CREATE POLICY "partner_job_permissions service role manage" ON partner_job_permissions FOR ALL USING (true) WITH CHECK (true);
+

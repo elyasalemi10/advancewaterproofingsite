@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw } from 'lucide-react'
+import { Calendar as CalendarIcon, Clock, User, Mail, Phone, MapPin, CheckCircle, XCircle, MessageCircle, Loader2, RefreshCw, Ban } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getBookingByBookingId, updateBookingStatus, type Booking } from '@/lib/supabase'
@@ -84,6 +84,30 @@ export default function ManageBookings() {
     } catch (err) {
       setError('Failed to confirm booking')
       console.error(err)
+    } finally {
+      setProcessing(false)
+    }
+  }
+
+  const handleCancel = async () => {
+    if (!booking) return
+    try {
+      setProcessing(true)
+      setError('')
+      const response = await fetch('/api/confirm-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('aw_auth') || ''}` },
+        body: JSON.stringify({ bookingId: bookingId, cancel: true })
+      })
+      if (response.ok) {
+        setSuccess('Booking cancelled and customer notified ❌')
+        setTimeout(() => loadBooking(), 1200)
+      } else {
+        const errorData = await response.json()
+        setError(`Failed to cancel booking: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (e) {
+      setError('Failed to cancel booking')
     } finally {
       setProcessing(false)
     }
@@ -394,7 +418,7 @@ export default function ManageBookings() {
             </CardHeader>
             <CardContent>
               {!showDeclineForm ? (
-                <div className="grid md:grid-cols-4 gap-3">
+                <div className="grid md:grid-cols-5 gap-3">
                   <Button 
                     onClick={handleAccept}
                     disabled={processing}
@@ -406,6 +430,19 @@ export default function ManageBookings() {
                       <CheckCircle className="w-4 h-4 mr-2" />
                     )}
                     Accept
+                  </Button>
+
+                  <Button 
+                    onClick={handleCancel}
+                    disabled={processing}
+                    variant="destructive"
+                  >
+                    {processing ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Ban className="w-4 h-4 mr-2" />
+                    )}
+                    Cancel
                   </Button>
 
                   <Button

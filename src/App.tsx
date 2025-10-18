@@ -16,6 +16,9 @@ import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import RapidSeal from './pages/services/RapidSeal'
+import Admin from './pages/Admin'
+import Partners from './pages/Partners'
+import PartnerJob from './pages/PartnerJob'
 import Blog from './pages/Blog'
 import BlogCreate from './pages/BlogCreate'
 import BlogDetail from './pages/BlogDetail'
@@ -52,6 +55,9 @@ function AppShell() {
           <Route path="/accept-booking" element={<AcceptBooking />} />
           <Route path="/customer/:token" element={<CustomerBooking />} />
           <Route path="/manage-booking" element={<ProtectedRoute><ManageBookings /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/partners" element={<Partners />} />
+          <Route path="/partners/:id" element={<Partners />} />
           <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />

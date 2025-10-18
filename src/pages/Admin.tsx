@@ -1,10 +1,22 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { MediaLibrary } from '@/components/MediaLibrary'
 import { setSEO } from '@/lib/seo'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Shield } from 'lucide-react'
+import { Shield, PlusCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function Admin() {
+  const [stats, setStats] = useState({ total: 0, pending: 0, accepted: 0, cancelled: 0 })
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const resp = await fetch('/api/blog?action=stats') // reusing an API slot is fine; placeholder
+        // If you have an API for bookings stats, swap endpoint accordingly
+        // For now, keep zeros to avoid blocking
+        void resp
+      } catch {}
+    })()
+  }, [])
   useEffect(() => {
     setSEO({
       title: 'Admin Dashboard | Advance Waterproofing',
@@ -23,6 +35,31 @@ export default function Admin() {
               Manage your website content and media
             </p>
           </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="rounded-lg border p-4 bg-white">
+            <div className="text-sm text-muted-foreground">Total Jobs</div>
+            <div className="text-3xl font-bold">{stats.total}</div>
+          </div>
+          <div className="rounded-lg border p-4 bg-white">
+            <div className="text-sm text-muted-foreground">Pending</div>
+            <div className="text-3xl font-bold">{stats.pending}</div>
+          </div>
+          <div className="rounded-lg border p-4 bg-white">
+            <div className="text-sm text-muted-foreground">Confirmed</div>
+            <div className="text-3xl font-bold">{stats.accepted}</div>
+          </div>
+          <div className="rounded-lg border p-4 bg-white">
+            <div className="text-sm text-muted-foreground">Cancelled</div>
+            <div className="text-3xl font-bold">{stats.cancelled}</div>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <Button onClick={() => (window.location.href = '/booking')}>
+            <PlusCircle className="w-5 h-5 mr-2" /> Create Job
+          </Button>
         </div>
 
         <Tabs defaultValue="media" className="space-y-6">
