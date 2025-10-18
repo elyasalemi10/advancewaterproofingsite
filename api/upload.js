@@ -14,6 +14,7 @@ function getS3() {
   return new S3Client({
     region: process.env.CLOUDFLARE_R2_REGION || 'auto',
     endpoint,
+    forcePathStyle: true,
     credentials: {
       accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || '',
       secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || ''
@@ -58,6 +59,9 @@ export default async function handler(req, res) {
   try {
     const { files, fields } = await parseMultipart(req)
     if (!files.length) return res.status(400).json({ error: 'No files provided' })
+    if (!process.env.CLOUDFLARE_ACCOUNT_ID || !process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || !process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || !process.env.CLOUDFLARE_R2_BUCKET) {
+      return res.status(500).json({ error: 'Cloudflare R2 environment variables missing' })
+    }
     const { bookingId, quoteId } = fields
     if (!bookingId && !quoteId) return res.status(400).json({ error: 'bookingId or quoteId required' })
 

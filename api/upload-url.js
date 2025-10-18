@@ -7,6 +7,7 @@ function getS3() {
   return new S3Client({
     region: process.env.CLOUDFLARE_R2_REGION || 'auto',
     endpoint,
+    forcePathStyle: true,
     credentials: {
       accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID || '',
       secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY || ''
