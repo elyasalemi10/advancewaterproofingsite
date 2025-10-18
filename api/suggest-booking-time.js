@@ -3,7 +3,7 @@ import { requireAuth } from './_auth.js'
 
 function getSupabaseClient() {
   const supabaseUrl = process.env.SUPABASE_URL || 'https://ryhrxlblccjjjowpubyv.supabase.co'
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ5aHJ4bGJsY2Nqampvd3B1Ynl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDMzMDM0NywiZXhwIjoyMDc1OTA2MzQ3fQ.nYRFSVsREhvkU3p-uonTseeLnEiK0Z9ugEalhspqJ24'
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
   return createClient(supabaseUrl, supabaseKey)
 }
 
@@ -31,12 +31,15 @@ export default async function handler(req, res) {
     if (fetchError || !booking) return res.status(404).json({ error: 'Booking not found' })
 
     // Send email via Resend
-    const RESEND_API_KEY = process.env.RESEND_API_KEY || 're_YF1u8Md5_LKN5LqkVRpCd8Ebw1UwZw9co'
+    const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
     const formattedRequested = new Date(booking.preferred_time).toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
     const suggestedDate = new Date(date)
     const [hStr, mStr] = String(time).split(':')
     if (hStr) suggestedDate.setHours(parseInt(hStr, 10), parseInt(mStr || '0', 10), 0, 0)
     const formattedSuggested = suggestedDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Melbourne' })
+
+    const baseUrl = req.headers.origin || req.headers.referer?.split('/').slice(0, 3).join('/') || 'https://advancewaterproofing.com.au'
+    const url = `${baseUrl}/customer/${booking.customer_access_token}`
 
     const emailHTML = `<!DOCTYPE html>
 <html lang="en">
@@ -44,7 +47,7 @@ export default async function handler(req, res) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>New Time Suggestion</title>
-  <style>*{box-sizing:border-box}body{margin:0;padding:0}a[x-apple-data-detectors]{color:inherit!important;text-decoration:inherit!important}#MessageViewBody a{color:inherit;text-decoration:none}p{line-height:inherit}@media (max-width:540px){.row-content{width:100%!important}.stack .column{display:block;width:100%!important}}</style>
+  <style>*{box-sizing:border-box}body{margin:0;padding:0}a[x-apple-data-detectors]{color:inherit!important;text-decoration:inherit!important}#MessageViewBody a{color:inherit;text-decoration:none}p{line-height:inherit;color:#101112}@media (max-width:540px){.row-content{width:100%!important}.stack .column{display:block;width:100%!important}}</style>
 </head>
 <body style="background:#ffffff;margin:0;padding:0;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;">
@@ -60,6 +63,11 @@ export default async function handler(req, res) {
               <p style="margin-bottom:16px;">Date: ${suggestedDate.toLocaleDateString('en-AU', {weekday:'long', year:'numeric', month:'long', day:'numeric'})}</p>
               <p>Service: ${booking.service}<br/>Address: ${booking.address}</p>
             </div>
+          </td></tr></table>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:10px;">
+            <a href="${url}" target="_blank" style="text-decoration:none;color:#ffffff;">
+              <span style="display:inline-block;background-color:#3585c3;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:400;padding:8px 20px;border-radius:4px;text-align:center;">Review & Confirm</span>
+            </a>
           </td></tr></table>
         </td></tr>
       </table>
