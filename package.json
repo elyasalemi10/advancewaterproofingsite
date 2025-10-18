@@ -67,6 +67,8 @@
     "react-resizable-panels": "^3.0.5",
     "react-responsive": "^10.0.1",
     "react-router-dom": "^7.9.3",
+    "marked": "^12.0.2",
+    "dompurify": "^3.1.6",
     "recharts": "^2.15.4",
     "resend": "^6.1.2",
     "sonner": "^2.0.7",
