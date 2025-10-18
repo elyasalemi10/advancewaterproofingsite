@@ -87,7 +87,8 @@ export default async function handler(req, res) {
       <tr><td style="padding:10px 16px;text-align:center;font-size:16px;color:#101112">
         <p style="margin:0 0 12px">The customer has requested a new time.</p>
         <p style="margin:0 0 12px">New requested time: ${formattedNew}<br>Address: ${booking.address}<br>Service: ${booking.service}</p>
-        <p style="margin:0 0 12px">Please review in Manage Booking and accept or decline.</p>
+        <p style="margin:0 0 16px">Please review and accept or decline:</p>
+        <p style="margin:0"><a href="${(req.headers.origin || '').replace(/\/$/, '')}/manage-booking?id=${booking.booking_id}" style="display:inline-block;padding:10px 18px;background:#3585c3;color:#fff;border-radius:4px;text-decoration:none">Open Booking</a></p>
       </td></tr>
     </table>
   </td></tr></table>

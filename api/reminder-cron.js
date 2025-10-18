@@ -38,7 +38,7 @@ function buildReminderEmailHTML(booking, url) {
 		body { margin: 0; padding: 0; }
 		a[x-apple-data-detectors] { color: inherit !important; text-decoration: inherit !important; }
 		#MessageViewBody a { color: inherit; text-decoration: none; }
-		p { line-height: inherit }
+    p { line-height: inherit; color: #101112; }
 		.desktop_hide, .desktop_hide table { mso-hide: all; display: none; max-height: 0px; overflow: hidden; }
 		.image_block img+div { display: none; }
 		sup, sub { font-size: 75%; line-height: 0; }

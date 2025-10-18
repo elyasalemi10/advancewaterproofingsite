@@ -124,7 +124,12 @@ export default function CustomerBooking() {
             <CheckCircle2 className="w-5 h-5" />
             <div>
               {confirmed ? 'You have confirmed this booking.' : null}
-              {rescheduled ? ` Reschedule requested to: ${new Date(booking.customer_rescheduled_time).toLocaleString('en-AU')}` : null}
+              {rescheduled ? (() => {
+                const dt = new Date(booking.customer_rescheduled_time)
+                const date = dt.toLocaleDateString('en-AU', { day:'2-digit', month:'long', year:'numeric' })
+                const time = dt.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
+                return ` Reschedule requested to: ${date} ${time}`
+              })() : null}
             </div>
           </div>
         ) : (
