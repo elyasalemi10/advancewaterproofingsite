@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     const s3 = getS3()
     const command = new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType })
     const url = await getSignedUrl(s3, command, { expiresIn: 60 * 5 })
+    // Provide the R2 API URL to upload directly
     return res.status(200).json({ url, key })
   } catch (e) {
     console.error(e)

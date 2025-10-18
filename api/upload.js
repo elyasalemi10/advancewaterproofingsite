@@ -62,13 +62,12 @@ export default async function handler(req, res) {
 
     const s3 = getS3()
     const bucket = process.env.CLOUDFLARE_R2_BUCKET || ''
-    const baseUrl = process.env.CLOUDFLARE_R2_PUBLIC_BASE_URL || ''
     const uploaded = []
     for (const f of files) {
       const key = `${bookingId || quoteId}/${Date.now()}-${encodeURIComponent(f.filename)}`
       await s3.send(new PutObjectCommand({ Bucket: bucket, Key: key, Body: f.buffer, ContentType: f.mime }))
-      const url = `${baseUrl.replace(/\/$/, '')}/${key}`
-      uploaded.push({ key, url, filename: f.filename, contentType: f.mime })
+      // Store the R2 object key (no public URL needed)
+      uploaded.push({ key, url: key, filename: f.filename, contentType: f.mime })
     }
 
     // Store URLs in Supabase
