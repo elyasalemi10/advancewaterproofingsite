@@ -45,6 +45,8 @@ function AppShell() {
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+  const { pathname } = useLocation()
+  const hideChatbot = pathname.startsWith('/admin') || pathname.startsWith('/partners') || pathname.startsWith('/customer')
   return (
     <div className="min-h-screen bg-background">
       <Header isScrolled={isScrolled} />
@@ -56,8 +58,10 @@ function AppShell() {
           <Route path="/customer/:token" element={<CustomerBooking />} />
           <Route path="/manage-booking" element={<ProtectedRoute><ManageBookings /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/admin/create-job" element={<ProtectedRoute><AdminCreateJob /></ProtectedRoute>} />
+          <Route path="/admin/create-partner" element={<ProtectedRoute><AdminCreatePartner /></ProtectedRoute>} />
           <Route path="/partners" element={<Partners />} />
-          <Route path="/partners/:id" element={<Partners />} />
+          <Route path="/partners/:id" element={<PartnerJob />} />
           <Route path="/manage-quotes" element={<ProtectedRoute><ManageQuote /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
           <Route path="/cancel-booking" element={<CancelBooking />} />
@@ -78,7 +82,7 @@ function AppShell() {
         </Routes>
       </main>
       <Footer />
-      <Chatbot />
+      {!hideChatbot && <Chatbot />}
       <StickyBookingBar />
     </div>
   )

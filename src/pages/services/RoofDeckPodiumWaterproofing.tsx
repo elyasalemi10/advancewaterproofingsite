@@ -59,7 +59,7 @@ export default function RoofDeckPodiumWaterproofing() {
             </div>
             <div className="relative">
               <img
-                src="/roof-deck-system.webp"
+                src="/hero-background.webp"
                 alt="Modern roof deck with waterproofing system"
                 className="rounded-lg shadow-2xl w-full h-[400px] object-cover"
               />

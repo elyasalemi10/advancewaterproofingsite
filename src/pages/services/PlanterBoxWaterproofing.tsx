@@ -117,8 +117,8 @@ export default function PlanterBoxWaterproofing() {
             </div>
             <div>
               <img
-                src="/planter-box-rooftop.jpg"
-                alt="Waterproofing installation in planter box"
+                src="/complete-system-components.jpeg"
+                alt="Planter box complete system components"
                 className="rounded-lg shadow-xl w-full h-[500px] object-cover"
               />
             </div>

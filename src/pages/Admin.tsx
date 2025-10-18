@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react'
-import { MediaLibrary } from '@/components/MediaLibrary'
 import { setSEO } from '@/lib/seo'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Shield, PlusCircle } from 'lucide-react'
+import { Shield, PlusCircle, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 export default function Admin() {
   const [stats, setStats] = useState({ total: 0, pending: 0, accepted: 0, cancelled: 0 })
+  const [jobs, setJobs] = useState<any[]>([])
   useEffect(() => {
     ;(async () => {
       try {
-        const resp = await fetch('/api/blog?action=stats') // reusing an API slot is fine; placeholder
-        // If you have an API for bookings stats, swap endpoint accordingly
-        // For now, keep zeros to avoid blocking
-        void resp
+        const resp = await fetch('/api/admin', { headers: { Authorization: `Bearer ${localStorage.getItem('aw_auth') || ''}` } })
+        const data = await resp.json()
+        if (resp.ok) {
+          setStats(data.stats)
+          setJobs(data.bookings || [])
+        }
       } catch {}
     })()
   }, [])
@@ -62,67 +64,27 @@ export default function Admin() {
           </Button>
         </div>
 
-        <Tabs defaultValue="media" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="media">Media Library</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            <TabsTrigger value="leads">Leads</TabsTrigger>
-          </TabsList>
+        <div className="grid gap-4">
+          {jobs.map((j) => (
+            <Card key={j.booking_id}><CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <div className="font-semibold">{j.service}</div>
+                <div className="text-sm text-muted-foreground">{j.address}</div>
+              </div>
+              <Button variant="outline" onClick={() => (window.location.href = `/manage-booking?id=${j.booking_id}`)}>Open</Button>
+            </CardContent></Card>
+          ))}
+          {jobs.length === 0 && <div className="text-muted-foreground">No jobs found.</div>}
+        </div>
 
-          <TabsContent value="media">
-            <MediaLibrary />
-          </TabsContent>
-
-          <TabsContent value="bookings">
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                Booking management coming soon
-              </p>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="leads">
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                Lead management coming soon
-              </p>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <div className="mt-12 bg-muted p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Admin Instructions</h2>
-          <div className="space-y-4 text-sm">
-            <div>
-              <h3 className="font-semibold mb-2">📷 Media Library</h3>
-              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>Drag and drop images/videos or click "Choose Files"</li>
-                <li>Click any media item to edit title, alt text, caption, and tags</li>
-                <li>Use alt text for SEO - describe the image clearly</li>
-                <li>Add tags to organise media (e.g., "balcony", "rapidseal", "before-after")</li>
-                <li>Copy URL to embed media on service pages</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">📅 Booking Management</h3>
-              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>Review tentative bookings submitted by clients</li>
-                <li>Confirm or reschedule appointments as needed</li>
-                <li>System will automatically send email confirmations</li>
-                <li>Sync with Google Calendar for team coordination</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">💬 Chatbot Logs</h3>
-              <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                <li>Review customer conversations and frequently asked questions</li>
-                <li>Identify common inquiries to improve chatbot responses</li>
-                <li>Follow up on leads who requested human contact</li>
-              </ul>
-            </div>
-          </div>
+        
+        <div className="mt-8 flex gap-3">
+          <Button onClick={() => (window.location.href = '/admin/create-job')}>
+            <PlusCircle className="w-5 h-5 mr-2" /> Create Job
+          </Button>
+          <Button variant="outline" onClick={() => (window.location.href = '/admin/create-partner')}>
+            <UserPlus className="w-5 h-5 mr-2" /> Create Partner
+          </Button>
         </div>
       </div>
     </div>

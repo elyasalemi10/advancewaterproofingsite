@@ -23,22 +23,7 @@ export default function CaulkingSolutions() {
     })
   }, [])
 
-  // Slideshow state
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const slides = [
-    {
-      image: '/maintenance-professional.webp',
-      alt: 'Professional caulking application'
-    },
-    {
-      image: '/caulking-slide1.webp',
-      alt: 'Window frame sealing'
-    },
-    {
-      image: '/caulking-slide2.webp',
-      alt: 'Building facade joint sealing'
-    }
-  ]
+  // Static hero image
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -112,45 +97,11 @@ export default function CaulkingSolutions() {
         </div>
       </section>
 
-      {/* Slideshow Section */}
+      {/* Static Image Section */}
       <section className="py-12 bg-muted/30">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="relative">
-            <div className="aspect-[16/9] md:aspect-[21/9] rounded-lg overflow-hidden">
-              <img
-                src={slides[currentSlide].image}
-                alt={slides[currentSlide].alt}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
-              onClick={prevSlide}
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white"
-              onClick={nextSlide}
-            >
-              <ChevronRight className="h-6 w-6" />
-            </Button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentSlide ? 'bg-white w-8' : 'bg-white/50'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
+          <div className="rounded-lg overflow-hidden">
+            <img src="/caulking.jpg" alt="Professional caulking application" className="w-full h-auto object-cover" />
           </div>
         </div>
       </section>
